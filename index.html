@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#080a12" />
+
   <title>OTP Service</title>
 
   <style>
@@ -13,53 +15,53 @@
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: Arial, "Noto Sans Khmer", sans-serif;
-      background:
-        radial-gradient(circle at top left, #26345f 0%, transparent 38%),
-        radial-gradient(circle at bottom right, #3b1d4d 0%, transparent 40%),
-        #080a12;
-      color: #fff;
+      padding: 18px;
       display: flex;
-      justify-content: center;
       align-items: center;
-      padding: 20px;
+      justify-content: center;
+      font-family: Arial, "Noto Sans Khmer", sans-serif;
+      color: #ffffff;
+      background:
+        radial-gradient(circle at top left, #293768 0%, transparent 38%),
+        radial-gradient(circle at bottom right, #4a245b 0%, transparent 42%),
+        #080a12;
     }
 
     .app {
       width: 100%;
       max-width: 460px;
-      background: rgba(18, 21, 35, 0.95);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 24px;
       padding: 25px;
-      box-shadow: 0 20px 70px rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 25px;
+      background: rgba(17, 20, 34, .96);
+      box-shadow: 0 20px 70px rgba(0,0,0,.45);
     }
 
     .logo {
       width: 72px;
       height: 72px;
-      margin: 0 auto 15px;
-      border-radius: 22px;
+      margin: 0 auto 14px;
       display: flex;
       align-items: center;
       justify-content: center;
+      border-radius: 22px;
       font-size: 35px;
       background: linear-gradient(135deg, #735cff, #a855f7);
-      box-shadow: 0 10px 30px rgba(124,92,255,0.35);
+      box-shadow: 0 10px 30px rgba(124,92,255,.35);
     }
 
     h1 {
+      margin: 0;
       text-align: center;
       font-size: 25px;
-      margin: 0 0 8px;
     }
 
     .subtitle {
+      margin: 9px 0 25px;
       text-align: center;
       color: #aeb5c9;
       font-size: 14px;
-      line-height: 1.7;
-      margin-bottom: 25px;
+      line-height: 1.8;
     }
 
     .steps {
@@ -73,7 +75,7 @@
       height: 5px;
       border-radius: 20px;
       background: #30364b;
-      transition: 0.3s;
+      transition: .25s;
     }
 
     .step-dot.active {
@@ -86,7 +88,7 @@
 
     .step.active {
       display: block;
-      animation: showStep 0.25s ease;
+      animation: showStep .25s ease;
     }
 
     @keyframes showStep {
@@ -102,62 +104,64 @@
     }
 
     .step-title {
+      margin-bottom: 8px;
       font-size: 20px;
       font-weight: bold;
-      margin-bottom: 8px;
     }
 
     .step-description {
+      margin-bottom: 20px;
       color: #aeb5c9;
       font-size: 14px;
-      line-height: 1.7;
-      margin-bottom: 18px;
-    }
-
-    label {
-      display: block;
-      font-size: 14px;
-      color: #d9def0;
-      margin: 0 0 8px;
-    }
-
-    input,
-    select {
-      width: 100%;
-      height: 52px;
-      border: 1px solid #343b54;
-      outline: none;
-      color: #fff;
-      background: #101426;
-      border-radius: 14px;
-      padding: 0 15px;
-      font-size: 16px;
-      transition: 0.2s;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: #806cff;
-      box-shadow: 0 0 0 3px rgba(128,108,255,0.12);
-    }
-
-    select {
-      cursor: pointer;
-    }
-
-    option {
-      background: #101426;
-      color: #fff;
+      line-height: 1.8;
     }
 
     .field {
       margin-bottom: 16px;
     }
 
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #d9def0;
+      font-size: 14px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      height: 52px;
+      padding: 0 15px;
+      border: 1px solid #343b54;
+      border-radius: 14px;
+      outline: none;
+      color: #fff;
+      background: #101426;
+      font-size: 16px;
+      transition: .2s;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #806cff;
+      box-shadow: 0 0 0 3px rgba(128,108,255,.13);
+    }
+
+    option {
+      color: #fff;
+      background: #101426;
+    }
+
     .phone-row {
       display: grid;
-      grid-template-columns: 125px 1fr;
+      grid-template-columns: 110px 1fr;
       gap: 9px;
+    }
+
+    .country-display {
+      text-align: center;
+      font-weight: bold;
+      color: #bfc7df;
     }
 
     .check-row {
@@ -167,7 +171,7 @@
       margin: 15px 0;
       color: #b8bfd3;
       font-size: 13px;
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
     .check-row input {
@@ -177,55 +181,54 @@
       accent-color: #806cff;
     }
 
+    .check-row label {
+      margin: 0;
+      color: #b8bfd3;
+      font-size: 13px;
+    }
+
     button {
       width: 100%;
       min-height: 52px;
-      border: none;
+      margin-top: 9px;
+      padding: 12px;
+      border: 0;
       border-radius: 14px;
+      color: #fff;
       background: linear-gradient(135deg, #735cff, #a855f7);
-      color: white;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      transition: 0.2s;
-      margin-top: 8px;
+      transition: .2s;
     }
 
     button:hover {
       filter: brightness(1.1);
-      transform: translateY(-1px);
     }
 
     button:disabled {
-      opacity: 0.5;
+      opacity: .55;
       cursor: not-allowed;
-      transform: none;
-    }
-
-    .secondary-btn {
-      background: #252b40;
-      color: #dfe4f5;
-    }
-
-    .small-btn {
-      min-height: 44px;
-      font-size: 14px;
-      margin-top: 12px;
     }
 
     .back-btn {
-      background: transparent;
       border: 1px solid #343b54;
       color: #c7cee2;
+      background: transparent;
+    }
+
+    .secondary-btn {
+      color: #dfe4f5;
+      background: #252b40;
     }
 
     .message {
       display: none;
-      border-radius: 12px;
-      padding: 12px 14px;
       margin: 15px 0;
+      padding: 12px 14px;
+      border-radius: 12px;
       font-size: 13px;
-      line-height: 1.7;
+      line-height: 1.8;
       white-space: pre-wrap;
       word-break: break-word;
     }
@@ -235,45 +238,40 @@
     }
 
     .message.error {
-      background: rgba(239,68,68,0.13);
-      border: 1px solid rgba(239,68,68,0.35);
+      border: 1px solid rgba(239,68,68,.35);
       color: #ffb4b4;
+      background: rgba(239,68,68,.13);
     }
 
     .message.success {
-      background: rgba(34,197,94,0.13);
-      border: 1px solid rgba(34,197,94,0.35);
+      border: 1px solid rgba(34,197,94,.35);
       color: #a7f3c0;
+      background: rgba(34,197,94,.13);
     }
 
     .message.info {
-      background: rgba(59,130,246,0.13);
-      border: 1px solid rgba(59,130,246,0.35);
+      border: 1px solid rgba(59,130,246,.35);
       color: #b8d7ff;
+      background: rgba(59,130,246,.13);
     }
 
     .recaptcha-box {
       display: flex;
       justify-content: center;
-      margin: 15px 0;
       min-height: 78px;
-    }
-
-    .otp-input {
-      text-align: center;
-      letter-spacing: 9px;
-      font-size: 25px;
-      font-weight: bold;
+      margin: 15px 0;
+      overflow: hidden;
     }
 
     .phone-preview {
-      background: #171d31;
-      border: 1px solid #343b54;
-      border-radius: 12px;
-      padding: 12px;
       margin: 15px 0;
-      font-size: 14px;
+      padding: 13px;
+      border: 1px solid #343b54;
+      border-radius: 13px;
       color: #cbd3e8;
+      background: #171d31;
+      font-size: 14px;
+      line-height: 1.8;
       word-break: break-word;
     }
 
@@ -281,31 +279,38 @@
       color: #fff;
     }
 
+    .otp-input {
+      text-align: center;
+      letter-spacing: 8px;
+      font-size: 25px;
+      font-weight: bold;
+    }
+
     .timer {
+      margin-top: 12px;
       text-align: center;
       color: #aeb5c9;
       font-size: 13px;
-      margin-top: 12px;
     }
 
     .footer {
+      margin-top: 22px;
       text-align: center;
       color: #737d99;
       font-size: 12px;
-      margin-top: 22px;
-      line-height: 1.7;
+      line-height: 1.8;
     }
 
     .loading {
       display: inline-block;
       width: 16px;
       height: 16px;
-      border: 2px solid rgba(255,255,255,0.4);
+      margin-right: 8px;
+      border: 2px solid rgba(255,255,255,.4);
       border-top-color: #fff;
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
       vertical-align: middle;
-      margin-right: 8px;
+      animation: spin .8s linear infinite;
     }
 
     @keyframes spin {
@@ -314,13 +319,19 @@
       }
     }
 
+    .success-icon {
+      margin: 10px 0;
+      text-align: center;
+      font-size: 55px;
+    }
+
     @media (max-width: 390px) {
       .app {
         padding: 20px;
       }
 
       .phone-row {
-        grid-template-columns: 112px 1fr;
+        grid-template-columns: 100px 1fr;
       }
 
       h1 {
@@ -332,6 +343,7 @@
 
 <body>
   <main class="app">
+
     <div class="logo">🔐</div>
 
     <h1>OTP Service</h1>
@@ -347,9 +359,9 @@
       <div class="step-dot" id="dot4"></div>
     </div>
 
-    <!-- STEP 1 -->
+    <!-- STEP 1: EMAIL -->
     <section class="step active" id="step1">
-      <div class="step-title">ជំហានទី ១</div>
+      <div class="step-title">ជំហានទី ១ · Email</div>
 
       <div class="step-description">
         បញ្ចូល Email របស់អ្នក ដើម្បីចាប់ផ្តើមបង្កើតគណនី។
@@ -357,6 +369,7 @@
 
       <div class="field">
         <label for="email">Email</label>
+
         <input
           id="email"
           type="email"
@@ -372,12 +385,12 @@
       </button>
     </section>
 
-    <!-- STEP 2 -->
+    <!-- STEP 2: PHONE -->
     <section class="step" id="step2">
-      <div class="step-title">ជំហានទី ២</div>
+      <div class="step-title">ជំហានទី ២ · លេខទូរស័ព្ទ</div>
 
       <div class="step-description">
-        ជ្រើសរើសប្រទេស ហើយបញ្ចូលលេខទូរស័ព្ទដែលអាចទទួល SMS បាន។
+        ជ្រើសរើសប្រទេស ហើយបញ្ចូលលេខដែលអាចទទួល SMS បាន។
       </div>
 
       <div class="field">
@@ -395,6 +408,7 @@
         <div class="phone-row">
           <input
             id="countryDisplay"
+            class="country-display"
             value="+84"
             readonly
             aria-label="Country code"
@@ -411,69 +425,31 @@
 
       <div class="check-row">
         <input id="terms" type="checkbox" />
+
         <label for="terms">
-          ខ្ញុំយល់ព្រមទទួលលេខកូដ OTP តាម SMS និងយល់ព្រមតាមលក្ខខណ្ឌប្រើប្រាស់។
+          ខ្ញុំយល់ព្រមតាមលក្ខខណ្ឌប្រើប្រាស់ និងទទួលលេខកូដ OTP តាម SMS។
         </label>
       </div>
 
       <div id="phoneMessage" class="message"></div>
 
-      <div class="recaptcha-box" id="recaptcha-container"></div>
+      <div id="recaptcha-container" class="recaptcha-box"></div>
 
       <button id="sendOtpBtn">
         ផ្ញើ OTP តាម SMS
       </button>
 
-      <button class="back-btn" id="backToEmailBtn">
+      <button id="backToEmailBtn" class="back-btn">
         ត្រឡប់ក្រោយ
       </button>
     </section>
 
-    <!-- STEP 3 -->
+    <!-- STEP 3: OTP -->
     <section class="step" id="step3">
-      <div class="step-title">ជំហានទី ៣</div>
+      <div class="step-title">ជំហានទី ៣ · បញ្ចូល OTP</div>
 
       <div class="step-description">
-        បង្កើត Password សម្រាប់គណនីរបស់អ្នក។
-      </div>
-
-      <div class="field">
-        <label for="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          placeholder="យ៉ាងហោចណាស់ ៦ តួអក្សរ"
-          autocomplete="new-password"
-        />
-      </div>
-
-      <div class="field">
-        <label for="confirmPassword">បញ្ជាក់ Password ម្តងទៀត</label>
-        <input
-          id="confirmPassword"
-          type="password"
-          placeholder="បញ្ចូល Password ម្តងទៀត"
-          autocomplete="new-password"
-        />
-      </div>
-
-      <div id="passwordMessage" class="message"></div>
-
-      <button id="passwordNextBtn">
-        បន្តទៅបញ្ចូល OTP
-      </button>
-
-      <button class="back-btn" id="backToPhoneBtn">
-        ត្រឡប់ក្រោយ
-      </button>
-    </section>
-
-    <!-- STEP 4 -->
-    <section class="step" id="step4">
-      <div class="step-title">ជំហានទី ៤</div>
-
-      <div class="step-description">
-        បញ្ចូលលេខ OTP ដែលបានផ្ញើទៅលេខទូរស័ព្ទរបស់អ្នក។
+        បញ្ចូលលេខ OTP ៦ ខ្ទង់ដែលបានផ្ញើទៅលេខទូរស័ព្ទរបស់អ្នក។
       </div>
 
       <div class="phone-preview">
@@ -499,17 +475,77 @@
       <div id="otpMessage" class="message"></div>
 
       <button id="verifyOtpBtn">
-        បញ្ជាក់ OTP និងបង្កើតគណនី
+        បញ្ជាក់ OTP
       </button>
 
-      <button class="secondary-btn small-btn" id="resendOtpBtn">
+      <button id="resendOtpBtn" class="secondary-btn">
         ផ្ញើ OTP ម្តងទៀត
       </button>
 
-      <div class="timer" id="timerText"></div>
+      <div id="timerText" class="timer"></div>
 
-      <button class="back-btn" id="backToPasswordBtn">
+      <button id="backToPhoneBtn" class="back-btn">
         ត្រឡប់ក្រោយ
+      </button>
+    </section>
+
+    <!-- STEP 4: PASSWORD -->
+    <section class="step" id="step4">
+      <div class="step-title">ជំហានទី ៤ · Password</div>
+
+      <div class="step-description">
+        បង្កើត Password ដើម្បីការពារគណនីរបស់អ្នក។
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+
+        <input
+          id="password"
+          type="password"
+          placeholder="យ៉ាងហោចណាស់ ៦ តួអក្សរ"
+          autocomplete="new-password"
+        />
+      </div>
+
+      <div class="field">
+        <label for="confirmPassword">បញ្ជាក់ Password</label>
+
+        <input
+          id="confirmPassword"
+          type="password"
+          placeholder="បញ្ចូល Password ម្តងទៀត"
+          autocomplete="new-password"
+        />
+      </div>
+
+      <div id="passwordMessage" class="message"></div>
+
+      <button id="createAccountBtn">
+        បង្កើតគណនី
+      </button>
+
+      <button id="backToOtpBtn" class="back-btn">
+        ត្រឡប់ក្រោយ
+      </button>
+    </section>
+
+    <!-- STEP 5: SUCCESS -->
+    <section class="step" id="step5">
+      <div class="success-icon">✅</div>
+
+      <div class="step-title" style="text-align:center;">
+        បង្កើតគណនីបានជោគជ័យ
+      </div>
+
+      <div class="step-description" style="text-align:center;">
+        គណនីរបស់អ្នកត្រូវបានបង្កើត និងភ្ជាប់ Email ជាមួយលេខទូរស័ព្ទរួចរាល់។
+      </div>
+
+      <div id="successMessage" class="message success show"></div>
+
+      <button id="restartBtn">
+        បង្កើតគណនីថ្មី
       </button>
     </section>
 
@@ -518,14 +554,14 @@
     </div>
   </main>
 
-  <!-- Firebase SDK -->
+  <!-- FIREBASE SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
   <script>
-    // =========================
+    // =====================================
     // FIREBASE CONFIG
-    // =========================
+    // =====================================
 
     const firebaseConfig = {
       apiKey: "AIzaSyDuxc49N49FWR_01A4SGxA8vAXE4z1vy4NUs",
@@ -541,45 +577,53 @@
 
     const auth = firebase.auth();
 
-    // =========================
+    // =====================================
     // VARIABLES
-    // =========================
+    // =====================================
 
     let currentStep = 1;
     let recaptchaVerifier = null;
     let confirmationResult = null;
     let fullPhoneNumber = "";
-    let timerInterval = null;
     let resendSeconds = 60;
+    let timerInterval = null;
 
     let userEmail = "";
-    let userPassword = "";
+    let verifiedPhoneUser = null;
 
-    // =========================
+    // =====================================
     // ELEMENTS
-    // =========================
+    // =====================================
 
     const emailInput = document.getElementById("email");
     const countryCode = document.getElementById("countryCode");
     const countryDisplay = document.getElementById("countryDisplay");
     const phoneInput = document.getElementById("phone");
     const termsInput = document.getElementById("terms");
-    const passwordInput = document.getElementById("password");
-    const confirmPasswordInput = document.getElementById("confirmPassword");
     const otpInput = document.getElementById("otp");
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput =
+      document.getElementById("confirmPassword");
 
     const emailNextBtn = document.getElementById("emailNextBtn");
     const sendOtpBtn = document.getElementById("sendOtpBtn");
-    const passwordNextBtn = document.getElementById("passwordNextBtn");
     const verifyOtpBtn = document.getElementById("verifyOtpBtn");
     const resendOtpBtn = document.getElementById("resendOtpBtn");
+    const createAccountBtn =
+      document.getElementById("createAccountBtn");
 
     const sentPhoneText = document.getElementById("sentPhoneText");
     const timerText = document.getElementById("timerText");
 
-    // =========================
+    const emailMessage = document.getElementById("emailMessage");
+    const phoneMessage = document.getElementById("phoneMessage");
+    const otpMessage = document.getElementById("otpMessage");
+    const passwordMessage =
+      document.getElementById("passwordMessage");
+
+    // =====================================
     // STEP CONTROL
-    // =========================
+    // =====================================
 
     function showStep(stepNumber) {
       currentStep = stepNumber;
@@ -588,18 +632,24 @@
         step.classList.remove("active");
       });
 
-      document
-        .getElementById("step" + stepNumber)
-        .classList.add("active");
+      const selectedStep =
+        document.getElementById("step" + stepNumber);
+
+      if (selectedStep) {
+        selectedStep.classList.add("active");
+      }
 
       document.querySelectorAll(".step-dot").forEach((dot, index) => {
-        dot.classList.toggle("active", index < stepNumber);
+        dot.classList.toggle(
+          "active",
+          index < Math.min(stepNumber, 4)
+        );
       });
     }
 
-    // =========================
+    // =====================================
     // MESSAGE
-    // =========================
+    // =====================================
 
     function showMessage(element, text, type = "error") {
       element.textContent = text;
@@ -611,46 +661,47 @@
       element.className = "message";
     }
 
-    // =========================
-    // FIREBASE ERROR MESSAGE
-    // =========================
+    // =====================================
+    // FIREBASE ERROR
+    // =====================================
 
     function getFirebaseErrorMessage(error) {
-      const code = error && error.code ? error.code : "unknown";
+      const code = error?.code || "unknown";
+      const detail = error?.message || "Unknown error";
 
       const messages = {
         "auth/invalid-phone-number":
-          "លេខទូរស័ព្ទមិនត្រឹមត្រូវ។ សូមពិនិត្យលេខម្ដងទៀត។",
+          "លេខទូរស័ព្ទមិនត្រឹមត្រូវ។",
 
         "auth/missing-phone-number":
           "សូមបញ្ចូលលេខទូរស័ព្ទ។",
 
         "auth/operation-not-allowed":
-          "Phone Authentication មិនទាន់បានបើកនៅ Firebase។",
+          "Phone Authentication មិនទាន់បានបើកក្នុង Firebase។",
 
         "auth/app-not-authorized":
           "Domain របស់ Website មិនទាន់បានបន្ថែមក្នុង Firebase Authorized domains។",
 
         "auth/invalid-app-credential":
-          "reCAPTCHA មិនត្រឹមត្រូវ ឬ Domain មិនត្រូវបានអនុញ្ញាត។",
+          "reCAPTCHA ឬ Domain មិនត្រឹមត្រូវ។",
 
         "auth/captcha-check-failed":
-          "ការត្រួតពិនិត្យ reCAPTCHA បរាជ័យ។ សូម Refresh ហើយសាកល្បងម្ដងទៀត។",
+          "reCAPTCHA បរាជ័យ។ សូម Refresh Website។",
 
         "auth/quota-exceeded":
-          "ចំនួនផ្ញើ SMS បានលើសកំណត់ Firebase។ សូមរង់ចាំ ឬពិនិត្យ Billing។",
+          "ចំនួនផ្ញើ SMS លើសកំណត់ Firebase។",
 
         "auth/billing-not-enabled":
-          "Firebase Billing មិនទាន់បានបើកសម្រាប់ការផ្ញើ SMS។",
+          "Firebase Billing មិនទាន់បានបើកសម្រាប់ SMS OTP។",
 
         "auth/too-many-requests":
-          "សាកល្បងច្រើនពេក។ សូមរង់ចាំមួយរយៈសិន។",
+          "សាកល្បងច្រើនពេក។ សូមរង់ចាំមួយរយៈ។",
 
         "auth/network-request-failed":
-          "បញ្ហាអ៊ីនធឺណិត។ សូមពិនិត្យ Connection។",
+          "អ៊ីនធឺណិតមានបញ្ហា។",
 
         "auth/code-expired":
-          "លេខ OTP បានផុតកំណត់។ សូមផ្ញើ OTP ថ្មី។",
+          "លេខ OTP បានផុតកំណត់។",
 
         "auth/invalid-verification-code":
           "លេខ OTP មិនត្រឹមត្រូវ។",
@@ -659,27 +710,27 @@
           "Email នេះមានគណនីរួចហើយ។",
 
         "auth/weak-password":
-          "Password ខ្សោយពេក។ សូមប្រើយ៉ាងហោចណាស់ ៦ តួអក្សរ។",
+          "Password ត្រូវមានយ៉ាងហោចណាស់ ៦ តួអក្សរ។",
 
         "auth/credential-already-in-use":
-          "លេខទូរស័ព្ទនេះត្រូវបានប្រើជាមួយគណនីផ្សេងរួចហើយ។",
+          "លេខទូរស័ព្ទ ឬ Email នេះបានប្រើជាមួយគណនីផ្សេងរួចហើយ។",
 
         "auth/provider-already-linked":
           "គណនីនេះបានភ្ជាប់រួចហើយ។"
       };
 
       return (
-        messages[code] ||
-        "Firebase Error: " +
-          code +
-          "\n" +
-          (error && error.message ? error.message : "Unknown error")
+        (messages[code] || "មានបញ្ហា Firebase") +
+        "\n\nError Code: " +
+        code +
+        "\nDetails: " +
+        detail
       );
     }
 
-    // =========================
-    // COUNTRY PHONE FORMAT
-    // =========================
+    // =====================================
+    // PHONE FORMAT
+    // =====================================
 
     function normalizePhoneNumber(value, selectedCode) {
       let digits = String(value || "").replace(/\D/g, "");
@@ -688,19 +739,17 @@
         return "";
       }
 
-      // ប្រសិនបើអ្នកបញ្ចូលលេខដែលចាប់ផ្តើមដោយ 00
       if (digits.startsWith("00")) {
         digits = digits.substring(2);
       }
 
-      // ប្រសិនបើបញ្ចូលលេខជាមួយ Country Code រួចហើយ
-      const codeWithoutPlus = selectedCode.replace("+", "");
+      const codeWithoutPlus =
+        selectedCode.replace("+", "");
 
       if (digits.startsWith(codeWithoutPlus)) {
         return "+" + digits;
       }
 
-      // លេខក្នុងស្រុកចាប់ផ្តើមដោយ 0
       if (digits.startsWith("0")) {
         digits = digits.substring(1);
       }
@@ -714,6 +763,10 @@
       return digits.length >= 8 && digits.length <= 15;
     }
 
+    // =====================================
+    // COUNTRY CHANGE
+    // =====================================
+
     countryCode.addEventListener("change", () => {
       countryDisplay.value = countryCode.value;
 
@@ -723,66 +776,85 @@
         phoneInput.placeholder = "012345678";
       }
 
-      clearMessage(document.getElementById("phoneMessage"));
+      clearMessage(phoneMessage);
     });
 
-    // =========================
+    // =====================================
     // RECAPTCHA
-    // =========================
+    // =====================================
 
-    function createRecaptcha() {
+    async function createRecaptcha() {
       try {
         if (recaptchaVerifier) {
-          recaptchaVerifier.clear();
+          try {
+            recaptchaVerifier.clear();
+          } catch (error) {
+            console.warn("Clear old reCAPTCHA failed:", error);
+          }
+
           recaptchaVerifier = null;
         }
 
-        recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-          "recaptcha-container",
-          {
-            size: "normal",
-            callback: function () {
-              console.log("reCAPTCHA completed");
-            },
-            "expired-callback": function () {
-              showMessage(
-                document.getElementById("phoneMessage"),
-                "reCAPTCHA បានផុតកំណត់។ សូមធ្វើម្ដងទៀត។",
-                "error"
-              );
-            }
-          }
-        );
+        document.getElementById(
+          "recaptcha-container"
+        ).innerHTML = "";
 
-        recaptchaVerifier.render();
+        recaptchaVerifier =
+          new firebase.auth.RecaptchaVerifier(
+            "recaptcha-container",
+            {
+              size: "normal",
+
+              callback: function () {
+                console.log("reCAPTCHA completed");
+              },
+
+              "expired-callback": function () {
+                showMessage(
+                  phoneMessage,
+                  "reCAPTCHA បានផុតកំណត់។ សូមធ្វើម្ដងទៀត។"
+                );
+              }
+            }
+          );
+
+        await recaptchaVerifier.render();
+
+        console.log("reCAPTCHA ready");
       } catch (error) {
         console.error("reCAPTCHA error:", error);
 
+        recaptchaVerifier = null;
+
         showMessage(
-          document.getElementById("phoneMessage"),
-          getFirebaseErrorMessage(error),
-          "error"
+          phoneMessage,
+          "មិនអាចបើក reCAPTCHA បានទេ។ សូម Refresh Website។\n\n" +
+            (error.code || "") +
+            "\n" +
+            (error.message || "")
         );
       }
     }
 
-    // =========================
+    // =====================================
     // STEP 1: EMAIL
-    // =========================
+    // =====================================
 
-    emailNextBtn.addEventListener("click", () => {
-      const email = emailInput.value.trim();
-      const emailMessage = document.getElementById("emailMessage");
-
+    emailNextBtn.addEventListener("click", async () => {
       clearMessage(emailMessage);
+
+      const email = emailInput.value.trim();
 
       if (!email) {
         showMessage(emailMessage, "សូមបញ្ចូល Email។");
         return;
       }
 
-      if (!email.includes("@") || !email.includes(".")) {
-        showMessage(emailMessage, "សូមបញ្ចូល Email ឱ្យបានត្រឹមត្រូវ។");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showMessage(
+          emailMessage,
+          "សូមបញ្ចូល Email ឱ្យបានត្រឹមត្រូវ។"
+        );
         return;
       }
 
@@ -797,13 +869,11 @@
       }, 300);
     });
 
-    // =========================
+    // =====================================
     // STEP 2: SEND OTP
-    // =========================
+    // =====================================
 
     sendOtpBtn.addEventListener("click", async () => {
-      const phoneMessage = document.getElementById("phoneMessage");
-
       clearMessage(phoneMessage);
 
       if (!termsInput.checked) {
@@ -815,22 +885,26 @@
       }
 
       const selectedCode = countryCode.value;
-      const localPhone = phoneInput.value.trim();
+      const phoneValue = phoneInput.value.trim();
 
-      if (!localPhone) {
-        showMessage(phoneMessage, "សូមបញ្ចូលលេខទូរស័ព្ទ។");
+      if (!phoneValue) {
+        showMessage(
+          phoneMessage,
+          "សូមបញ្ចូលលេខទូរស័ព្ទ។"
+        );
         return;
       }
 
       fullPhoneNumber = normalizePhoneNumber(
-        localPhone,
+        phoneValue,
         selectedCode
       );
 
       if (!isValidPhone(fullPhoneNumber)) {
         showMessage(
           phoneMessage,
-          "លេខទូរស័ព្ទមិនត្រឹមត្រូវ៖ " + fullPhoneNumber
+          "លេខទូរស័ព្ទមិនត្រឹមត្រូវ៖ " +
+            fullPhoneNumber
         );
         return;
       }
@@ -838,10 +912,11 @@
       if (!recaptchaVerifier) {
         showMessage(
           phoneMessage,
-          "reCAPTCHA មិនទាន់រួចរាល់។ សូមរង់ចាំបន្តិច ហើយសាកល្បងម្ដងទៀត។"
+          "reCAPTCHA មិនទាន់រួចរាល់។ សូមរង់ចាំបន្តិច។",
+          "info"
         );
 
-        createRecaptcha();
+        await createRecaptcha();
         return;
       }
 
@@ -850,25 +925,31 @@
         '<span class="loading"></span>កំពុងផ្ញើ OTP...';
 
       try {
-        console.log("Sending OTP to:", fullPhoneNumber);
-
-        confirmationResult = await auth.signInWithPhoneNumber(
-          fullPhoneNumber,
-          recaptchaVerifier
+        console.log(
+          "Sending OTP to:",
+          fullPhoneNumber
         );
+
+        confirmationResult =
+          await auth.signInWithPhoneNumber(
+            fullPhoneNumber,
+            recaptchaVerifier
+          );
 
         sentPhoneText.textContent = fullPhoneNumber;
 
         showMessage(
           phoneMessage,
-          "បានផ្ញើ OTP ទៅ " + fullPhoneNumber,
+          "បានផ្ញើ OTP ទៅ " +
+            fullPhoneNumber,
           "success"
         );
 
+        startTimer();
         showStep(3);
       } catch (error) {
         console.error(
-          "Send OTP Error:",
+          "Send OTP error:",
           error.code,
           error.message,
           error
@@ -878,38 +959,96 @@
           phoneMessage,
           getFirebaseErrorMessage(error) +
             "\n\nលេខដែលបានផ្ញើ៖ " +
-            fullPhoneNumber,
-          "error"
+            fullPhoneNumber
         );
 
-        try {
-          if (recaptchaVerifier) {
-            recaptchaVerifier.clear();
-            recaptchaVerifier = null;
-          }
-
-          createRecaptcha();
-        } catch (captchaError) {
-          console.error("Reset reCAPTCHA error:", captchaError);
-        }
+        await createRecaptcha();
       } finally {
         sendOtpBtn.disabled = false;
         sendOtpBtn.textContent = "ផ្ញើ OTP តាម SMS";
       }
     });
 
-    // =========================
-    // STEP 3: PASSWORD
-    // =========================
+    // =====================================
+    // STEP 3: VERIFY OTP
+    // =====================================
 
-    passwordNextBtn.addEventListener("click", () => {
-      const passwordMessage =
-        document.getElementById("passwordMessage");
+    verifyOtpBtn.addEventListener("click", async () => {
+      clearMessage(otpMessage);
 
+      const otp = otpInput.value.trim();
+
+      if (!confirmationResult) {
+        showMessage(
+          otpMessage,
+          "មិនមាន OTP ទេ។ សូមត្រឡប់ទៅផ្ញើ OTP ម្តងទៀត។"
+        );
+        return;
+      }
+
+      if (!/^\d{6}$/.test(otp)) {
+        showMessage(
+          otpMessage,
+          "សូមបញ្ចូល OTP ចំនួន ៦ ខ្ទង់។"
+        );
+        return;
+      }
+
+      verifyOtpBtn.disabled = true;
+      verifyOtpBtn.innerHTML =
+        '<span class="loading"></span>កំពុងផ្ទៀងផ្ទាត់...';
+
+      try {
+        const result =
+          await confirmationResult.confirm(otp);
+
+        verifiedPhoneUser = result.user;
+
+        stopTimer();
+
+        showMessage(
+          otpMessage,
+          "OTP ត្រឹមត្រូវ។ សូមបង្កើត Password។",
+          "success"
+        );
+
+        showStep(4);
+      } catch (error) {
+        console.error(
+          "Verify OTP error:",
+          error.code,
+          error.message,
+          error
+        );
+
+        showMessage(
+          otpMessage,
+          getFirebaseErrorMessage(error)
+        );
+      } finally {
+        verifyOtpBtn.disabled = false;
+        verifyOtpBtn.textContent = "បញ្ជាក់ OTP";
+      }
+    });
+
+    // =====================================
+    // STEP 4: CREATE ACCOUNT
+    // =====================================
+
+    createAccountBtn.addEventListener("click", async () => {
       clearMessage(passwordMessage);
 
       const password = passwordInput.value;
-      const confirmPassword = confirmPasswordInput.value;
+      const confirmPassword =
+        confirmPasswordInput.value;
+
+      if (!verifiedPhoneUser) {
+        showMessage(
+          passwordMessage,
+          "សូមបញ្ជាក់ OTP ជាមុនសិន។"
+        );
+        return;
+      }
 
       if (!password || !confirmPassword) {
         showMessage(
@@ -935,123 +1074,61 @@
         return;
       }
 
-      userPassword = password;
-
-      showStep(4);
-      startTimer();
-    });
-
-    // =========================
-    // STEP 4: VERIFY OTP
-    // =========================
-
-    verifyOtpBtn.addEventListener("click", async () => {
-      const otpMessage = document.getElementById("otpMessage");
-
-      clearMessage(otpMessage);
-
-      const otp = otpInput.value.trim();
-
-      if (!confirmationResult) {
-        showMessage(
-          otpMessage,
-          "មិនមានការផ្ញើ OTP ទេ។ សូមត្រឡប់ទៅផ្ញើ OTP ម្តងទៀត។"
-        );
-        return;
-      }
-
-      if (!/^\d{6}$/.test(otp)) {
-        showMessage(
-          otpMessage,
-          "សូមបញ្ចូល OTP ចំនួន ៦ ខ្ទង់។"
-        );
-        return;
-      }
-
-      verifyOtpBtn.disabled = true;
-      verifyOtpBtn.innerHTML =
-        '<span class="loading"></span>កំពុងផ្ទៀងផ្ទាត់...';
+      createAccountBtn.disabled = true;
+      createAccountBtn.innerHTML =
+        '<span class="loading"></span>កំពុងបង្កើតគណនី...';
 
       try {
-        const result = await confirmationResult.confirm(otp);
-        const phoneUser = result.user;
-
         const emailCredential =
           firebase.auth.EmailAuthProvider.credential(
             userEmail,
-            userPassword
+            password
           );
 
-        try {
-          await phoneUser.linkWithCredential(emailCredential);
+        await verifiedPhoneUser.linkWithCredential(
+          emailCredential
+        );
 
-          showMessage(
-            otpMessage,
-            "បង្កើតគណនីបានជោគជ័យ។ Email និងលេខទូរស័ព្ទត្រូវបានភ្ជាប់។",
-            "success"
-          );
-        } catch (linkError) {
-          console.error(
-            "Link Email Error:",
-            linkError.code,
-            linkError.message,
-            linkError
-          );
+        document.getElementById(
+          "successMessage"
+        ).textContent =
+          "Email: " +
+          userEmail +
+          "\nលេខទូរស័ព្ទ: " +
+          fullPhoneNumber;
 
-          if (
-            linkError.code === "auth/provider-already-linked"
-          ) {
-            showMessage(
-              otpMessage,
-              "OTP ត្រឹមត្រូវ។ គណនីត្រូវបានបង្កើតរួចហើយ។",
-              "success"
-            );
-          } else {
-            showMessage(
-              otpMessage,
-              "OTP ត្រឹមត្រូវ ប៉ុន្តែភ្ជាប់ Email មិនបាន៖\n" +
-                getFirebaseErrorMessage(linkError),
-              "error"
-            );
-          }
-        }
-
-        stopTimer();
-        verifyOtpBtn.disabled = true;
-        resendOtpBtn.disabled = true;
+        showStep(5);
       } catch (error) {
         console.error(
-          "Verify OTP Error:",
+          "Create account error:",
           error.code,
           error.message,
           error
         );
 
         showMessage(
-          otpMessage,
-          getFirebaseErrorMessage(error),
-          "error"
+          passwordMessage,
+          getFirebaseErrorMessage(error)
         );
       } finally {
-        verifyOtpBtn.disabled = false;
-        verifyOtpBtn.textContent =
-          "បញ្ជាក់ OTP និងបង្កើតគណនី";
+        createAccountBtn.disabled = false;
+        createAccountBtn.textContent = "បង្កើតគណនី";
       }
     });
 
-    // =========================
+    // =====================================
     // RESEND OTP
-    // =========================
+    // =====================================
 
     resendOtpBtn.addEventListener("click", async () => {
-      const otpMessage = document.getElementById("otpMessage");
-
       clearMessage(otpMessage);
 
       if (resendSeconds > 0) {
         showMessage(
           otpMessage,
-          "សូមរង់ចាំ " + resendSeconds + " វិនាទីសិន។",
+          "សូមរង់ចាំ " +
+            resendSeconds +
+            " វិនាទីសិន។",
           "info"
         );
         return;
@@ -1060,41 +1137,35 @@
       if (!fullPhoneNumber) {
         showMessage(
           otpMessage,
-          "មិនមានលេខទូរស័ព្ទសម្រាប់ផ្ញើឡើងវិញទេ។"
+          "មិនមានលេខទូរស័ព្ទទេ។"
         );
         return;
       }
 
       resendOtpBtn.disabled = true;
-      resendOtpBtn.textContent = "កំពុងផ្ញើឡើងវិញ...";
+      resendOtpBtn.textContent =
+        "កំពុងផ្ញើឡើងវិញ...";
 
       try {
-        if (recaptchaVerifier) {
-          recaptchaVerifier.clear();
-          recaptchaVerifier = null;
-        }
+        await createRecaptcha();
 
-        createRecaptcha();
-
-        await new Promise((resolve) => {
-          setTimeout(resolve, 700);
-        });
-
-        confirmationResult = await auth.signInWithPhoneNumber(
-          fullPhoneNumber,
-          recaptchaVerifier
-        );
+        confirmationResult =
+          await auth.signInWithPhoneNumber(
+            fullPhoneNumber,
+            recaptchaVerifier
+          );
 
         showMessage(
           otpMessage,
-          "បានផ្ញើ OTP ថ្មីទៅ " + fullPhoneNumber,
+          "បានផ្ញើ OTP ថ្មីទៅ " +
+            fullPhoneNumber,
           "success"
         );
 
         startTimer();
       } catch (error) {
         console.error(
-          "Resend OTP Error:",
+          "Resend OTP error:",
           error.code,
           error.message,
           error
@@ -1102,18 +1173,18 @@
 
         showMessage(
           otpMessage,
-          getFirebaseErrorMessage(error),
-          "error"
+          getFirebaseErrorMessage(error)
         );
       } finally {
         resendOtpBtn.disabled = false;
-        resendOtpBtn.textContent = "ផ្ញើ OTP ម្តងទៀត";
+        resendOtpBtn.textContent =
+          "ផ្ញើ OTP ម្តងទៀត";
       }
     });
 
-    // =========================
+    // =====================================
     // TIMER
-    // =========================
+    // =====================================
 
     function startTimer() {
       stopTimer();
@@ -1143,6 +1214,7 @@
       } else {
         timerText.textContent =
           "អាចផ្ញើ OTP ម្តងទៀតបានហើយ";
+
         resendOtpBtn.disabled = false;
       }
     }
@@ -1157,9 +1229,9 @@
       updateTimerText();
     }
 
-    // =========================
+    // =====================================
     // BACK BUTTONS
-    // =========================
+    // =====================================
 
     document
       .getElementById("backToEmailBtn")
@@ -1171,17 +1243,31 @@
       .getElementById("backToPhoneBtn")
       .addEventListener("click", () => {
         showStep(2);
+
+        setTimeout(() => {
+          createRecaptcha();
+        }, 300);
       });
 
     document
-      .getElementById("backToPasswordBtn")
+      .getElementById("backToOtpBtn")
       .addEventListener("click", () => {
         showStep(3);
       });
 
-    // =========================
-    // OTP INPUT ONLY NUMBERS
-    // =========================
+    // =====================================
+    // RESTART
+    // =====================================
+
+    document
+      .getElementById("restartBtn")
+      .addEventListener("click", () => {
+        location.reload();
+      });
+
+    // =====================================
+    // INPUT FILTER
+    // =====================================
 
     otpInput.addEventListener("input", () => {
       otpInput.value = otpInput.value
@@ -1190,12 +1276,13 @@
     });
 
     phoneInput.addEventListener("input", () => {
-      phoneInput.value = phoneInput.value.replace(/[^\d+\s-]/g, "");
+      phoneInput.value = phoneInput.value
+        .replace(/[^\d+\s-]/g, "");
     });
 
-    // =========================
-    // INITIAL CHECK
-    // =========================
+    // =====================================
+    // FIREBASE AUTH STATE
+    // =====================================
 
     auth.onAuthStateChanged((user) => {
       if (user) {
