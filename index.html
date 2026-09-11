@@ -33,7 +33,7 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial,
         sans-serif;
       color: var(--text);
-      background: #020617;
+      background: var(--bg);
     }
 
     body {
@@ -45,11 +45,13 @@
     }
 
     button,
-    input {
+    input,
+    select {
       font: inherit;
     }
 
-    button {
+    button,
+    select {
       cursor: pointer;
     }
 
@@ -172,19 +174,7 @@
       box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
     }
 
-    .icon-circle {
-      width: 32px;
-      height: 32px;
-      flex: 0 0 32px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: var(--sky);
-      color: #ffffff;
-      font-size: 18px;
-      font-weight: 900;
-    }
-
+    .icon-circle,
     .field-icon {
       width: 32px;
       height: 32px;
@@ -194,41 +184,28 @@
       border-radius: 50%;
       background: var(--sky);
       color: #ffffff;
-      font-size: 16px;
+      font-size: 17px;
+      font-weight: 900;
     }
 
     .country-phone {
-      width: auto;
-      min-width: 82px;
-      height: 32px;
-      flex: 0 0 82px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      padding: 0;
+      width: 110px;
+      min-width: 110px;
+      height: 36px;
+      flex: 0 0 110px;
+      padding: 0 5px;
+      border: 0;
+      outline: 0;
       border-radius: 10px;
-      background: transparent;
-      color: #ffffff;
-      font-size: 14px;
-      line-height: 1;
-    }
-
-    .country-phone span {
-      display: inline-flex;
-      align-items: center;
-      font-size: 20px;
-      line-height: 1;
-    }
-
-    .country-phone strong {
-      display: inline-flex;
-      align-items: center;
+      background: rgba(56, 189, 248, 0.12);
       color: #ffffff;
       font-size: 13px;
       font-weight: 800;
-      line-height: 1;
-      white-space: nowrap;
+    }
+
+    .country-phone option {
+      color: #111827;
+      background: #ffffff;
     }
 
     .input-box input {
@@ -527,24 +504,28 @@
         <h2 class="step-title">បញ្ចូលលេខទូរស័ព្ទ</h2>
 
         <p class="step-description">
-          លេខទូរស័ព្ទនេះនឹងប្រើសម្រាប់ការផ្ទៀងផ្ទាត់ OTP។
+          ជ្រើសរើសប្រទេស រួចបញ្ចូលលេខទូរស័ព្ទសម្រាប់ទទួល OTP។
         </p>
 
         <div class="field">
           <label for="phone">លេខទូរស័ព្ទ</label>
 
           <div class="input-box">
-            <div class="field-icon country-phone">
-              <span>🇰🇭</span>
-              <strong>+855</strong>
-            </div>
+            <select
+              id="countryCode"
+              class="country-phone"
+              aria-label="ជ្រើសរើសប្រទេស"
+            >
+              <option value="+855">🇰🇭 +855</option>
+              <option value="+84">🇻🇳 +84</option>
+            </select>
 
             <input
               id="phone"
               type="tel"
               inputmode="tel"
               autocomplete="tel"
-              placeholder="012 345 678"
+              placeholder="012 345 678 / 091 234 5678"
             />
           </div>
         </div>
@@ -745,8 +726,12 @@
 
     const email = document.getElementById("email");
     const phone = document.getElementById("phone");
+    const countryCode =
+      document.getElementById("countryCode");
+
     const terms = document.getElementById("terms");
     const password = document.getElementById("password");
+
     const confirmPassword =
       document.getElementById("confirmPassword");
 
@@ -823,18 +808,31 @@
       return digits.length >= 8 && digits.length <= 15;
     }
 
-    function convertToCambodiaPhone(value) {
+    function convertToInternationalPhone(
+      value,
+      selectedCountryCode
+    ) {
       let digits = value.replace(/\D/g, "");
 
-      if (digits.startsWith("855")) {
+      /*
+        បើអ្នកបញ្ចូលលេខជាមួយ country code
+        រួចហើយ ដូចជា +855... ឬ +84...
+      */
+      if (
+        digits.startsWith("855") ||
+        digits.startsWith("84")
+      ) {
         return "+" + digits;
       }
 
+      /*
+        លុបលេខ 0 នៅខាងមុខ
+      */
       if (digits.startsWith("0")) {
         digits = digits.substring(1);
       }
 
-      return "+855" + digits;
+      return selectedCountryCode + digits;
     }
 
     function getFirebaseErrorMessage(error) {
@@ -867,7 +865,13 @@
           "Password ខ្សោយពេក។",
 
         "auth/network-request-failed":
-          "បញ្ហាអ៊ីនធឺណិត។ សូមពិនិត្យការតភ្ជាប់។"
+          "បញ្ហាអ៊ីនធឺណិត។ សូមពិនិត្យការតភ្ជាប់។",
+
+        "auth/operation-not-allowed":
+          "Firebase Phone Authentication មិនទាន់បានបើកទេ។",
+
+        "auth/unauthorized-domain":
+          "Domain នេះមិនទាន់បានអនុញ្ញាតក្នុង Firebase ទេ។"
       };
 
       return (
@@ -917,6 +921,7 @@
           "recaptcha-container",
           {
             size: "normal",
+
             callback: () => {
               showMessage(
                 phoneMessage,
@@ -924,6 +929,7 @@
                 "success"
               );
             },
+
             "expired-callback": () => {
               showMessage(
                 phoneMessage,
@@ -994,7 +1000,15 @@
           button.textContent = "កំពុងផ្ញើ OTP...";
 
           currentPhoneNumber =
-            convertToCambodiaPhone(phone.value.trim());
+            convertToInternationalPhone(
+              phone.value.trim(),
+              countryCode.value
+            );
+
+          console.log(
+            "Phone number used:",
+            currentPhoneNumber
+          );
 
           const appVerifier = createRecaptcha();
 
@@ -1218,11 +1232,6 @@
             );
 
           const user = result.user;
-
-          /*
-            បន្ទាប់ពី Phone OTP ជោគជ័យ
-            ភ្ជាប់ Email + Password ទៅ User ដដែល
-          */
 
           const emailCredential =
             firebase.auth.EmailAuthProvider.credential(
