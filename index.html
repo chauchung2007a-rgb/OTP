@@ -637,24 +637,22 @@
     </section>
   </main>
 
+ 
+
   <!-- Firebase Compat SDK -->
   <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
 
   <script>
-   
-
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDu6OVVvrJAlX_HeycHpWzBxfefktAjhrc",
-  authDomain: "my-otp-app-c3640.firebaseapp.com",
-  projectId: "my-otp-app-c3640",
-  storageBucket: "my-otp-app-c3640.firebasestorage.app",
-  messagingSenderId: "201457460660",
-  appId: "1:201457460660:web:68aaf3e34d2be1fc47fee1",
-  measurementId: "G-XTXDGKW9H2"
-};
-
+    const firebaseConfig = {
+      apiKey: "AIzaSyDu6OVVvrJAlX_HeycHpWzBxfefktAjhrc",
+      authDomain: "my-otp-app-c3640.firebaseapp.com",
+      projectId: "my-otp-app-c3640",
+      storageBucket: "my-otp-app-c3640.firebasestorage.app",
+      messagingSenderId: "201457460660",
+      appId: "1:201457460660:web:68aaf3e34d2be1fc47fee1",
+      measurementId: "G-XTXDGKW9H2"
+    };
 
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
@@ -665,6 +663,7 @@ const firebaseConfig = {
     auth.useDeviceLanguage();
 
     let currentStep = 0;
+    let loginMode = false;
 
     const steps = [
       document.getElementById("step1"),
@@ -713,6 +712,12 @@ const firebaseConfig = {
 
     const footerBox =
       document.getElementById("footerBox");
+
+    const emailNext =
+      document.getElementById("emailNext");
+
+    const passwordNext =
+      document.getElementById("passwordNext");
 
     function showMessage(element, text, type = "error") {
       element.textContent = text;
@@ -766,6 +771,30 @@ const firebaseConfig = {
       });
     }
 
+    function resetToCreateMode() {
+      loginMode = false;
+
+      document.querySelector("#step2 .step-title").textContent =
+        "បង្កើត Password";
+
+      document.querySelector("#step2 .step-description").textContent =
+        "បង្កើត Password ដែលពិបាកទាយ និងងាយចងចាំសម្រាប់អ្នក។";
+
+      passwordNext.style.display = "block";
+
+      const loginSubmit =
+        document.getElementById("loginSubmit");
+
+      if (loginSubmit) {
+        loginSubmit.style.display = "none";
+      }
+
+      password.setAttribute("autocomplete", "new-password");
+      confirmPassword.setAttribute("autocomplete", "new-password");
+
+      clearMessage(passwordMessage);
+    }
+
     function validEmail(value) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
     }
@@ -791,7 +820,7 @@ const firebaseConfig = {
           "Gmail មិនត្រឹមត្រូវទេ។",
 
         "auth/email-already-in-use":
-          "Gmail នេះមានគណនីរួចហើយ។",
+          "Gmail នេះមានគណនីរួចហើយ។ សូមចុច «ចូលគណនីដែលមានស្រាប់»។",
 
         "auth/weak-password":
           "Password ខ្សោយពេក។",
@@ -802,6 +831,18 @@ const firebaseConfig = {
         "auth/too-many-requests":
           "ស្នើច្រើនដងពេក។ សូមរង់ចាំមុនសិន។",
 
+        "auth/wrong-password":
+          "Gmail ឬ Password មិនត្រឹមត្រូវទេ។",
+
+        "auth/invalid-credential":
+          "Gmail ឬ Password មិនត្រឹមត្រូវទេ។",
+
+        "auth/user-not-found":
+          "រកមិនឃើញគណនីនេះទេ។",
+
+        "auth/user-disabled":
+          "គណនីនេះត្រូវបានបិទ។",
+
         "auth/requires-recent-login":
           "សូមចូលគណនីឡើងវិញ។"
       };
@@ -811,116 +852,349 @@ const firebaseConfig = {
         (error.code || error.message || "Unknown error");
     }
 
-    document
-      .getElementById("emailNext")
-      .addEventListener("click", function() {
-        clearMessage(emailMessage);
+    /*
+      បន្ថែមប៊ូតុង Login ដោយមិនប្ដូររាងដើម
+    */
 
-        const emailValue = email.value.trim();
+    const loginButton =
+      document.createElement("button");
 
-        if (!validEmail(emailValue)) {
-          showMessage(
-            emailMessage,
-            "សូមបញ្ចូល Gmail / Email ឲ្យបានត្រឹមត្រូវ។"
+    loginButton.className = "secondary-button";
+    loginButton.id = "loginButton";
+    loginButton.type = "button";
+    loginButton.textContent = "ចូលគណនីដែលមានស្រាប់";
+
+    emailNext.insertAdjacentElement(
+      "afterend",
+      loginButton
+    );
+
+    /*
+      ប៊ូតុង Login នៅ Step 2
+    */
+
+    const loginSubmit =
+      document.createElement("button");
+
+    loginSubmit.className = "secondary-button";
+    loginSubmit.id = "loginSubmit";
+    loginSubmit.type = "button";
+    loginSubmit.textContent = "ចូលគណនី";
+    loginSubmit.style.display = "none";
+
+    passwordNext.insertAdjacentElement(
+      "afterend",
+      loginSubmit
+    );
+
+    /*
+      ប៊ូតុង Forgot Password
+    */
+
+    const resetPasswordButton =
+      document.createElement("button");
+
+    resetPasswordButton.className = "secondary-button";
+    resetPasswordButton.id = "resetPasswordButton";
+    resetPasswordButton.type = "button";
+    resetPasswordButton.textContent = "ភ្លេច Password?";
+
+    loginSubmit.insertAdjacentElement(
+      "afterend",
+      resetPasswordButton
+    );
+
+    /*
+      Step 1: Email
+    */
+
+    emailNext.addEventListener("click", function() {
+      clearMessage(emailMessage);
+
+      const emailValue = email.value.trim();
+
+      if (!validEmail(emailValue)) {
+        showMessage(
+          emailMessage,
+          "សូមបញ្ចូល Gmail / Email ឲ្យបានត្រឹមត្រូវ។"
+        );
+
+        email.focus();
+        return;
+      }
+
+      resetToCreateMode();
+      goToStep(1);
+    });
+
+    /*
+      ចូលគណនីដែលមានស្រាប់
+    */
+
+    loginButton.addEventListener("click", function() {
+      clearMessage(emailMessage);
+
+      const emailValue = email.value.trim();
+
+      if (!validEmail(emailValue)) {
+        showMessage(
+          emailMessage,
+          "សូមបញ្ចូល Gmail របស់អ្នកជាមុនសិន។"
+        );
+
+        email.focus();
+        return;
+      }
+
+      loginMode = true;
+
+      document.querySelector("#step2 .step-title").textContent =
+        "ចូលគណនី";
+
+      document.querySelector("#step2 .step-description").textContent =
+        "បញ្ចូល Password របស់គណនីដែលមានស្រាប់។";
+
+      passwordNext.style.display = "none";
+      loginSubmit.style.display = "block";
+
+      password.setAttribute("autocomplete", "current-password");
+      confirmPassword.value = "";
+      confirmPassword.style.display = "none";
+
+      const confirmField =
+        confirmPassword.closest(".field");
+
+      if (confirmField) {
+        confirmField.style.display = "none";
+      }
+
+      clearMessage(passwordMessage);
+
+      goToStep(1);
+    });
+
+    /*
+      បង្កើតគណនីថ្មី
+    */
+
+    passwordNext.addEventListener("click", async function() {
+      clearMessage(passwordMessage);
+
+      const emailValue = email.value.trim();
+      const passwordValue = password.value;
+      const confirmValue = confirmPassword.value;
+
+      if (!validEmail(emailValue)) {
+        showMessage(
+          passwordMessage,
+          "សូមបញ្ចូល Gmail ឲ្យបានត្រឹមត្រូវ។"
+        );
+
+        goToStep(0);
+        return;
+      }
+
+      const valid =
+        passwordValue.length >= 8 &&
+        /[A-Z]/.test(passwordValue) &&
+        /[0-9]/.test(passwordValue) &&
+        /[^A-Za-z0-9]/.test(passwordValue);
+
+      if (!valid) {
+        showMessage(
+          passwordMessage,
+          "Password ត្រូវមាន 8 តួ មានអក្សរធំ លេខ និងសញ្ញាពិសេស។"
+        );
+
+        requirements.classList.add("open");
+        requirementsArrow.textContent = "⌃";
+        return;
+      }
+
+      if (passwordValue !== confirmValue) {
+        showMessage(
+          passwordMessage,
+          "Password ទាំងពីរមិនដូចគ្នាទេ។"
+        );
+
+        return;
+      }
+
+      try {
+        passwordNext.disabled = true;
+        passwordNext.textContent = "កំពុងបង្កើតគណនី...";
+
+        const result =
+          await auth.createUserWithEmailAndPassword(
+            emailValue,
+            passwordValue
           );
 
-          email.focus();
-          return;
-        }
+        const user = result.user;
 
-        goToStep(1);
-      });
+        await user.sendEmailVerification();
 
-    document
-      .getElementById("passwordNext")
-      .addEventListener("click", async function() {
-        clearMessage(passwordMessage);
+        document.getElementById(
+          "verifyEmailText"
+        ).textContent =
+          "បានផ្ញើ Verify Email ទៅ: " + emailValue;
 
-        const emailValue = email.value.trim();
-        const passwordValue = password.value;
-        const confirmValue = confirmPassword.value;
+        showMessage(
+          passwordMessage,
+          "បង្កើតគណនីបានហើយ។ សូមពិនិត្យ Gmail របស់អ្នក។",
+          "success"
+        );
 
-        if (!validEmail(emailValue)) {
-          showMessage(
-            passwordMessage,
-            "សូមបញ្ចូល Gmail ឲ្យបានត្រឹមត្រូវ។"
+        goToStep(2);
+
+      } catch (error) {
+        showMessage(
+          passwordMessage,
+          firebaseError(error)
+        );
+
+      } finally {
+        passwordNext.disabled = false;
+        passwordNext.textContent =
+          "បង្កើតគណនី និងផ្ញើ Gmail";
+      }
+    });
+
+    /*
+      Login
+    */
+
+    loginSubmit.addEventListener("click", async function() {
+      clearMessage(passwordMessage);
+
+      const emailValue = email.value.trim();
+      const passwordValue = password.value;
+
+      if (!validEmail(emailValue)) {
+        showMessage(
+          passwordMessage,
+          "សូមបញ្ចូល Gmail ឲ្យបានត្រឹមត្រូវ។"
+        );
+
+        goToStep(0);
+        return;
+      }
+
+      if (!passwordValue) {
+        showMessage(
+          passwordMessage,
+          "សូមបញ្ចូល Password។"
+        );
+
+        password.focus();
+        return;
+      }
+
+      try {
+        loginSubmit.disabled = true;
+        loginSubmit.textContent = "កំពុងចូលគណនី...";
+
+        const result =
+          await auth.signInWithEmailAndPassword(
+            emailValue,
+            passwordValue
           );
 
-          goToStep(0);
-          return;
-        }
+        const user = result.user;
 
-        const valid =
-          passwordValue.length >= 8 &&
-          /[A-Z]/.test(passwordValue) &&
-          /[0-9]/.test(passwordValue) &&
-          /[^A-Za-z0-9]/.test(passwordValue);
+        await user.reload();
 
-        if (!valid) {
-          showMessage(
-            passwordMessage,
-            "Password ត្រូវមាន 8 តួ មានអក្សរធំ លេខ និងសញ្ញាពិសេស។"
-          );
-
-          requirements.classList.add("open");
-          requirementsArrow.textContent = "⌃";
-          return;
-        }
-
-        if (passwordValue !== confirmValue) {
-          showMessage(
-            passwordMessage,
-            "Password ទាំងពីរមិនដូចគ្នាទេ។"
-          );
-
-          return;
-        }
-
-        const button =
-          document.getElementById("passwordNext");
-
-        try {
-          button.disabled = true;
-          button.textContent = "កំពុងបង្កើតគណនី...";
-
-          const result =
-            await auth.createUserWithEmailAndPassword(
-              emailValue,
-              passwordValue
-            );
-
-          const user = result.user;
-
-          await user.sendEmailVerification();
-
+        if (!user.emailVerified) {
           document.getElementById(
             "verifyEmailText"
           ).textContent =
-            "បានផ្ញើ Verify Email ទៅ: " + emailValue;
+            "Gmail របស់អ្នកមិនទាន់ Verify: " + emailValue;
 
           showMessage(
             passwordMessage,
-            "បង្កើតគណនីបានហើយ។ សូមពិនិត្យ Gmail របស់អ្នក។",
-            "success"
+            "គណនីនេះមិនទាន់ Verify Gmail ទេ។ សូមពិនិត្យ Gmail របស់អ្នក។"
           );
 
           goToStep(2);
-
-        } catch (error) {
-          showMessage(
-            passwordMessage,
-            firebaseError(error)
-          );
-        } finally {
-          button.disabled = false;
-          button.textContent = "បង្កើតគណនី និងផ្ញើ Gmail";
+          return;
         }
-      });
+
+        showHomeScreen();
+
+      } catch (error) {
+        showMessage(
+          passwordMessage,
+          firebaseError(error)
+        );
+
+      } finally {
+        loginSubmit.disabled = false;
+        loginSubmit.textContent = "ចូលគណនី";
+      }
+    });
+
+    /*
+      Forgot Password
+    */
+
+    resetPasswordButton.addEventListener("click", async function() {
+      clearMessage(passwordMessage);
+
+      const emailValue = email.value.trim();
+
+      if (!validEmail(emailValue)) {
+        showMessage(
+          passwordMessage,
+          "សូមបញ្ចូល Gmail របស់អ្នកជាមុនសិន។"
+        );
+
+        goToStep(0);
+        return;
+      }
+
+      try {
+        resetPasswordButton.disabled = true;
+        resetPasswordButton.textContent = "កំពុងផ្ញើ...";
+
+        await auth.sendPasswordResetEmail(emailValue);
+
+        showMessage(
+          passwordMessage,
+          "បានផ្ញើតំណកំណត់ Password ថ្មីទៅ Gmail របស់អ្នកហើយ។",
+          "success"
+        );
+
+      } catch (error) {
+        showMessage(
+          passwordMessage,
+          firebaseError(error)
+        );
+
+      } finally {
+        resetPasswordButton.disabled = false;
+        resetPasswordButton.textContent = "ភ្លេច Password?";
+      }
+    });
+
+    /*
+      Back button
+    */
 
     document
       .querySelectorAll("[data-back]")
       .forEach(function(button) {
         button.addEventListener("click", function() {
+          resetToCreateMode();
+
+          const confirmField =
+            confirmPassword.closest(".field");
+
+          if (confirmField) {
+            confirmField.style.display = "block";
+          }
+
+          confirmPassword.style.display = "block";
+
           goToStep(
             Math.max(
               0,
@@ -929,6 +1203,10 @@ const firebaseConfig = {
           );
         });
       });
+
+    /*
+      Password requirements
+    */
 
     document
       .getElementById("requirementsButton")
@@ -941,6 +1219,10 @@ const firebaseConfig = {
             : "⌄";
       });
 
+    /*
+      Show / Hide Password
+    */
+
     document
       .getElementById("togglePassword")
       .addEventListener("click", function() {
@@ -948,9 +1230,15 @@ const firebaseConfig = {
 
         password.type = show ? "text" : "password";
 
-        confirmPassword.type =
-          show ? "text" : "password";
+        if (confirmPassword.style.display !== "none") {
+          confirmPassword.type =
+            show ? "text" : "password";
+        }
       });
+
+    /*
+      Check Email Verified
+    */
 
     document
       .getElementById("checkEmailVerified")
@@ -962,7 +1250,7 @@ const firebaseConfig = {
         if (!user) {
           showMessage(
             emailVerifyMessage,
-            "សូមបង្កើតគណនីជាមុនសិន។"
+            "សូមបង្កើតគណនី ឬចូលគណនីជាមុនសិន។"
           );
 
           goToStep(0);
@@ -998,6 +1286,10 @@ const firebaseConfig = {
         }
       });
 
+    /*
+      Resend Email
+    */
+
     document
       .getElementById("resendEmail")
       .addEventListener("click", async function() {
@@ -1008,7 +1300,7 @@ const firebaseConfig = {
         if (!user) {
           showMessage(
             emailVerifyMessage,
-            "សូមបង្កើតគណនីជាមុនសិន។"
+            "សូមបង្កើតគណនី ឬចូលគណនីជាមុនសិន។"
           );
 
           goToStep(0);
@@ -1042,11 +1334,17 @@ const firebaseConfig = {
         }
       });
 
+    /*
+      Logout
+    */
+
     document
       .getElementById("logoutButton")
       .addEventListener("click", async function() {
         try {
           await auth.signOut();
+
+          loginMode = false;
 
           homeScreen.classList.remove("active");
 
@@ -1059,6 +1357,17 @@ const firebaseConfig = {
           password.value = "";
           confirmPassword.value = "";
 
+          const confirmField =
+            confirmPassword.closest(".field");
+
+          if (confirmField) {
+            confirmField.style.display = "block";
+          }
+
+          confirmPassword.style.display = "block";
+
+          resetToCreateMode();
+
           clearMessage(emailMessage);
           clearMessage(passwordMessage);
           clearMessage(emailVerifyMessage);
@@ -1070,11 +1379,16 @@ const firebaseConfig = {
         }
       });
 
+    /*
+      Auto Login
+    */
+
     auth.onAuthStateChanged(function(user) {
       if (user && user.emailVerified) {
         showHomeScreen();
       }
     });
   </script>
+
 </body>
 </html>
