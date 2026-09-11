@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+
+  <title>OTP Service</title>
+
+  <style>
+    :root {
+      --sky: #38bdf8;
+      --bg: #020617;
+      --panel: rgba(15, 23, 42, 0.95);
+      --border: rgba(148, 163, 184, 0.22);
+      --text: #ffffff;
+      --muted: #94a3b8;
+      --danger: #fb7185;
+      --success: #4ade80;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial,
+        sans-serif;
+      color: var(--text);
+      background: #020617;
+    }
+
+    body {
+      min-height: 100dvh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px 12px;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 430px;
+    }
+
+    .card {
+      width: 100%;
+      padding: 20px 16px 16px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: var(--panel);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(18px);
+    }
+
+    .logo {
+      width: 112px;
+      height: 112px;
+      margin: 0 auto 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 850;
+    }
+
+    .brand p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .progress {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .progress-item {
+      height: 5px;
+      border-radius: 99px;
+      background: #1e293b;
+    }
+
+    .progress-item.active {
+      background: var(--sky);
+    }
+
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    .step-title {
+      margin: 0 0 5px;
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .step-description {
+      margin: 0 0 15px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      display: block;
+      margin: 0 0 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+
+    .input-box {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-height: 47px;
+      padding: 7px 11px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: rgba(15, 23, 42, 0.78);
+    }
+
+    .input-box:focus-within {
+      border-color: var(--sky);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+    }
+
+    .icon-circle {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--sky);
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .field-icon {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--sky);
+      color: #ffffff;
+      font-size: 16px;
+    }
+
+    .country-phone {
+      width: auto;
+      min-width: 82px;
+      height: 32px;
+      flex: 0 0 82px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 0;
+      border-radius: 10px;
+      background: transparent;
+      color: #ffffff;
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .country-phone span {
+      display: inline-flex;
+      align-items: center;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .country-phone strong {
+      display: inline-flex;
+      align-items: center;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .input-box input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      color: var(--text);
+      background: transparent;
+      font-size: 14px;
+    }
+
+    .input-box input::placeholder {
+      color: #64748b;
+    }
+
+    .password-toggle {
+      border: 0;
+      background: transparent;
+      color: #ffffff;
+      padding: 5px;
+      font-size: 18px;
+    }
+
+    /* ប្រអប់លក្ខខណ្ឌ Password នៅខាងក្រោមគេ */
+    .requirements {
+      margin: 16px 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(15, 23, 42, 0.5);
+    }
+
+    .requirements-button {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 0;
+      color: #111827;
+      background: #ffffff;
+      padding: 10px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    .requirements-content {
+      display: none;
+      padding: 0 12px 10px;
+    }
+
+    .requirements.open .requirements-content {
+      display: block;
+    }
+
+    .requirement {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .requirement.valid {
+      color: var(--success);
+    }
+
+    .requirement span:first-child {
+      width: 16px;
+      text-align: center;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin: 8px 0 14px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .check-row input {
+      margin-top: 2px;
+      accent-color: var(--sky);
+    }
+
+    .check-row a {
+      color: var(--sky);
+      text-decoration: none;
+    }
+
+    .main-button,
+    .secondary-button {
+      width: 100%;
+      min-height: 46px;
+      border-radius: 13px;
+      color: #ffffff;
+      background: var(--sky);
+      border: 1px solid var(--sky);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .main-button:active,
+    .secondary-button:active {
+      opacity: 0.8;
+    }
+
+    .secondary-button {
+      min-height: 42px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    .secondary-button[data-back] {
+      background: #ffffff;
+      color: #111827;
+      border: 1px solid #ffffff;
+    }
+
+    .message {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 11px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.error {
+      color: #fecdd3;
+      background: rgba(225, 29, 72, 0.12);
+      border: 1px solid rgba(251, 113, 133, 0.25);
+    }
+
+    .message.success {
+      color: #bbf7d0;
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(74, 222, 128, 0.25);
+    }
+
+    .otp-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+      margin: 16px 0;
+    }
+
+    .otp-input {
+      width: 100%;
+      height: 47px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      outline: none;
+      background: rgba(15, 23, 42, 0.8);
+      color: #ffffff;
+      text-align: center;
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .otp-input:focus {
+      border-color: var(--sky);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+    }
+
+    .demo-code {
+      margin-top: 12px;
+      padding: 9px;
+      border-radius: 10px;
+      color: #bae6fd;
+      background: rgba(56, 189, 248, 0.09);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .footer {
+      margin-top: 14px;
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .footer strong {
+      color: #94a3b8;
+    }
+
+    @media (max-height: 700px) {
+      body {
+        align-items: flex-start;
+        padding-top: 10px;
+      }
+
+      .card {
+        padding-top: 13px;
+      }
+
+      .logo {
+        width: 82px;
+        height: 82px;
+      }
+
+      .brand {
+        margin-bottom: 11px;
+      }
+
+      .brand h1 {
+        font-size: 21px;
+      }
+
+      .progress {
+        margin-bottom: 13px;
+      }
+
+      .field {
+        margin-bottom: 9px;
+      }
+
+      .input-box {
+        min-height: 43px;
+      }
+
+      .main-button {
+        min-height: 43px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="app">
+    <section class="card">
+
+      <div class="logo">
+        <img src="logo.png" alt="OTP Service Logo" />
+      </div>
+
+      <div class="brand">
+        <h1>OTP Service</h1>
+        <p>បង្កើតគណនីរបស់អ្នកដោយសុវត្ថិភាព</p>
+      </div>
+
+      <div class="progress">
+        <div class="progress-item active"></div>
+        <div class="progress-item"></div>
+        <div class="progress-item"></div>
+        <div class="progress-item"></div>
+      </div>
+
+      <!-- STEP 1 -->
+      <section class="step active" id="step1">
+        <h2 class="step-title">បង្កើតគណនី</h2>
+
+        <p class="step-description">
+          បញ្ចូល Gmail របស់អ្នក ដើម្បីចាប់ផ្ដើមបង្កើតគណនីថ្មី។
+        </p>
+
+        <div class="field">
+          <label for="email">Gmail / Email</label>
+
+          <div class="input-box">
+            <div class="icon-circle">G</div>
+
+            <input
+              id="email"
+              type="email"
+              inputmode="email"
+              autocomplete="email"
+              placeholder="បញ្ចូល Gmail របស់អ្នក"
+            />
+          </div>
+        </div>
+
+        <button class="main-button" id="emailNext">
+          បន្តទៅមុខ
+        </button>
+
+        <div class="message" id="emailMessage"></div>
+      </section>
+
+      <!-- STEP 2 -->
+      <section class="step" id="step2">
+        <h2 class="step-title">បញ្ចូលលេខទូរស័ព្ទ</h2>
+
+        <p class="step-description">
+          លេខទូរស័ព្ទនេះនឹងប្រើសម្រាប់ការផ្ទៀងផ្ទាត់ OTP។
+        </p>
+
+        <div class="field">
+          <label for="phone">លេខទូរស័ព្ទ</label>
+
+          <div class="input-box">
+            <div class="field-icon country-phone">
+              <span>🇰🇭</span>
+              <strong>+855</strong>
+            </div>
+
+            <input
+              id="phone"
+              type="tel"
+              inputmode="tel"
+              autocomplete="tel"
+              placeholder="012 345 678"
+            />
+          </div>
+        </div>
+
+        <label class="check-row">
+          <input type="checkbox" id="terms" />
+
+          <span>
+            ខ្ញុំយល់ព្រមតាម
+            <a href="#" onclick="return false;">លក្ខខណ្ឌប្រើប្រាស់</a>
+            និងគោលការណ៍ឯកជនភាព។
+          </span>
+        </label>
+
+        <button class="main-button" id="phoneNext">
+          បន្តទៅ Password
+        </button>
+
+        <button class="secondary-button" data-back="1">
+          ត្រឡប់ក្រោយ
+        </button>
+
+        <div class="message" id="phoneMessage"></div>
+      </section>
+
+      <!-- STEP 3 -->
+      <section class="step" id="step3">
+        <h2 class="step-title">បង្កើត Password</h2>
+
+        <p class="step-description">
+          បង្កើត Password ដែលពិបាកទាយ និងងាយចងចាំសម្រាប់អ្នក។
+        </p>
+
+        <div class="field">
+          <label for="password">Password</label>
+
+          <div class="input-box">
+            <div class="field-icon">🔒</div>
+
+            <input
+              id="password"
+              type="password"
+              autocomplete="new-password"
+              placeholder="បញ្ចូល Password"
+            />
+
+            <button
+              class="password-toggle"
+              id="togglePassword"
+              type="button"
+              aria-label="បង្ហាញ Password"
+            >
+              ◉
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="confirmPassword">បញ្ជាក់ Password ម្ដងទៀត</label>
+
+          <div class="input-box">
+            <div class="field-icon">🔒</div>
+
+            <input
+              id="confirmPassword"
+              type="password"
+              autocomplete="new-password"
+              placeholder="បញ្ចូល Password ម្ដងទៀត"
+            />
+          </div>
+        </div>
+
+        <button class="main-button" id="passwordNext">
+          បន្តទៅ OTP
+        </button>
+
+        <button class="secondary-button" data-back="2">
+          ត្រឡប់ក្រោយ
+        </button>
+
+        <div class="message" id="passwordMessage"></div>
+
+        <!-- ប្រអប់លក្ខខណ្ឌនៅខាងក្រោមគេបង្អស់ -->
+        <div class="requirements" id="requirements">
+          <button
+            class="requirements-button"
+            id="requirementsButton"
+            type="button"
+          >
+            <span>លក្ខខណ្ឌ Password</span>
+            <span id="requirementsArrow">⌄</span>
+          </button>
+
+          <div class="requirements-content">
+            <div class="requirement" id="reqLength">
+              <span>○</span>
+              <span>យ៉ាងតិច 8 តួអក្សរ</span>
+            </div>
+
+            <div class="requirement" id="reqUpper">
+              <span>○</span>
+              <span>មានអក្សរធំ A-Z</span>
+            </div>
+
+            <div class="requirement" id="reqNumber">
+              <span>○</span>
+              <span>មានលេខ 0-9</span>
+            </div>
+
+            <div class="requirement" id="reqSpecial">
+              <span>○</span>
+              <span>មានសញ្ញាពិសេស ! @ #</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- STEP 4 -->
+      <section class="step" id="step4">
+        <h2 class="step-title">ផ្ទៀងផ្ទាត់ OTP</h2>
+
+        <p class="step-description">
+          បញ្ចូលលេខ OTP 6 ខ្ទង់ ដើម្បីបញ្ចប់ការបង្កើតគណនី។
+        </p>
+
+        <div class="otp-row">
+          <input class="otp-input" maxlength="1" inputmode="numeric" />
+          <input class="otp-input" maxlength="1" inputmode="numeric" />
+          <input class="otp-input" maxlength="1" inputmode="numeric" />
+          <input class="otp-input" maxlength="1" inputmode="numeric" />
+          <input class="otp-input" maxlength="1" inputmode="numeric" />
+          <input class="otp-input" maxlength="1" inputmode="numeric" />
+        </div>
+
+        <button class="main-button" id="verifyOtp">
+          ផ្ទៀងផ្ទាត់ OTP
+        </button>
+
+        <button class="secondary-button" id="resendOtp">
+          ផ្ញើ OTP ម្ដងទៀត
+        </button>
+
+        <div class="demo-code" id="demoCode">
+          Demo OTP: 123456
+        </div>
+
+        <div class="message" id="otpMessage"></div>
+      </section>
+
+      <div class="footer">
+        <strong>OTP Service</strong><br />
+        Demo interface only. សម្រាប់ប្រើប្រាស់ពិត ត្រូវភ្ជាប់ Backend និង OTP Provider។
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const steps = [
+      document.getElementById("step1"),
+      document.getElementById("step2"),
+      document.getElementById("step3"),
+      document.getElementById("step4")
+    ];
+
+    const progressItems =
+      document.querySelectorAll(".progress-item");
+
+    const email = document.getElementById("email");
+    const phone = document.getElementById("phone");
+    const terms = document.getElementById("terms");
+    const password = document.getElementById("password");
+    const confirmPassword =
+      document.getElementById("confirmPassword");
+
+    const emailMessage =
+      document.getElementById("emailMessage");
+
+    const phoneMessage =
+      document.getElementById("phoneMessage");
+
+    const passwordMessage =
+      document.getElementById("passwordMessage");
+
+    const otpMessage =
+      document.getElementById("otpMessage");
+
+    const requirements =
+      document.getElementById("requirements");
+
+    const requirementsButton =
+      document.getElementById("requirementsButton");
+
+    const requirementsArrow =
+      document.getElementById("requirementsArrow");
+
+    let currentStep = 0;
+    let demoOtp = "123456";
+
+    function showMessage(element, text, type = "error") {
+      element.textContent = text;
+      element.className = "message show " + type;
+    }
+
+    function clearMessage(element) {
+      element.textContent = "";
+      element.className = "message";
+    }
+
+    function goToStep(index) {
+      currentStep = index;
+
+      steps.forEach((step, stepIndex) => {
+        step.classList.toggle(
+          "active",
+          stepIndex === index
+        );
+      });
+
+      progressItems.forEach((item, itemIndex) => {
+        item.classList.toggle(
+          "active",
+          itemIndex <= index
+        );
+      });
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    function validEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function validPhone(value) {
+      const digits = value.replace(/\D/g, "");
+
+      return digits.length >= 8 && digits.length <= 15;
+    }
+
+    function checkPasswordRequirements() {
+      const value = password.value;
+
+      const checks = {
+        reqLength: value.length >= 8,
+        reqUpper: /[A-Z]/.test(value),
+        reqNumber: /[0-9]/.test(value),
+        reqSpecial: /[^A-Za-z0-9]/.test(value)
+      };
+
+      Object.entries(checks).forEach(([id, valid]) => {
+        const element = document.getElementById(id);
+
+        element.classList.toggle("valid", valid);
+
+        element.querySelector(
+          "span:first-child"
+        ).textContent = valid ? "✓" : "○";
+      });
+
+      return Object.values(checks).every(Boolean);
+    }
+
+    document
+      .getElementById("emailNext")
+      .addEventListener("click", () => {
+        clearMessage(emailMessage);
+
+        if (!validEmail(email.value.trim())) {
+          showMessage(
+            emailMessage,
+            "សូមបញ្ចូល Gmail / Email ឲ្យបានត្រឹមត្រូវ។"
+          );
+
+          email.focus();
+          return;
+        }
+
+        goToStep(1);
+      });
+
+    document
+      .getElementById("phoneNext")
+      .addEventListener("click", () => {
+        clearMessage(phoneMessage);
+
+        if (!validPhone(phone.value.trim())) {
+          showMessage(
+            phoneMessage,
+            "សូមបញ្ចូលលេខទូរស័ព្ទឲ្យបានត្រឹមត្រូវ។"
+          );
+
+          phone.focus();
+          return;
+        }
+
+        if (!terms.checked) {
+          showMessage(
+            phoneMessage,
+            "សូមយល់ព្រមតាមលក្ខខណ្ឌជាមុនសិន។"
+          );
+
+          return;
+        }
+
+        goToStep(2);
+      });
+
+    document
+      .getElementById("passwordNext")
+      .addEventListener("click", () => {
+        clearMessage(passwordMessage);
+
+        if (!checkPasswordRequirements()) {
+          showMessage(
+            passwordMessage,
+            "Password មិនទាន់គ្រប់លក្ខខណ្ឌទេ។"
+          );
+
+          requirements.classList.add("open");
+          requirementsArrow.textContent = "⌃";
+
+          password.focus();
+          return;
+        }
+
+        if (password.value !== confirmPassword.value) {
+          showMessage(
+            passwordMessage,
+            "Password ទាំងពីរមិនដូចគ្នាទេ។"
+          );
+
+          confirmPassword.focus();
+          return;
+        }
+
+        goToStep(3);
+      });
+
+    document
+      .querySelectorAll("[data-back]")
+      .forEach((button) => {
+        button.addEventListener("click", () => {
+          const target =
+            Number(button.dataset.back) - 1;
+
+          goToStep(Math.max(0, target));
+        });
+      });
+
+    requirementsButton.addEventListener("click", () => {
+      requirements.classList.toggle("open");
+
+      requirementsArrow.textContent =
+        requirements.classList.contains("open")
+          ? "⌃"
+          : "⌄";
+    });
+
+    password.addEventListener("input", () => {
+      checkPasswordRequirements();
+
+      if (password.value.length > 0) {
+        requirements.classList.add("open");
+        requirementsArrow.textContent = "⌃";
+      }
+    });
+
+    document
+      .getElementById("togglePassword")
+      .addEventListener("click", () => {
+        const isPassword =
+          password.type === "password";
+
+        password.type =
+          isPassword ? "text" : "password";
+
+        confirmPassword.type =
+          isPassword ? "text" : "password";
+      });
+
+    const otpInputs =
+      document.querySelectorAll(".otp-input");
+
+    otpInputs.forEach((input, index) => {
+      input.addEventListener("input", () => {
+        input.value = input.value
+          .replace(/\D/g, "")
+          .slice(0, 1);
+
+        if (
+          input.value &&
+          index < otpInputs.length - 1
+        ) {
+          otpInputs[index + 1].focus();
+        }
+      });
+
+      input.addEventListener("keydown", (event) => {
+        if (
+          event.key === "Backspace" &&
+          !input.value &&
+          index > 0
+        ) {
+          otpInputs[index - 1].focus();
+        }
+      });
+
+      input.addEventListener("paste", (event) => {
+        event.preventDefault();
+
+        const pasted = (
+          event.clipboardData.getData("text") || ""
+        )
+          .replace(/\D/g, "")
+          .slice(0, 6);
+
+        pasted.split("").forEach((digit, digitIndex) => {
+          if (otpInputs[digitIndex]) {
+            otpInputs[digitIndex].value = digit;
+          }
+        });
+
+        otpInputs[
+          Math.min(pasted.length, 5)
+        ].focus();
+      });
+    });
+
+    document
+      .getElementById("verifyOtp")
+      .addEventListener("click", () => {
+        clearMessage(otpMessage);
+
+        const enteredOtp = Array.from(otpInputs)
+          .map((input) => input.value)
+          .join("");
+
+        if (enteredOtp.length !== 6) {
+          showMessage(
+            otpMessage,
+            "សូមបញ្ចូល OTP ឲ្យបាន 6 ខ្ទង់។"
+          );
+
+          return;
+        }
+
+        if (enteredOtp !== demoOtp) {
+          showMessage(
+            otpMessage,
+            "OTP មិនត្រឹមត្រូវទេ។ សូមព្យាយាមម្ដងទៀត។"
+          );
+
+          return;
+        }
+
+        showMessage(
+          otpMessage,
+          "បង្កើតគណនីបានជោគជ័យ! សូមស្វាគមន៍មកកាន់ OTP Service។",
+          "success"
+        );
+      });
+
+    document
+      .getElementById("resendOtp")
+      .addEventListener("click", () => {
+        demoOtp = String(
+          Math.floor(100000 + Math.random() * 900000)
+        );
+
+        document.getElementById("demoCode").textContent =
+          "Demo OTP: " + demoOtp;
+
+        clearMessage(otpMessage);
+
+        showMessage(
+          otpMessage,
+          "បានបង្កើត OTP ថ្មីហើយ។ សូមប្រើលេខ Demo OTP ខាងលើ។",
+          "success"
+        );
+      });
+  </script>
+</body>
+</html>
