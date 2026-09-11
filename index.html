@@ -22,7 +22,8 @@
       -webkit-tap-highlight-color:transparent;
     }
 
-    html,body {
+    html,
+    body {
       margin:0;
       min-height:100%;
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
@@ -38,11 +39,14 @@
       padding:16px 12px;
     }
 
-    button,input,select {
+    button,
+    input,
+    select {
       font:inherit;
     }
 
-    button,select {
+    button,
+    select {
       cursor:pointer;
     }
 
@@ -391,6 +395,75 @@
       text-align:center;
     }
 
+    /* HOME - រក្សារូបរាងដើម ហើយបង្ហាញក្រោយ Login ជោគជ័យ */
+    .home-screen {
+      display:none;
+      text-align:center;
+      padding:18px 4px 8px;
+    }
+
+    .home-screen.active {
+      display:block;
+    }
+
+    .home-icon {
+      width:88px;
+      height:88px;
+      margin:0 auto 14px;
+      display:grid;
+      place-items:center;
+      border-radius:28px;
+      background:rgba(56,189,248,.14);
+      border:1px solid rgba(56,189,248,.35);
+      font-size:45px;
+    }
+
+    .home-screen h2 {
+      margin:0;
+      font-size:25px;
+      font-weight:850;
+    }
+
+    .home-screen p {
+      margin:8px 0 22px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    .home-card {
+      padding:16px;
+      border:1px solid var(--border);
+      border-radius:17px;
+      background:rgba(15,23,42,.65);
+      text-align:left;
+    }
+
+    .home-card-title {
+      margin:0 0 7px;
+      font-size:15px;
+      font-weight:800;
+    }
+
+    .home-card-text {
+      margin:0 !important;
+      color:var(--muted);
+      font-size:12px !important;
+      line-height:1.7;
+    }
+
+    .logout-button {
+      margin-top:16px;
+      width:100%;
+      min-height:44px;
+      border:1px solid rgba(251,113,133,.5);
+      border-radius:13px;
+      background:rgba(225,29,72,.12);
+      color:#fecdd3;
+      font-size:13px;
+      font-weight:800;
+    }
+
     .footer {
       margin-top:14px;
       color:#64748b;
@@ -449,21 +522,46 @@
   <main class="app">
     <section class="card">
 
-      <div class="logo">
+      <div class="logo" id="logoBox">
         <img src="logo.png" alt="OTP Service Logo">
       </div>
 
-      <div class="brand">
+      <div class="brand" id="brandBox">
         <h1>OTP Service</h1>
         <p>បង្កើតគណនីរបស់អ្នកដោយសុវត្ថិភាព</p>
       </div>
 
-      <div class="progress">
+      <div class="progress" id="progressBox">
         <div class="progress-item active"></div>
         <div class="progress-item"></div>
         <div class="progress-item"></div>
         <div class="progress-item"></div>
       </div>
+
+      <!-- HOME SCREEN -->
+      <section class="home-screen" id="homeScreen">
+        <div class="home-icon">🏠</div>
+
+        <h2>សូមស្វាគមន៍</h2>
+
+        <p>
+          អ្នកបានចូលក្នុង App ដោយជោគជ័យ។<br>
+          នេះជាផ្ទាំង Home របស់អ្នក។
+        </p>
+
+        <div class="home-card">
+          <h3 class="home-card-title">🏡 Home</h3>
+
+          <p class="home-card-text">
+            ពេលនេះ App បង្ហាញតែ Home សិន។<br>
+            មុខងារ Code, Chats និង Settings អាចបន្ថែមនៅពេលក្រោយ។
+          </p>
+        </div>
+
+        <button class="logout-button" id="logoutButton">
+          ចាកចេញ
+        </button>
+      </section>
 
       <!-- STEP 1 -->
       <section class="step active" id="step1">
@@ -677,7 +775,7 @@
         <div class="message" id="otpMessage"></div>
       </section>
 
-      <div class="footer">
+      <div class="footer" id="footerBox">
         <strong>OTP Service</strong><br>
         Powered by Firebase Authentication.
       </div>
@@ -727,11 +825,21 @@
     const progressItems =
       document.querySelectorAll(".progress-item");
 
-    const email = document.getElementById("email");
-    const phone = document.getElementById("phone");
-    const countryCode = document.getElementById("countryCode");
-    const terms = document.getElementById("terms");
-    const password = document.getElementById("password");
+    const email =
+      document.getElementById("email");
+
+    const phone =
+      document.getElementById("phone");
+
+    const countryCode =
+      document.getElementById("countryCode");
+
+    const terms =
+      document.getElementById("terms");
+
+    const password =
+      document.getElementById("password");
+
     const confirmPassword =
       document.getElementById("confirmPassword");
 
@@ -768,6 +876,21 @@
     const resendOtp =
       document.getElementById("resendOtp");
 
+    const homeScreen =
+      document.getElementById("homeScreen");
+
+    const logoBox =
+      document.getElementById("logoBox");
+
+    const brandBox =
+      document.getElementById("brandBox");
+
+    const progressBox =
+      document.getElementById("progressBox");
+
+    const footerBox =
+      document.getElementById("footerBox");
+
     function showMessage(element, text, type = "error") {
       element.textContent = text;
       element.className = "message show " + type;
@@ -781,6 +904,13 @@
     function goToStep(index) {
       currentStep = index;
 
+      homeScreen.classList.remove("active");
+
+      logoBox.style.display = "flex";
+      brandBox.style.display = "block";
+      progressBox.style.display = "grid";
+      footerBox.style.display = "block";
+
       steps.forEach(function(step, i) {
         step.classList.toggle("active", i === index);
       });
@@ -788,6 +918,31 @@
       progressItems.forEach(function(item, i) {
         item.classList.toggle("active", i <= index);
       });
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+      updateOtpLimit();
+    }
+
+    function showHomeScreen() {
+      steps.forEach(function(step) {
+        step.classList.remove("active");
+      });
+
+      logoBox.style.display = "none";
+      brandBox.style.display = "none";
+      progressBox.style.display = "none";
+      footerBox.style.display = "none";
+
+      homeScreen.classList.add("active");
+
+      if (countdownTimer) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+      }
 
       window.scrollTo({
         top: 0,
@@ -895,7 +1050,6 @@
           ? data
           : {};
       } catch (error) {
-        console.warn("Cannot read OTP history:", error);
         return {};
       }
     }
@@ -1201,17 +1355,21 @@
 
           goToStep(2);
         } catch (error) {
-          console.error("Send OTP error:", error);
-
           showMessage(
             phoneMessage,
             firebaseError(error)
           );
 
           resetRecaptcha();
+
+          /*
+            បើ Firebase មិនផ្ញើ OTP ក៏នៅតែបង្ហាញ Step OTP
+            តាមការចង់បានរបស់បង។
+          */
+          goToStep(3);
         } finally {
-          button.disabled = false;
           button.textContent = "ផ្ញើ OTP";
+          updateOtpLimit();
         }
       });
 
@@ -1292,6 +1450,7 @@
         const show = password.type === "password";
 
         password.type = show ? "text" : "password";
+
         confirmPassword.type =
           show ? "text" : "password";
       });
@@ -1367,10 +1526,9 @@
         if (!confirmationResult) {
           showMessage(
             otpMessage,
-            "សូមផ្ញើ OTP ជាមុនសិន។"
+            "មិនមាន OTP ដែលអាចផ្ទៀងផ្ទាត់បានទេ។ សូមផ្ញើ OTP ម្តងទៀត។"
           );
 
-          goToStep(1);
           return;
         }
 
@@ -1407,7 +1565,7 @@
 
             showMessage(
               otpMessage,
-              "បង្កើតគណនីបានជោគជ័យ! សូមស្វាគមន៍មកកាន់ OTP Service។",
+              "បង្កើតគណនីបានជោគជ័យ!",
               "success"
             );
           }
@@ -1420,21 +1578,23 @@
             "resendOtp"
           ).style.display = "none";
 
-          document.getElementById(
-            "otpLimitInfo"
-          ).style.display = "none";
-
-          document.getElementById(
-            "otpCountdown"
-          ).style.display = "none";
+          otpLimitInfo.style.display = "none";
+          otpCountdown.style.display = "none";
 
           document.getElementById(
             "demoCode"
           ).textContent =
             "គណនីរបស់អ្នកត្រូវបានបង្កើតដោយជោគជ័យ។";
-        } catch (error) {
-          console.error("Verify OTP error:", error);
 
+          /*
+            ចំណុចសំខាន់:
+            ពេល Verify OTP ជោគជ័យ → ចូល Home
+          */
+          setTimeout(function() {
+            showHomeScreen();
+          }, 500);
+
+        } catch (error) {
           showMessage(
             otpMessage,
             firebaseError(error)
@@ -1495,16 +1655,22 @@
         );
 
         updateOtpLimit();
-      } catch (error) {
-        console.error("Resend OTP error:", error);
 
+      } catch (error) {
         showMessage(
           otpMessage,
           firebaseError(error)
         );
 
         resetRecaptcha();
+
+        /*
+          បើផ្ញើមិនបាន ក៏នៅតែរក្សានៅប្រអប់ OTP
+        */
+        goToStep(3);
+
         updateOtpLimit();
+
       } finally {
         resendOtp.textContent =
           "ផ្ញើ OTP ម្ដងទៀត";
@@ -1512,6 +1678,46 @@
         updateOtpLimit();
       }
     });
+
+    document
+      .getElementById("logoutButton")
+      .addEventListener("click", async function() {
+        try {
+          await auth.signOut();
+
+          homeScreen.classList.remove("active");
+
+          logoBox.style.display = "flex";
+          brandBox.style.display = "block";
+          progressBox.style.display = "grid";
+          footerBox.style.display = "block";
+
+          email.value = "";
+          phone.value = "";
+          password.value = "";
+          confirmPassword.value = "";
+          terms.checked = false;
+
+          currentPhoneNumber = "";
+          confirmationResult = null;
+
+          otpInputs.forEach(function(input) {
+            input.value = "";
+          });
+
+          document.getElementById(
+            "verifyOtp"
+          ).style.display = "block";
+
+          resendOtp.style.display = "block";
+          otpLimitInfo.style.display = "block";
+
+          goToStep(0);
+
+        } catch (error) {
+          console.error("Logout error:", error);
+        }
+      });
 
     updateOtpLimit();
   </script>
