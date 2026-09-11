@@ -374,6 +374,23 @@
       text-align:center;
     }
 
+    .otp-limit-info {
+      margin-top:8px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+      text-align:center;
+    }
+
+    .otp-countdown {
+      display:none;
+      margin-top:5px;
+      color:#facc15;
+      font-size:12px;
+      line-height:1.5;
+      text-align:center;
+    }
+
     .footer {
       margin-top:14px;
       color:#64748b;
@@ -596,22 +613,22 @@
           </button>
 
           <div class="requirements-content">
-            <div class="requirement" id="reqLength">
+            <div class="requirement">
               <span>○</span>
               <span>យ៉ាងតិច 8 តួអក្សរ</span>
             </div>
 
-            <div class="requirement" id="reqUpper">
+            <div class="requirement">
               <span>○</span>
               <span>មានអក្សរធំ A-Z</span>
             </div>
 
-            <div class="requirement" id="reqNumber">
+            <div class="requirement">
               <span>○</span>
               <span>មានលេខ 0-9</span>
             </div>
 
-            <div class="requirement" id="reqSpecial">
+            <div class="requirement">
               <span>○</span>
               <span>មានសញ្ញាពិសេស ! @ #</span>
             </div>
@@ -644,6 +661,15 @@
           ផ្ញើ OTP ម្ដងទៀត
         </button>
 
+        <div class="otp-limit-info" id="otpLimitInfo">
+          នៅសល់ 3 ដងក្នុងរយៈពេល 1 ម៉ោង
+        </div>
+
+        <div class="otp-countdown" id="otpCountdown">
+          អាចស្នើ OTP ម្តងទៀតក្នុង
+          <span id="otpTimeLeft">60:00</span>
+        </div>
+
         <div class="demo-code" id="demoCode">
           OTP ត្រូវបានផ្ញើទៅលេខទូរស័ព្ទរបស់អ្នក។
         </div>
@@ -659,295 +685,480 @@
   </main>
 
   <!-- Firebase Compat SDK -->
-<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCQXDsSmrknt9PCHuM_VqcTg_VtMcLIHrY",
-    authDomain: "otp-service-2848f.firebaseapp.com",
-    projectId: "otp-service-2848f",
-    storageBucket: "otp-service-2848f.firebasestorage.app",
-    messagingSenderId: "451512407744",
-    appId: "1:451512407744:web:f6c29ada54215c1f5e7f25",
-    measurementId: "G-3PY5GR5C47"
-  };
-
-  // ការពារ Firebase initialize ច្រើនដង
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-
-  const auth = firebase.auth();
-
-  auth.useDeviceLanguage();
-
-  console.log("Firebase Project:", firebase.app().options.projectId);
-  console.log("Firebase Auth Domain:", firebase.app().options.authDomain);
-  console.log("Firebase API Key:", firebase.app().options.apiKey);
-
-  let confirmationResult = null;
-  let firebaseRecaptcha = null;
-  let currentPhoneNumber = "";
-  let currentStep = 0;
-
-  const steps = [
-    document.getElementById("step1"),
-    document.getElementById("step2"),
-    document.getElementById("step3"),
-    document.getElementById("step4")
-  ];
-
-  const progressItems =
-    document.querySelectorAll(".progress-item");
-
-  const email = document.getElementById("email");
-  const phone = document.getElementById("phone");
-  const countryCode = document.getElementById("countryCode");
-  const terms = document.getElementById("terms");
-  const password = document.getElementById("password");
-  const confirmPassword =
-    document.getElementById("confirmPassword");
-
-  const emailMessage =
-    document.getElementById("emailMessage");
-
-  const phoneMessage =
-    document.getElementById("phoneMessage");
-
-  const passwordMessage =
-    document.getElementById("passwordMessage");
-
-  const otpMessage =
-    document.getElementById("otpMessage");
-
-  const requirements =
-    document.getElementById("requirements");
-
-  const requirementsArrow =
-    document.getElementById("requirementsArrow");
-
-  const otpInputs =
-    document.querySelectorAll(".otp-input");
-
-  function showMessage(element, text, type = "error") {
-    element.textContent = text;
-    element.className = "message show " + type;
-  }
-
-  function clearMessage(element) {
-    element.textContent = "";
-    element.className = "message";
-  }
-
-  function goToStep(index) {
-    currentStep = index;
-
-    steps.forEach(function(step, i) {
-      step.classList.toggle("active", i === index);
-    });
-
-    progressItems.forEach(function(item, i) {
-      item.classList.toggle("active", i <= index);
-    });
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth"
-    });
-  }
-
-  function validEmail(value) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  }
-
-  function validPhone(value) {
-    const digits = value.replace(/\D/g, "");
-    return digits.length >= 8 && digits.length <= 15;
-  }
-
-  function convertToInternationalPhone(value, code) {
-    let digits = value.replace(/\D/g, "");
-
-    if (digits.startsWith("855")) {
-      return "+" + digits;
-    }
-
-    if (digits.startsWith("84")) {
-      return "+" + digits;
-    }
-
-    if (digits.startsWith("0")) {
-      digits = digits.substring(1);
-    }
-
-    return code + digits;
-  }
-
-  function firebaseError(error) {
-    console.error("Firebase error code:", error.code);
-    console.error("Firebase error message:", error.message);
-
-    const messages = {
-      "auth/invalid-api-key":
-        "Firebase API Key មិនត្រឹមត្រូវ ឬ API Key ត្រូវបានបិទ។",
-
-      "auth/api-key-not-valid":
-        "Firebase API Key មិនអាចប្រើបាន។ សូមពិនិត្យ Firebase Project Settings។",
-
-      "auth/operation-not-allowed":
-        "Phone Authentication មិនទាន់បានបើកក្នុង Firebase Project នេះ។",
-
-      "auth/app-not-authorized":
-        "Domain របស់ Website មិនទាន់បានអនុញ្ញាតក្នុង Firebase។",
-
-      "auth/unauthorized-domain":
-        "សូមបន្ថែម Domain របស់ Website ក្នុង Authorized domains។",
-
-      "auth/invalid-phone-number":
-        "លេខទូរស័ព្ទមិនត្រឹមត្រូវទេ។",
-
-      "auth/too-many-requests":
-        "ស្នើ OTP ច្រើនដងពេក។ សូមរង់ចាំបន្តិច។",
-
-      "auth/quota-exceeded":
-        "ការផ្ញើ OTP ដល់កម្រិតកំណត់។",
-
-      "auth/captcha-check-failed":
-        "reCAPTCHA មិនត្រឹមត្រូវ។ សូមសាកម្ដងទៀត។",
-
-      "auth/invalid-app-credential":
-        "reCAPTCHA ឬ Firebase Domain មានបញ្ហា។",
-
-      "auth/billing-not-enabled":
-        "Firebase ត្រូវការបើក Billing សម្រាប់ការផ្ញើ SMS។",
-
-      "auth/invalid-verification-code":
-        "លេខ OTP មិនត្រឹមត្រូវទេ។",
-
-      "auth/code-expired":
-        "លេខ OTP ផុតកំណត់ហើយ។",
-
-      "auth/email-already-in-use":
-        "Email នេះមានគណនីរួចហើយ។",
-
-      "auth/credential-already-in-use":
-        "Email ឬលេខទូរស័ព្ទនេះមានគណនីរួចហើយ។",
-
-      "auth/weak-password":
-        "Password ខ្សោយពេក។",
-
-      "auth/network-request-failed":
-        "មានបញ្ហាអ៊ីនធឺណិត។"
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCQXDsSmrknt9PCHuM_VqcTg_VtMcLIHrY",
+      authDomain: "otp-service-2848f.firebaseapp.com",
+      projectId: "otp-service-2848f",
+      storageBucket: "otp-service-2848f.firebasestorage.app",
+      messagingSenderId: "451512407744",
+      appId: "1:451512407744:web:f6c29ada54215c1f5e7f25",
+      measurementId: "G-3PY5GR5C47"
     };
 
-    return messages[error.code] ||
-      "មានបញ្ហា: " +
-      (error.code || error.message || "Unknown error");
-  }
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
 
-  async function createRecaptcha() {
-    if (firebaseRecaptcha) {
+    const auth = firebase.auth();
+
+    auth.useDeviceLanguage();
+
+    let confirmationResult = null;
+    let firebaseRecaptcha = null;
+    let currentPhoneNumber = "";
+    let currentStep = 0;
+    let countdownTimer = null;
+
+    const OTP_LIMIT = 3;
+    const OTP_WINDOW = 60 * 60 * 1000;
+    const OTP_STORAGE_KEY = "otp_service_request_history";
+
+    const steps = [
+      document.getElementById("step1"),
+      document.getElementById("step2"),
+      document.getElementById("step3"),
+      document.getElementById("step4")
+    ];
+
+    const progressItems =
+      document.querySelectorAll(".progress-item");
+
+    const email = document.getElementById("email");
+    const phone = document.getElementById("phone");
+    const countryCode = document.getElementById("countryCode");
+    const terms = document.getElementById("terms");
+    const password = document.getElementById("password");
+    const confirmPassword =
+      document.getElementById("confirmPassword");
+
+    const emailMessage =
+      document.getElementById("emailMessage");
+
+    const phoneMessage =
+      document.getElementById("phoneMessage");
+
+    const passwordMessage =
+      document.getElementById("passwordMessage");
+
+    const otpMessage =
+      document.getElementById("otpMessage");
+
+    const requirements =
+      document.getElementById("requirements");
+
+    const requirementsArrow =
+      document.getElementById("requirementsArrow");
+
+    const otpInputs =
+      document.querySelectorAll(".otp-input");
+
+    const otpLimitInfo =
+      document.getElementById("otpLimitInfo");
+
+    const otpCountdown =
+      document.getElementById("otpCountdown");
+
+    const otpTimeLeft =
+      document.getElementById("otpTimeLeft");
+
+    const resendOtp =
+      document.getElementById("resendOtp");
+
+    function showMessage(element, text, type = "error") {
+      element.textContent = text;
+      element.className = "message show " + type;
+    }
+
+    function clearMessage(element) {
+      element.textContent = "";
+      element.className = "message";
+    }
+
+    function goToStep(index) {
+      currentStep = index;
+
+      steps.forEach(function(step, i) {
+        step.classList.toggle("active", i === index);
+      });
+
+      progressItems.forEach(function(item, i) {
+        item.classList.toggle("active", i <= index);
+      });
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    function validEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    }
+
+    function validPhone(value) {
+      const digits = value.replace(/\D/g, "");
+      return digits.length >= 8 && digits.length <= 15;
+    }
+
+    function convertToInternationalPhone(value, code) {
+      let digits = value.replace(/\D/g, "");
+
+      if (digits.startsWith("855")) {
+        return "+" + digits;
+      }
+
+      if (digits.startsWith("84")) {
+        return "+" + digits;
+      }
+
+      if (digits.startsWith("0")) {
+        digits = digits.substring(1);
+      }
+
+      return code + digits;
+    }
+
+    function firebaseError(error) {
+      console.error("Firebase error code:", error.code);
+      console.error("Firebase error message:", error.message);
+
+      const messages = {
+        "auth/invalid-api-key":
+          "Firebase API Key មិនត្រឹមត្រូវ ឬ API Key ត្រូវបានបិទ។",
+
+        "auth/api-key-not-valid":
+          "Firebase API Key មិនអាចប្រើបាន។",
+
+        "auth/operation-not-allowed":
+          "Phone Authentication មិនទាន់បានបើកក្នុង Firebase។",
+
+        "auth/app-not-authorized":
+          "Domain របស់ Website មិនទាន់បានអនុញ្ញាតក្នុង Firebase។",
+
+        "auth/unauthorized-domain":
+          "សូមបន្ថែម Domain របស់ Website ក្នុង Authorized domains។",
+
+        "auth/invalid-phone-number":
+          "លេខទូរស័ព្ទមិនត្រឹមត្រូវទេ។",
+
+        "auth/too-many-requests":
+          "ស្នើ OTP ច្រើនដងពេក។ សូមរង់ចាំមុនសិន។",
+
+        "auth/quota-exceeded":
+          "ការផ្ញើ OTP ដល់កម្រិតកំណត់។",
+
+        "auth/captcha-check-failed":
+          "reCAPTCHA មិនត្រឹមត្រូវ។",
+
+        "auth/invalid-app-credential":
+          "reCAPTCHA ឬ Firebase Domain មានបញ្ហា។",
+
+        "auth/billing-not-enabled":
+          "Firebase ត្រូវការបើក Billing សម្រាប់ការផ្ញើ SMS។",
+
+        "auth/invalid-verification-code":
+          "លេខ OTP មិនត្រឹមត្រូវទេ។",
+
+        "auth/code-expired":
+          "លេខ OTP ផុតកំណត់ហើយ។",
+
+        "auth/email-already-in-use":
+          "Email នេះមានគណនីរួចហើយ។",
+
+        "auth/credential-already-in-use":
+          "Email ឬលេខទូរស័ព្ទនេះមានគណនីរួចហើយ។",
+
+        "auth/weak-password":
+          "Password ខ្សោយពេក។",
+
+        "auth/network-request-failed":
+          "មានបញ្ហាអ៊ីនធឺណិត។"
+      };
+
+      return messages[error.code] ||
+        "មានបញ្ហា: " +
+        (error.code || error.message || "Unknown error");
+    }
+
+    function readOtpHistory() {
+      try {
+        const data =
+          JSON.parse(
+            localStorage.getItem(OTP_STORAGE_KEY) || "{}"
+          );
+
+        return data && typeof data === "object"
+          ? data
+          : {};
+      } catch (error) {
+        console.warn("Cannot read OTP history:", error);
+        return {};
+      }
+    }
+
+    function saveOtpHistory(data) {
+      try {
+        localStorage.setItem(
+          OTP_STORAGE_KEY,
+          JSON.stringify(data)
+        );
+      } catch (error) {
+        console.warn("Cannot save OTP history:", error);
+      }
+    }
+
+    function getOtpRequests(phoneNumber) {
+      if (!phoneNumber) {
+        return [];
+      }
+
+      const data = readOtpHistory();
+      const now = Date.now();
+
+      const requests =
+        Array.isArray(data[phoneNumber])
+          ? data[phoneNumber]
+          : [];
+
+      const freshRequests =
+        requests.filter(function(timestamp) {
+          return now - Number(timestamp) < OTP_WINDOW;
+        });
+
+      if (freshRequests.length !== requests.length) {
+        data[phoneNumber] = freshRequests;
+        saveOtpHistory(data);
+      }
+
+      return freshRequests;
+    }
+
+    function recordOtpRequest(phoneNumber) {
+      if (!phoneNumber) {
+        return;
+      }
+
+      const data = readOtpHistory();
+      const requests = getOtpRequests(phoneNumber);
+
+      requests.push(Date.now());
+      data[phoneNumber] = requests;
+
+      saveOtpHistory(data);
+      updateOtpLimit();
+    }
+
+    function formatTime(milliseconds) {
+      const totalSeconds =
+        Math.max(0, Math.ceil(milliseconds / 1000));
+
+      const minutes =
+        Math.floor(totalSeconds / 60);
+
+      const seconds =
+        totalSeconds % 60;
+
+      return String(minutes).padStart(2, "0") +
+        ":" +
+        String(seconds).padStart(2, "0");
+    }
+
+    function updateOtpLimit() {
+      if (!currentPhoneNumber) {
+        otpLimitInfo.textContent =
+          "នៅសល់ 3 ដងក្នុងរយៈពេល 1 ម៉ោង";
+
+        resendOtp.disabled = false;
+        otpCountdown.style.display = "none";
+        return;
+      }
+
+      const requests =
+        getOtpRequests(currentPhoneNumber);
+
+      const remaining =
+        Math.max(0, OTP_LIMIT - requests.length);
+
+      otpLimitInfo.textContent =
+        "នៅសល់ " +
+        remaining +
+        " ដងក្នុងរយៈពេល 1 ម៉ោង";
+
+      if (countdownTimer) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+      }
+
+      if (remaining > 0) {
+        resendOtp.disabled = false;
+        otpCountdown.style.display = "none";
+        return;
+      }
+
+      resendOtp.disabled = true;
+      otpCountdown.style.display = "block";
+
+      function refreshCountdown() {
+        const freshRequests =
+          getOtpRequests(currentPhoneNumber);
+
+        if (freshRequests.length < OTP_LIMIT) {
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+          updateOtpLimit();
+          return;
+        }
+
+        const earliestRequest =
+          Math.min.apply(null, freshRequests);
+
+        const unlockTime =
+          earliestRequest + OTP_WINDOW;
+
+        const remainingTime =
+          unlockTime - Date.now();
+
+        if (remainingTime <= 0) {
+          clearInterval(countdownTimer);
+          countdownTimer = null;
+          updateOtpLimit();
+          return;
+        }
+
+        otpTimeLeft.textContent =
+          formatTime(remainingTime);
+      }
+
+      refreshCountdown();
+
+      countdownTimer =
+        setInterval(refreshCountdown, 1000);
+    }
+
+    function canRequestOtp(phoneNumber, messageElement) {
+      const requests =
+        getOtpRequests(phoneNumber);
+
+      if (requests.length >= OTP_LIMIT) {
+        const earliestRequest =
+          Math.min.apply(null, requests);
+
+        const remainingTime =
+          earliestRequest + OTP_WINDOW - Date.now();
+
+        showMessage(
+          messageElement,
+          "អ្នកបានស្នើ OTP គ្រប់ 3 ដងហើយ។ សូមរង់ចាំ " +
+          formatTime(remainingTime) +
+          " ទៀត។"
+        );
+
+        updateOtpLimit();
+        return false;
+      }
+
+      return true;
+    }
+
+    async function createRecaptcha() {
+      if (firebaseRecaptcha) {
+        return firebaseRecaptcha;
+      }
+
+      firebaseRecaptcha =
+        new firebase.auth.RecaptchaVerifier(
+          "recaptcha-container",
+          {
+            size: "normal",
+
+            callback: function() {
+              showMessage(
+                phoneMessage,
+                "reCAPTCHA ត្រូវបានផ្ទៀងផ្ទាត់។",
+                "success"
+              );
+            },
+
+            "expired-callback": function() {
+              resetRecaptcha();
+
+              showMessage(
+                phoneMessage,
+                "reCAPTCHA ផុតកំណត់។ សូមព្យាយាមម្ដងទៀត។"
+              );
+            }
+          }
+        );
+
+      await firebaseRecaptcha.render();
+
       return firebaseRecaptcha;
     }
 
-    firebaseRecaptcha =
-      new firebase.auth.RecaptchaVerifier(
-        "recaptcha-container",
-        {
-          size: "normal",
-
-          callback: function() {
-            showMessage(
-              phoneMessage,
-              "reCAPTCHA ត្រូវបានផ្ទៀងផ្ទាត់។",
-              "success"
-            );
-          },
-
-          "expired-callback": function() {
-            resetRecaptcha();
-
-            showMessage(
-              phoneMessage,
-              "reCAPTCHA ផុតកំណត់។ សូមព្យាយាមម្ដងទៀត។"
-            );
-          }
+    function resetRecaptcha() {
+      if (firebaseRecaptcha) {
+        try {
+          firebaseRecaptcha.clear();
+        } catch (error) {
+          console.warn("reCAPTCHA clear error:", error);
         }
-      );
 
-    await firebaseRecaptcha.render();
-
-    return firebaseRecaptcha;
-  }
-
-  function resetRecaptcha() {
-    if (firebaseRecaptcha) {
-      try {
-        firebaseRecaptcha.clear();
-      } catch (error) {
-        console.warn("reCAPTCHA clear error:", error);
+        firebaseRecaptcha = null;
       }
 
-      firebaseRecaptcha = null;
+      const container =
+        document.getElementById("recaptcha-container");
+
+      if (container) {
+        container.innerHTML = "";
+      }
     }
 
-    const container =
-      document.getElementById("recaptcha-container");
+    document
+      .getElementById("emailNext")
+      .addEventListener("click", function() {
+        clearMessage(emailMessage);
 
-    if (container) {
-      container.innerHTML = "";
-    }
-  }
+        if (!validEmail(email.value.trim())) {
+          showMessage(
+            emailMessage,
+            "សូមបញ្ចូល Gmail / Email ឲ្យបានត្រឹមត្រូវ។"
+          );
 
-  document
-    .getElementById("emailNext")
-    .addEventListener("click", function() {
-      clearMessage(emailMessage);
+          email.focus();
+          return;
+        }
 
-      if (!validEmail(email.value.trim())) {
-        showMessage(
-          emailMessage,
-          "សូមបញ្ចូល Gmail / Email ឲ្យបានត្រឹមត្រូវ។"
-        );
+        goToStep(1);
+      });
 
-        email.focus();
-        return;
-      }
+    document
+      .getElementById("phoneNext")
+      .addEventListener("click", async function() {
+        clearMessage(phoneMessage);
 
-      goToStep(1);
-    });
+        if (!validPhone(phone.value.trim())) {
+          showMessage(
+            phoneMessage,
+            "សូមបញ្ចូលលេខទូរស័ព្ទឲ្យបានត្រឹមត្រូវ។"
+          );
 
-  document
-    .getElementById("phoneNext")
-    .addEventListener("click", async function() {
-      clearMessage(phoneMessage);
+          phone.focus();
+          return;
+        }
 
-      if (!validPhone(phone.value.trim())) {
-        showMessage(
-          phoneMessage,
-          "សូមបញ្ចូលលេខទូរស័ព្ទឲ្យបានត្រឹមត្រូវ។"
-        );
+        if (!terms.checked) {
+          showMessage(
+            phoneMessage,
+            "សូមយល់ព្រមតាមលក្ខខណ្ឌជាមុនសិន។"
+          );
 
-        phone.focus();
-        return;
-      }
-
-      if (!terms.checked) {
-        showMessage(
-          phoneMessage,
-          "សូមយល់ព្រមតាមលក្ខខណ្ឌជាមុនសិន។"
-        );
-
-        return;
-      }
-
-      const button =
-        document.getElementById("phoneNext");
-
-      try {
-        button.disabled = true;
-        button.textContent = "កំពុងផ្ញើ OTP...";
+          return;
+        }
 
         currentPhoneNumber =
           convertToInternationalPhone(
@@ -955,259 +1166,310 @@
             countryCode.value
           );
 
-        console.log(
-          "Phone number used:",
-          currentPhoneNumber
-        );
-
-        const appVerifier =
-          await createRecaptcha();
-
-        confirmationResult =
-          await auth.signInWithPhoneNumber(
+        if (
+          !canRequestOtp(
             currentPhoneNumber,
-            appVerifier
+            phoneMessage
+          )
+        ) {
+          return;
+        }
+
+        const button =
+          document.getElementById("phoneNext");
+
+        try {
+          button.disabled = true;
+          button.textContent = "កំពុងផ្ញើ OTP...";
+
+          const appVerifier =
+            await createRecaptcha();
+
+          confirmationResult =
+            await auth.signInWithPhoneNumber(
+              currentPhoneNumber,
+              appVerifier
+            );
+
+          recordOtpRequest(currentPhoneNumber);
+
+          showMessage(
+            phoneMessage,
+            "បានផ្ញើ OTP ទៅលេខទូរស័ព្ទរបស់អ្នកហើយ។",
+            "success"
           );
 
-        showMessage(
-          phoneMessage,
-          "បានផ្ញើ OTP ទៅលេខទូរស័ព្ទរបស់អ្នកហើយ។",
-          "success"
-        );
+          goToStep(2);
+        } catch (error) {
+          console.error("Send OTP error:", error);
 
-        goToStep(2);
-      } catch (error) {
-        console.error("Send OTP error:", error);
+          showMessage(
+            phoneMessage,
+            firebaseError(error)
+          );
 
-        showMessage(
-          phoneMessage,
-          firebaseError(error)
-        );
-
-        resetRecaptcha();
-      } finally {
-        button.disabled = false;
-        button.textContent = "ផ្ញើ OTP";
-      }
-    });
-
-  document
-    .getElementById("passwordNext")
-    .addEventListener("click", function() {
-      clearMessage(passwordMessage);
-
-      const value = password.value;
-
-      const valid =
-        value.length >= 8 &&
-        /[A-Z]/.test(value) &&
-        /[0-9]/.test(value) &&
-        /[^A-Za-z0-9]/.test(value);
-
-      if (!valid) {
-        showMessage(
-          passwordMessage,
-          "Password ត្រូវមាន 8 តួ អក្សរធំ លេខ និងសញ្ញាពិសេស។"
-        );
-
-        requirements.classList.add("open");
-        requirementsArrow.textContent = "⌃";
-
-        return;
-      }
-
-      if (password.value !== confirmPassword.value) {
-        showMessage(
-          passwordMessage,
-          "Password ទាំងពីរមិនដូចគ្នាទេ។"
-        );
-
-        return;
-      }
-
-      if (!confirmationResult) {
-        showMessage(
-          passwordMessage,
-          "សូមផ្ញើ OTP ជាមុនសិន។"
-        );
-
-        goToStep(1);
-        return;
-      }
-
-      goToStep(3);
-    });
-
-  document
-    .querySelectorAll("[data-back]")
-    .forEach(function(button) {
-      button.addEventListener("click", function() {
-        goToStep(
-          Math.max(
-            0,
-            Number(button.dataset.back) - 1
-          )
-        );
-      });
-    });
-
-  document
-    .getElementById("requirementsButton")
-    .addEventListener("click", function() {
-      requirements.classList.toggle("open");
-
-      requirementsArrow.textContent =
-        requirements.classList.contains("open")
-          ? "⌃"
-          : "⌄";
-    });
-
-  document
-    .getElementById("togglePassword")
-    .addEventListener("click", function() {
-      const show = password.type === "password";
-
-      password.type = show ? "text" : "password";
-      confirmPassword.type = show ? "text" : "password";
-    });
-
-  otpInputs.forEach(function(input, index) {
-    input.addEventListener("input", function() {
-      input.value =
-        input.value.replace(/\D/g, "").slice(0, 1);
-
-      if (
-        input.value &&
-        index < otpInputs.length - 1
-      ) {
-        otpInputs[index + 1].focus();
-      }
-    });
-
-    input.addEventListener("keydown", function(event) {
-      if (
-        event.key === "Backspace" &&
-        !input.value &&
-        index > 0
-      ) {
-        otpInputs[index - 1].focus();
-      }
-    });
-
-    input.addEventListener("paste", function(event) {
-      event.preventDefault();
-
-      const pasted =
-        event.clipboardData
-          .getData("text")
-          .replace(/\D/g, "")
-          .slice(0, 6);
-
-      pasted.split("").forEach(function(digit, i) {
-        if (otpInputs[i]) {
-          otpInputs[i].value = digit;
+          resetRecaptcha();
+        } finally {
+          button.disabled = false;
+          button.textContent = "ផ្ញើ OTP";
         }
       });
 
-      otpInputs[
-        Math.min(pasted.length, otpInputs.length - 1)
-      ].focus();
-    });
-  });
+    document
+      .getElementById("passwordNext")
+      .addEventListener("click", function() {
+        clearMessage(passwordMessage);
 
-  document
-    .getElementById("verifyOtp")
-    .addEventListener("click", async function() {
+        const value = password.value;
+
+        const valid =
+          value.length >= 8 &&
+          /[A-Z]/.test(value) &&
+          /[0-9]/.test(value) &&
+          /[^A-Za-z0-9]/.test(value);
+
+        if (!valid) {
+          showMessage(
+            passwordMessage,
+            "Password ត្រូវមាន 8 តួ អក្សរធំ លេខ និងសញ្ញាពិសេស។"
+          );
+
+          requirements.classList.add("open");
+          requirementsArrow.textContent = "⌃";
+
+          return;
+        }
+
+        if (password.value !== confirmPassword.value) {
+          showMessage(
+            passwordMessage,
+            "Password ទាំងពីរមិនដូចគ្នាទេ។"
+          );
+
+          return;
+        }
+
+        if (!confirmationResult) {
+          showMessage(
+            passwordMessage,
+            "សូមផ្ញើ OTP ជាមុនសិន។"
+          );
+
+          goToStep(1);
+          return;
+        }
+
+        goToStep(3);
+      });
+
+    document
+      .querySelectorAll("[data-back]")
+      .forEach(function(button) {
+        button.addEventListener("click", function() {
+          goToStep(
+            Math.max(
+              0,
+              Number(button.dataset.back) - 1
+            )
+          );
+        });
+      });
+
+    document
+      .getElementById("requirementsButton")
+      .addEventListener("click", function() {
+        requirements.classList.toggle("open");
+
+        requirementsArrow.textContent =
+          requirements.classList.contains("open")
+            ? "⌃"
+            : "⌄";
+      });
+
+    document
+      .getElementById("togglePassword")
+      .addEventListener("click", function() {
+        const show = password.type === "password";
+
+        password.type = show ? "text" : "password";
+        confirmPassword.type =
+          show ? "text" : "password";
+      });
+
+    otpInputs.forEach(function(input, index) {
+      input.addEventListener("input", function() {
+        input.value =
+          input.value.replace(/\D/g, "").slice(0, 1);
+
+        if (
+          input.value &&
+          index < otpInputs.length - 1
+        ) {
+          otpInputs[index + 1].focus();
+        }
+      });
+
+      input.addEventListener("keydown", function(event) {
+        if (
+          event.key === "Backspace" &&
+          !input.value &&
+          index > 0
+        ) {
+          otpInputs[index - 1].focus();
+        }
+      });
+
+      input.addEventListener("paste", function(event) {
+        event.preventDefault();
+
+        const pasted =
+          event.clipboardData
+            .getData("text")
+            .replace(/\D/g, "")
+            .slice(0, 6);
+
+        pasted.split("").forEach(function(digit, i) {
+          if (otpInputs[i]) {
+            otpInputs[i].value = digit;
+          }
+        });
+
+        otpInputs[
+          Math.min(
+            pasted.length,
+            otpInputs.length - 1
+          )
+        ].focus();
+      });
+    });
+
+    document
+      .getElementById("verifyOtp")
+      .addEventListener("click", async function() {
+        clearMessage(otpMessage);
+
+        const code =
+          Array.from(otpInputs)
+            .map(function(input) {
+              return input.value;
+            })
+            .join("");
+
+        if (code.length !== 6) {
+          showMessage(
+            otpMessage,
+            "សូមបញ្ចូល OTP ឲ្យបាន 6 ខ្ទង់។"
+          );
+
+          return;
+        }
+
+        if (!confirmationResult) {
+          showMessage(
+            otpMessage,
+            "សូមផ្ញើ OTP ជាមុនសិន។"
+          );
+
+          goToStep(1);
+          return;
+        }
+
+        const button =
+          document.getElementById("verifyOtp");
+
+        try {
+          button.disabled = true;
+          button.textContent = "កំពុងផ្ទៀងផ្ទាត់...";
+
+          const result =
+            await confirmationResult.confirm(code);
+
+          const user = result.user;
+
+          const credential =
+            firebase.auth.EmailAuthProvider.credential(
+              email.value.trim(),
+              password.value
+            );
+
+          if (
+            user.providerData.some(function(provider) {
+              return provider.providerId === "password";
+            })
+          ) {
+            showMessage(
+              otpMessage,
+              "លេខទូរស័ព្ទនេះមាន Email/Password រួចហើយ។",
+              "success"
+            );
+          } else {
+            await user.linkWithCredential(credential);
+
+            showMessage(
+              otpMessage,
+              "បង្កើតគណនីបានជោគជ័យ! សូមស្វាគមន៍មកកាន់ OTP Service។",
+              "success"
+            );
+          }
+
+          document.getElementById(
+            "verifyOtp"
+          ).style.display = "none";
+
+          document.getElementById(
+            "resendOtp"
+          ).style.display = "none";
+
+          document.getElementById(
+            "otpLimitInfo"
+          ).style.display = "none";
+
+          document.getElementById(
+            "otpCountdown"
+          ).style.display = "none";
+
+          document.getElementById(
+            "demoCode"
+          ).textContent =
+            "គណនីរបស់អ្នកត្រូវបានបង្កើតដោយជោគជ័យ។";
+        } catch (error) {
+          console.error("Verify OTP error:", error);
+
+          showMessage(
+            otpMessage,
+            firebaseError(error)
+          );
+        } finally {
+          button.disabled = false;
+          button.textContent = "ផ្ទៀងផ្ទាត់ OTP";
+        }
+      });
+
+    resendOtp.addEventListener("click", async function() {
       clearMessage(otpMessage);
 
-      const code =
-        Array.from(otpInputs)
-          .map(function(input) {
-            return input.value;
-          })
-          .join("");
-
-      if (code.length !== 6) {
+      if (!currentPhoneNumber) {
         showMessage(
           otpMessage,
-          "សូមបញ្ចូល OTP ឲ្យបាន 6 ខ្ទង់។"
-        );
-
-        return;
-      }
-
-      if (!confirmationResult) {
-        showMessage(
-          otpMessage,
-          "សូមផ្ញើ OTP ជាមុនសិន។"
+          "សូមបញ្ចូលលេខទូរស័ព្ទជាមុនសិន។"
         );
 
         goToStep(1);
         return;
       }
 
-      const button =
-        document.getElementById("verifyOtp");
-
-      try {
-        button.disabled = true;
-        button.textContent = "កំពុងផ្ទៀងផ្ទាត់...";
-
-        const result =
-          await confirmationResult.confirm(code);
-
-        const user = result.user;
-
-        const credential =
-          firebase.auth.EmailAuthProvider.credential(
-            email.value.trim(),
-            password.value
-          );
-
-        await user.linkWithCredential(credential);
-
-        showMessage(
-          otpMessage,
-          "បង្កើតគណនីបានជោគជ័យ! សូមស្វាគមន៍មកកាន់ OTP Service។",
-          "success"
-        );
-
-        document.getElementById(
-          "verifyOtp"
-        ).style.display = "none";
-
-        document.getElementById(
-          "resendOtp"
-        ).style.display = "none";
-
-        document.getElementById(
-          "demoCode"
-        ).textContent =
-          "គណនីរបស់អ្នកត្រូវបានបង្កើតដោយជោគជ័យ។";
-      } catch (error) {
-        console.error("Verify OTP error:", error);
-
-        showMessage(
-          otpMessage,
-          firebaseError(error)
-        );
-      } finally {
-        button.disabled = false;
-        button.textContent = "ផ្ទៀងផ្ទាត់ OTP";
+      if (
+        !canRequestOtp(
+          currentPhoneNumber,
+          otpMessage
+        )
+      ) {
+        return;
       }
-    });
-
-  document
-    .getElementById("resendOtp")
-    .addEventListener("click", async function() {
-      clearMessage(otpMessage);
-
-      const button =
-        document.getElementById("resendOtp");
 
       try {
-        button.disabled = true;
-        button.textContent = "កំពុងផ្ញើ...";
+        resendOtp.disabled = true;
+        resendOtp.textContent = "កំពុងផ្ញើ...";
 
         resetRecaptcha();
 
@@ -1219,6 +1481,8 @@
             currentPhoneNumber,
             appVerifier
           );
+
+        recordOtpRequest(currentPhoneNumber);
 
         otpInputs.forEach(function(input) {
           input.value = "";
@@ -1229,6 +1493,8 @@
           "បានផ្ញើ OTP ថ្មីទៅលេខទូរស័ព្ទរបស់អ្នកហើយ។",
           "success"
         );
+
+        updateOtpLimit();
       } catch (error) {
         console.error("Resend OTP error:", error);
 
@@ -1238,13 +1504,16 @@
         );
 
         resetRecaptcha();
+        updateOtpLimit();
       } finally {
-        button.disabled = false;
-        button.textContent = "ផ្ញើ OTP ម្ដងទៀត";
+        resendOtp.textContent =
+          "ផ្ញើ OTP ម្ដងទៀត";
+
+        updateOtpLimit();
       }
     });
-</script>
 
+    updateOtpLimit();
   </script>
 </body>
 </html>
