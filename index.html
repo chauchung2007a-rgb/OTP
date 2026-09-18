@@ -12,13 +12,15 @@
 <title>Mine - Cambodia</title>
 
 <style>
+
 *{
     box-sizing:border-box;
     -webkit-tap-highlight-color:transparent;
     user-select:none;
 }
 
-html,body{
+html,
+body{
     margin:0;
     width:100%;
     height:100%;
@@ -35,259 +37,411 @@ html,body{
 
 canvas{
     display:block;
+    touch-action:none;
 }
 
-/* ================= TOP UI ================= */
+/* ================= TOP LEFT ================= */
 
 #mapBox{
+
     position:absolute;
+
     top:12px;
     left:12px;
+
     width:155px;
     height:125px;
+
     z-index:20;
+
     padding:8px;
+
     border-radius:15px;
+
     background:rgba(25,45,55,.72);
+
     color:white;
+
     backdrop-filter:blur(8px);
+
+    pointer-events:none;
 }
 
 #mapTitle{
+
     font-size:17px;
+
     font-weight:bold;
+
     margin-bottom:5px;
 }
 
 #miniMap{
+
     width:100%;
     height:70px;
+
     border-radius:8px;
+
     background:
-        linear-gradient(135deg,#4d9b4d 25%,#6db65a 25% 50%,#478e4b 50% 75%,#6aaa52 75%);
+        linear-gradient(
+            135deg,
+            #4d9b4d 25%,
+            #6db65a 25% 50%,
+            #478e4b 50% 75%,
+            #6aaa52 75%
+        );
+
     position:relative;
+
     overflow:hidden;
 }
 
 #mapPlayer{
+
     position:absolute;
+
     width:10px;
     height:10px;
+
     background:white;
+
     border-radius:50%;
+
     left:50%;
     top:50%;
+
     transform:translate(-50%,-50%);
-    box-shadow:0 0 5px #fff;
+
+    box-shadow:0 0 5px white;
 }
 
 #coords{
+
     font-size:11px;
+
     margin-top:5px;
 }
 
 /* ================= TOP RIGHT ================= */
 
 #status{
+
     position:absolute;
+
     z-index:20;
+
     top:12px;
     right:12px;
+
     display:flex;
+
     align-items:center;
-    gap:10px;
+
+    gap:8px;
 }
 
 .statusBox{
+
     padding:8px 12px;
+
     border-radius:13px;
+
     background:rgba(30,40,45,.72);
+
     color:white;
+
     font-weight:bold;
+
     backdrop-filter:blur(8px);
 }
 
 #pause{
+
     width:48px;
     height:48px;
+
     border:0;
+
     border-radius:14px;
+
     background:rgba(255,255,255,.72);
+
     font-size:22px;
+
+    touch-action:none;
 }
 
 /* ================= CROSSHAIR ================= */
 
 #crosshair{
+
     position:absolute;
+
     z-index:15;
+
     left:50%;
     top:50%;
+
     transform:translate(-50%,-50%);
+
     width:24px;
     height:24px;
+
     pointer-events:none;
 }
 
 #crosshair:before,
 #crosshair:after{
+
     content:"";
+
     position:absolute;
+
     background:white;
-    box-shadow:0 0 2px #000;
+
+    box-shadow:0 0 2px black;
 }
 
 #crosshair:before{
+
     width:2px;
     height:24px;
+
     left:11px;
 }
 
 #crosshair:after{
+
     width:24px;
     height:2px;
+
     top:11px;
 }
 
-/* ================= LEFT CONTROLS ================= */
+/* ================= MOVEMENT ================= */
 
 #movement{
+
     position:absolute;
+
     z-index:30;
+
     left:22px;
     bottom:24px;
+
     width:145px;
     height:145px;
+
+    touch-action:none;
 }
 
 .move{
+
     position:absolute;
+
     width:52px;
     height:52px;
+
     border:1px solid rgba(255,255,255,.35);
+
     border-radius:14px;
+
     background:rgba(45,55,60,.62);
+
     color:white;
+
     font-size:23px;
+
     backdrop-filter:blur(5px);
+
+    touch-action:none;
 }
 
-.move:active,
-.action:active{
+.move:active{
+
     transform:scale(.9);
 }
 
 #forward{
+
     left:46px;
     top:0;
 }
 
 #back{
+
     left:46px;
     bottom:0;
 }
 
 #left{
+
     left:0;
     top:46px;
 }
 
 #right{
+
     right:0;
     top:46px;
 }
 
-/* ================= RIGHT ACTIONS ================= */
+/* ================= ACTIONS ================= */
 
 #actions{
+
     position:absolute;
+
     z-index:30;
+
     right:22px;
     bottom:25px;
+
     display:flex;
+
     flex-direction:column;
+
     gap:12px;
+
     align-items:center;
+
+    touch-action:none;
 }
 
 .action{
+
     width:65px;
     height:65px;
+
     border:1px solid rgba(255,255,255,.35);
+
     border-radius:50%;
+
     background:rgba(45,55,60,.65);
+
     color:white;
+
     font-size:27px;
+
     backdrop-filter:blur(6px);
+
+    touch-action:none;
 }
 
-#jump{
-    font-size:30px;
+.action:active{
+
+    transform:scale(.9);
 }
 
 /* ================= HOTBAR ================= */
 
 #hotbar{
+
     position:absolute;
+
     z-index:35;
+
     left:50%;
     bottom:18px;
+
     transform:translateX(-50%);
+
     display:flex;
+
     gap:5px;
+
     padding:7px;
+
     border-radius:13px;
+
     background:rgba(25,30,33,.82);
+
+    touch-action:none;
 }
 
 .slot{
+
     width:53px;
     height:53px;
+
     border:2px solid #52606a;
+
     border-radius:8px;
+
     background:#171b1e;
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
+
     position:relative;
+
     font-size:25px;
+
     color:white;
+
+    touch-action:none;
 }
 
 .slot.selected{
+
     border-color:white;
-    box-shadow:0 0 0 2px rgba(255,255,255,.25);
+
+    box-shadow:
+        0 0 0 2px
+        rgba(255,255,255,.25);
 }
 
 .number{
+
     position:absolute;
+
     right:4px;
     bottom:2px;
+
     font-size:11px;
+
     color:white;
 }
 
 /* ================= PORTRAIT ================= */
 
 #portrait{
+
     display:none;
+
     position:absolute;
+
     z-index:100;
+
     inset:0;
+
     background:#20252a;
+
     color:white;
+
     align-items:center;
+
     justify-content:center;
+
     text-align:center;
+
     font-size:21px;
+
     font-weight:bold;
 }
 
 @media(max-aspect-ratio:1/1){
+
     #portrait{
+
         display:flex;
     }
 }
+
 </style>
 </head>
 
@@ -295,139 +449,283 @@ canvas{
 
 <div id="game">
 
+    <!-- MAP -->
+
     <div id="mapBox">
-        <div id="mapTitle">🇰🇭 Mine - Cambodia</div>
+
+        <div id="mapTitle">
+            🇰🇭 Mine - Cambodia
+        </div>
 
         <div id="miniMap">
+
             <div id="mapPlayer"></div>
+
         </div>
 
         <div id="coords">
-            X: <span id="cx">0</span>
-            &nbsp; Y: <span id="cy">1</span>
-            &nbsp; Z: <span id="cz">0</span>
+
+            X:
+            <span id="cx">0</span>
+
+            &nbsp;
+
+            Y:
+            <span id="cy">2</span>
+
+            &nbsp;
+
+            Z:
+            <span id="cz">7</span>
+
         </div>
+
     </div>
 
+
+    <!-- STATUS -->
+
     <div id="status">
-        <div class="statusBox">❤️ 100</div>
-        <div class="statusBox">🍗 100</div>
-        <div class="statusBox">☀️ Day</div>
-        <button id="pause">Ⅱ</button>
+
+        <div class="statusBox">
+            ❤️ 100
+        </div>
+
+        <div class="statusBox">
+            🍗 100
+        </div>
+
+        <div class="statusBox">
+            ☀️ Day
+        </div>
+
+        <button id="pause">
+            Ⅱ
+        </button>
+
     </div>
+
+
+    <!-- CROSSHAIR -->
 
     <div id="crosshair"></div>
 
-    <!-- Movement -->
+
+    <!-- MOVEMENT -->
+
     <div id="movement">
 
-        <button class="move" id="forward">▲</button>
-        <button class="move" id="left">◀</button>
-        <button class="move" id="right">▶</button>
-        <button class="move" id="back">▼</button>
+        <button
+            class="move"
+            id="forward">
+            ▲
+        </button>
+
+        <button
+            class="move"
+            id="left">
+            ◀
+        </button>
+
+        <button
+            class="move"
+            id="right">
+            ▶
+        </button>
+
+        <button
+            class="move"
+            id="back">
+            ▼
+        </button>
 
     </div>
 
-    <!-- Actions -->
+
+    <!-- ACTIONS -->
+
     <div id="actions">
 
-        <button class="action" id="break">⛏️</button>
+        <button
+            class="action"
+            id="break">
+            ⛏️
+        </button>
 
-        <button class="action" id="place">🧱</button>
+        <button
+            class="action"
+            id="place">
+            🧱
+        </button>
 
-        <button class="action" id="jump">⬆</button>
+        <button
+            class="action"
+            id="jump">
+            ⬆
+        </button>
 
     </div>
 
-    <!-- Hotbar -->
+
+    <!-- HOTBAR -->
+
     <div id="hotbar">
 
-        <div class="slot selected" data-block="grass">
+        <div
+            class="slot selected"
+            data-block="grass">
+
             🌿
-            <span class="number">64</span>
+
+            <span class="number">
+                64
+            </span>
+
         </div>
 
-        <div class="slot" data-block="dirt">
+        <div
+            class="slot"
+            data-block="dirt">
+
             🟫
-            <span class="number">64</span>
+
+            <span class="number">
+                64
+            </span>
+
         </div>
 
-        <div class="slot" data-block="stone">
+        <div
+            class="slot"
+            data-block="stone">
+
             🪨
-            <span class="number">64</span>
+
+            <span class="number">
+                64
+            </span>
+
         </div>
 
-        <div class="slot" data-block="wood">
+        <div
+            class="slot"
+            data-block="wood">
+
             🪵
-            <span class="number">48</span>
+
+            <span class="number">
+                48
+            </span>
+
         </div>
 
-        <div class="slot" data-block="sand">
+        <div
+            class="slot"
+            data-block="sand">
+
             🟨
-            <span class="number">32</span>
+
+            <span class="number">
+                32
+            </span>
+
         </div>
 
-        <div class="slot" data-block="leaf">
+        <div
+            class="slot"
+            data-block="leaf">
+
             🌿
-            <span class="number">32</span>
+
+            <span class="number">
+                32
+            </span>
+
         </div>
 
     </div>
 
+
+    <!-- PORTRAIT WARNING -->
+
     <div id="portrait">
-        📱<br><br>
-        សូមបង្វិលទូរសព្ទផ្ដេក<br>
+
+        📱
+
+        <br><br>
+
+        សូមបង្វិលទូរសព្ទផ្ដេក
+
+        <br>
+
         ដើម្បីលេង Mine
+
     </div>
 
 </div>
 
 
 <!-- THREE.JS -->
+
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+
 
 <script>
 
 /* =====================================================
-   MINE V1
-   Small Cambodia-style voxel world
+   MINE V2
+   3D WORLD + COLLISION
 ===================================================== */
 
-const scene = new THREE.Scene();
 
-scene.background = new THREE.Color(0x8fd3f4);
+/* ================= SCENE ================= */
 
-scene.fog = new THREE.Fog(
-    0x8fd3f4,
-    35,
-    100
-);
+const scene =
+    new THREE.Scene();
+
+scene.background =
+    new THREE.Color(
+        0x8fd3f4
+    );
+
+scene.fog =
+    new THREE.Fog(
+        0x8fd3f4,
+        35,
+        100
+    );
 
 
 /* ================= CAMERA ================= */
 
-const camera = new THREE.PerspectiveCamera(
-    70,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    200
-);
+const camera =
+    new THREE.PerspectiveCamera(
+        70,
+        window.innerWidth /
+        window.innerHeight,
+        0.1,
+        200
+    );
 
 camera.position.set(
     0,
-    4,
+    3.6,
     8
 );
 
 
 /* ================= RENDERER ================= */
 
-const renderer = new THREE.WebGLRenderer({
-    antialias:true
-});
+const renderer =
+    new THREE.WebGLRenderer({
+        antialias:true
+    });
 
 renderer.setPixelRatio(
-    Math.min(window.devicePixelRatio,2)
+    Math.min(
+        window.devicePixelRatio,
+        2
+    )
 );
 
 renderer.setSize(
@@ -435,38 +733,48 @@ renderer.setSize(
     window.innerHeight
 );
 
-renderer.shadowMap.enabled = true;
+renderer.shadowMap.enabled =
+    true;
 
 document
     .getElementById("game")
-    .appendChild(renderer.domElement);
+    .appendChild(
+        renderer.domElement
+    );
 
 
 /* ================= LIGHT ================= */
 
-const skyLight = new THREE.HemisphereLight(
-    0xbde9ff,
-    0x56703f,
-    2.2
+const skyLight =
+    new THREE.HemisphereLight(
+        0xbde9ff,
+        0x56703f,
+        2.2
+    );
+
+scene.add(
+    skyLight
 );
 
-scene.add(skyLight);
 
+const sunLight =
+    new THREE.DirectionalLight(
+        0xffffff,
+        2.5
+    );
 
-const sun = new THREE.DirectionalLight(
-    0xffffff,
-    2.5
-);
-
-sun.position.set(
+sunLight.position.set(
     -20,
     35,
     15
 );
 
-sun.castShadow = true;
+sunLight.castShadow =
+    true;
 
-scene.add(sun);
+scene.add(
+    sunLight
+);
 
 
 /* ================= MATERIALS ================= */
@@ -512,14 +820,17 @@ const materials = {
 };
 
 
-/* ================= BLOCK SIZE ================= */
-
-const SIZE = 1;
-
-
-/* ================= BLOCK FUNCTION ================= */
+/* ================= BLOCK DATA ================= */
 
 const blocks = [];
+
+const blockGeometry =
+    new THREE.BoxGeometry(
+        1,
+        1,
+        1
+    );
+
 
 function addBlock(
     x,
@@ -528,17 +839,11 @@ function addBlock(
     type
 ){
 
-    const geometry =
-        new THREE.BoxGeometry(
-            SIZE,
-            SIZE,
-            SIZE
-        );
-
     const mesh =
         new THREE.Mesh(
-            geometry,
-            materials[type] || materials.dirt
+            blockGeometry,
+            materials[type] ||
+            materials.dirt
         );
 
     mesh.position.set(
@@ -547,10 +852,14 @@ function addBlock(
         z
     );
 
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
+    mesh.castShadow =
+        true;
 
-    mesh.userData.type = type;
+    mesh.receiveShadow =
+        true;
+
+    mesh.userData.type =
+        type;
 
     scene.add(mesh);
 
@@ -560,16 +869,24 @@ function addBlock(
 }
 
 
-/* ================= SMALL WORLD ================= */
+/* ================= WORLD ================= */
 
-const WORLD = 22;
+const WORLD = 20;
 
 
 /* Ground */
 
-for(let x=-WORLD;x<=WORLD;x++){
+for(
+    let x=-WORLD;
+    x<=WORLD;
+    x++
+){
 
-    for(let z=-WORLD;z<=WORLD;z++){
+    for(
+        let z=-WORLD;
+        z<=WORLD;
+        z++
+    ){
 
         addBlock(
             x,
@@ -597,28 +914,44 @@ for(let x=-WORLD;x<=WORLD;x++){
 
 /* ================= RIVER ================= */
 
-for(let x=-WORLD;x<=WORLD;x++){
+for(
+    let x=-WORLD;
+    x<=WORLD;
+    x++
+){
 
-    for(let z=-3;z<=0;z++){
+    for(
+        let z=-3;
+        z<=0;
+        z++
+    ){
 
         const water =
             addBlock(
                 x,
-                0.35,
+                .35,
                 z,
                 "water"
             );
 
-        water.scale.y=.35;
+        water.scale.y =
+            .35;
     }
 }
 
 
 /* ================= TREES ================= */
 
-function tree(x,z){
+function createTree(
+    x,
+    z
+){
 
-    for(let y=1;y<=4;y++){
+    for(
+        let y=1;
+        y<=4;
+        y++
+    ){
 
         addBlock(
             x,
@@ -628,69 +961,92 @@ function tree(x,z){
         );
     }
 
-    for(let dx=-2;dx<=2;dx++){
 
-        for(let dz=-2;dz<=2;dz++){
+    for(
+        let dx=-2;
+        dx<=2;
+        dx++
+    ){
 
-            for(let dy=4;dy<=5;dy++){
+        for(
+            let dz=-2;
+            dz<=2;
+            dz++
+        ){
 
-                if(
-                    Math.abs(dx)+
-                    Math.abs(dz)<4
-                ){
+            if(
+                Math.abs(dx) +
+                Math.abs(dz) < 4
+            ){
 
-                    addBlock(
-                        x+dx,
-                        dy,
-                        z+dz,
-                        "leaf"
-                    );
-                }
+                addBlock(
+                    x+dx,
+                    5,
+                    z+dz,
+                    "leaf"
+                );
+
+                addBlock(
+                    x+dx,
+                    6,
+                    z+dz,
+                    "leaf"
+                );
             }
         }
     }
 }
 
 
-/* Trees around village */
-
-tree(-8,-7);
-tree(-5,-8);
-tree(7,-8);
-tree(10,-5);
-tree(-11,5);
-tree(9,8);
-tree(-8,9);
-tree(12,10);
+createTree(-8,-7);
+createTree(-5,-9);
+createTree(7,-8);
+createTree(10,-5);
+createTree(-11,6);
+createTree(9,8);
+createTree(-8,9);
+createTree(12,10);
 
 
 /* ================= HILLS ================= */
 
-for(let x=-18;x<=18;x++){
+for(
+    let x=-15;
+    x<=15;
+    x++
+){
 
-    for(let z=7;z<=13;z++){
+    for(
+        let z=8;
+        z<=14;
+        z++
+    ){
 
-        const distance =
-            Math.abs(x)/18 +
-            Math.abs(z-10)/6;
+        const d =
+            Math.abs(x)/15 +
+            Math.abs(z-11)/6;
 
-        if(distance<1){
+        if(d<1){
 
             const height =
                 Math.floor(
-                    2+
-                    (1-distance)*5
+                    2 +
+                    (1-d)*5
                 );
 
-            for(let y=1;y<=height;y++){
+            for(
+                let y=1;
+                y<=height;
+                y++
+            ){
 
                 addBlock(
                     x,
                     y,
                     z,
                     y===height
-                        ? "grass"
-                        : "stone"
+                    ? "grass"
+                    : "stone"
                 );
             }
         }
@@ -698,15 +1054,24 @@ for(let x=-18;x<=18;x++){
 }
 
 
-/* ================= VILLAGE HOUSES ================= */
+/* ================= HOUSES ================= */
 
-function house(x,z){
+function createHouse(
+    x,
+    z
+){
 
-    /* floor */
+    for(
+        let dx=0;
+        dx<5;
+        dx++
+    ){
 
-    for(let dx=0;dx<5;dx++){
-
-        for(let dz=0;dz<5;dz++){
+        for(
+            let dz=0;
+            dz<5;
+            dz++
+        ){
 
             addBlock(
                 x+dx,
@@ -718,11 +1083,17 @@ function house(x,z){
     }
 
 
-    /* walls */
+    for(
+        let y=2;
+        y<=4;
+        y++
+    ){
 
-    for(let y=2;y<=4;y++){
-
-        for(let dx=0;dx<5;dx++){
+        for(
+            let dx=0;
+            dx<5;
+            dx++
+        ){
 
             addBlock(
                 x+dx,
@@ -740,7 +1111,11 @@ function house(x,z){
         }
 
 
-        for(let dz=1;dz<4;dz++){
+        for(
+            let dz=1;
+            dz<4;
+            dz++
+        ){
 
             addBlock(
                 x,
@@ -759,11 +1134,17 @@ function house(x,z){
     }
 
 
-    /* roof */
+    for(
+        let dx=-1;
+        dx<=5;
+        dx++
+    ){
 
-    for(let dx=-1;dx<=5;dx++){
-
-        for(let dz=-1;dz<=5;dz++){
+        for(
+            let dz=-1;
+        dz<=5;
+        dz++
+        ){
 
             addBlock(
                 x+dx,
@@ -776,81 +1157,166 @@ function house(x,z){
 }
 
 
-/* Small village */
-
-house(-14,-1);
-house(8,-1);
-house(-2,7);
+createHouse(-14,-1);
+createHouse(8,-1);
 
 
-/* ================= PLAYER ================= */
+/* =====================================================
+   PLAYER
+===================================================== */
 
 const player = {
 
     x:0,
+
     y:2,
+
     z:7,
 
-    speed:.18,
+    speed:.12,
 
     vy:0,
+
+    height:1.8,
+
+    radius:.3,
 
     onGround:true
 };
 
 
-/* ================= CAMERA CONTROL ================= */
+/* ================= CAMERA ROTATION ================= */
 
 let yaw = 0;
+
 let pitch = -0.12;
-
-
-/* ================= UPDATE CAMERA ================= */
-
-function updateCamera(){
-
-    camera.position.set(
-        player.x,
-        player.y+1.6,
-        player.z
-    );
-
-    const direction =
-        new THREE.Vector3(
-            Math.sin(yaw),
-            Math.sin(pitch),
-            Math.cos(yaw)
-        );
-
-    camera.lookAt(
-        camera.position.x +
-        direction.x,
-
-        camera.position.y +
-        direction.y,
-
-        camera.position.z +
-        direction.z
-    );
-}
 
 
 /* ================= MOVEMENT ================= */
 
-let moving = {
+const moving = {
 
     forward:false,
-    back:false,
-    left:false,
-    right:false
 
+    back:false,
+
+    left:false,
+
+    right:false
 };
 
+
+/* =====================================================
+   COLLISION
+===================================================== */
+
+function isSolidBlock(
+    x,
+    y,
+    z
+){
+
+    for(
+        const block of blocks
+    ){
+
+        if(
+            !block.parent
+        ){
+            continue;
+        }
+
+        const type =
+            block.userData.type;
+
+        if(type==="water"){
+            continue;
+        }
+
+        const bx =
+            block.position.x;
+
+        const by =
+            block.position.y;
+
+        const bz =
+            block.position.z;
+
+
+        const minX =
+            x-player.radius;
+
+        const maxX =
+            x+player.radius;
+
+        const minY =
+            y;
+
+        const maxY =
+            y+player.height;
+
+        const minZ =
+            z-player.radius;
+
+        const maxZ =
+            z+player.radius;
+
+
+        const blockMinX =
+            bx-.5;
+
+        const blockMaxX =
+            bx+.5;
+
+        const blockMinY =
+            by-.5;
+
+        const blockMaxY =
+            by+.5;
+
+        const blockMinZ =
+            bz-.5;
+
+        const blockMaxZ =
+            bz+.5;
+
+
+        const hitX =
+            maxX>blockMinX &&
+            minX<blockMaxX;
+
+        const hitY =
+            maxY>blockMinY &&
+            minY<blockMaxY;
+
+        const hitZ =
+            maxZ>blockMinZ &&
+            minZ<blockMaxZ;
+
+
+        if(
+            hitX &&
+            hitY &&
+            hitZ
+        ){
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+
+/* =====================================================
+   MOVEMENT WITH COLLISION
+===================================================== */
 
 function movePlayer(){
 
     const speed =
         player.speed;
+
 
     const forwardX =
         Math.sin(yaw);
@@ -858,68 +1324,127 @@ function movePlayer(){
     const forwardZ =
         Math.cos(yaw);
 
+
+    let moveX=0;
+
+    let moveZ=0;
+
+
     if(moving.forward){
 
-        player.x +=
+        moveX +=
             forwardX*speed;
 
-        player.z +=
+        moveZ +=
             forwardZ*speed;
     }
+
 
     if(moving.back){
 
-        player.x -=
+        moveX -=
             forwardX*speed;
 
-        player.z -=
+        moveZ -=
             forwardZ*speed;
     }
 
+
     if(moving.left){
 
-        player.x +=
+        moveX +=
             Math.sin(
-                yaw-Math.PI/2
+                yaw +
+                Math.PI/2
             )*speed;
 
-        player.z +=
+        moveZ +=
             Math.cos(
-                yaw-Math.PI/2
+                yaw +
+                Math.PI/2
             )*speed;
     }
+
 
     if(moving.right){
 
-        player.x +=
+        moveX +=
             Math.sin(
-                yaw+Math.PI/2
+                yaw -
+                Math.PI/2
             )*speed;
 
-        player.z +=
+        moveZ +=
             Math.cos(
-                yaw+Math.PI/2
+                yaw -
+                Math.PI/2
             )*speed;
     }
 
 
-    /* World boundary */
+    /* X collision */
+
+    const nextX =
+        player.x+moveX;
+
+
+    if(
+        !isSolidBlock(
+            nextX,
+            player.y,
+            player.z
+        )
+    ){
+
+        player.x =
+            nextX;
+    }
+
+
+    /* Z collision */
+
+    const nextZ =
+        player.z+moveZ;
+
+
+    if(
+        !isSolidBlock(
+            player.x,
+            player.y,
+            nextZ
+        )
+    ){
+
+        player.z =
+            nextZ;
+    }
+
+
+    /* Boundary */
 
     player.x =
         Math.max(
-            -20,
-            Math.min(20,player.x)
+            -19,
+            Math.min(
+                19,
+                player.x
+            )
         );
 
     player.z =
         Math.max(
-            -20,
-            Math.min(20,player.z)
+            -19,
+            Math.min(
+                19,
+                player.z
+            )
         );
 }
 
 
-/* ================= BUTTONS ================= */
+/* =====================================================
+   BUTTON CONTROL
+===================================================== */
 
 function holdButton(
     id,
@@ -927,63 +1452,94 @@ function holdButton(
 ){
 
     const button =
-        document.getElementById(id);
+        document.getElementById(
+            id
+        );
 
-    button.addEventListener(
-        "touchstart",
-        e=>{
-            e.preventDefault();
-            moving[key]=true;
-        },
-        {passive:false}
-    );
 
-    button.addEventListener(
-        "touchend",
-        e=>{
-            e.preventDefault();
-            moving[key]=false;
-        },
-        {passive:false}
-    );
+    function start(e){
 
-    button.addEventListener(
-        "touchcancel",
-        ()=>{
-            moving[key]=false;
+        e.preventDefault();
+
+        moving[key]=true;
+
+        if(
+            e.pointerId !== undefined
+        ){
+
+            button.setPointerCapture?.(
+                e.pointerId
+            );
         }
+    }
+
+
+    function stop(e){
+
+        e.preventDefault();
+
+        moving[key]=false;
+    }
+
+
+    button.addEventListener(
+        "pointerdown",
+        start
     );
 
     button.addEventListener(
-        "mousedown",
-        ()=>{
-            moving[key]=true;
-        }
+        "pointerup",
+        stop
     );
 
     button.addEventListener(
-        "mouseup",
-        ()=>{
-            moving[key]=false;
-        }
+        "pointercancel",
+        stop
+    );
+
+    button.addEventListener(
+        "pointerleave",
+        stop
     );
 }
 
-holdButton("forward","forward");
-holdButton("back","back");
-holdButton("left","left");
-holdButton("right","right");
+
+holdButton(
+    "forward",
+    "forward"
+);
+
+holdButton(
+    "back",
+    "back"
+);
+
+holdButton(
+    "left",
+    "left"
+);
+
+holdButton(
+    "right",
+    "right"
+);
 
 
-/* ================= JUMP ================= */
+/* =====================================================
+   JUMP
+===================================================== */
 
 document
     .getElementById("jump")
     .addEventListener(
-        "click",
-        ()=>{
+        "pointerdown",
+        e=>{
 
-            if(player.onGround){
+            e.preventDefault();
+
+            if(
+                player.onGround
+            ){
 
                 player.vy=.18;
 
@@ -993,13 +1549,52 @@ document
     );
 
 
+/* =====================================================
+   PHYSICS
+===================================================== */
+
 function physics(){
 
     player.vy -= .008;
 
-    player.y += player.vy;
+    const nextY =
+        player.y +
+        player.vy;
 
-    if(player.y<=2){
+
+    if(
+        player.vy < 0
+    ){
+
+        if(
+            isSolidBlock(
+                player.x,
+                nextY,
+                player.z
+            )
+        ){
+
+            player.y =
+                Math.ceil(
+                    player.y
+                );
+
+            player.vy=0;
+
+            player.onGround=true;
+
+            return;
+        }
+    }
+
+
+    player.y =
+        nextY;
+
+
+    if(
+        player.y<=2
+    ){
 
         player.y=2;
 
@@ -1010,135 +1605,126 @@ function physics(){
 }
 
 
-/* ================= LOOK AROUND ================= */
+/* =====================================================
+   LOOK AROUND
+===================================================== */
 
-let touching = false;
-let lastX = 0;
-let lastY = 0;
+let looking=false;
+
+let lastX=0;
+
+let lastY=0;
+
 
 renderer.domElement.addEventListener(
-    "touchstart",
+    "pointerdown",
     e=>{
 
-        if(
-            e.touches.length!==1
-        ) return;
+        looking=true;
 
-        touching=true;
+        lastX=e.clientX;
 
-        lastX =
-            e.touches[0].clientX;
-
-        lastY =
-            e.touches[0].clientY;
-    },
-    {passive:true}
-);
-
-
-renderer.domElement.addEventListener(
-    "touchmove",
-    e=>{
-
-        if(!touching) return;
-
-        const x =
-            e.touches[0].clientX;
-
-        const y =
-            e.touches[0].clientY;
-
-        const dx =
-            x-lastX;
-
-        const dy =
-            y-lastY;
-
-        yaw -= dx*.006;
-
-        pitch -= dy*.004;
-
-        pitch =
-            Math.max(
-                -.9,
-                Math.min(.7,pitch)
-            );
-
-        lastX=x;
-        lastY=y;
-    },
-    {passive:true}
-);
-
-
-renderer.domElement.addEventListener(
-    "touchend",
-    ()=>{
-        touching=false;
+        lastY=e.clientY;
     }
 );
 
 
-/* ================= RAYCASTER ================= */
+renderer.domElement.addEventListener(
+    "pointermove",
+    e=>{
 
-const raycaster =
-    new THREE.Raycaster();
-
-const center =
-    new THREE.Vector2(0,0);
+        if(!looking){
+            return;
+        }
 
 
-/* ================= BREAK BLOCK ================= */
+        const dx =
+            e.clientX-lastX;
 
-document
-    .getElementById("break")
-    .addEventListener(
-        "click",
-        ()=>{
+        const dy =
+            e.clientY-lastY;
 
-            raycaster.setFromCamera(
-                center,
-                camera
+
+        yaw -=
+            dx*.006;
+
+        pitch -=
+            dy*.004;
+
+
+        pitch =
+            Math.max(
+                -.9,
+                Math.min(
+                    .7,
+                    pitch
+                )
             );
 
-            const hits =
-                raycaster.intersectObjects(
-                    blocks
-                );
 
-            if(hits.length){
+        lastX=e.clientX;
 
-                const block =
-                    hits[0].object;
+        lastY=e.clientY;
+    }
+);
 
-                const distance =
-                    camera.position.distanceTo(
-                        block.position
-                    );
 
-                if(distance<6){
+renderer.domElement.addEventListener(
+    "pointerup",
+    ()=>{
+        looking=false;
+    }
+);
 
-                    scene.remove(block);
 
-                    const index =
-                        blocks.indexOf(block);
+renderer.domElement.addEventListener(
+    "pointercancel",
+    ()=>{
+        looking=false;
+    }
+);
 
-                    if(index>=0){
 
-                        blocks.splice(
-                            index,
-                            1
-                        );
-                    }
-                }
-            }
-        }
+/* =====================================================
+   CAMERA
+===================================================== */
+
+function updateCamera(){
+
+    camera.position.set(
+        player.x,
+        player.y+1.6,
+        player.z
     );
 
 
-/* ================= PLACE BLOCK ================= */
+    const direction =
+        new THREE.Vector3(
+            Math.sin(yaw),
+            Math.sin(pitch),
+            Math.cos(yaw)
+        );
 
-let selectedType="grass";
+
+    camera.lookAt(
+        camera.position.x+
+        direction.x,
+
+        camera.position.y+
+        direction.y,
+
+        camera.position.z+
+        direction.z
+    );
+}
+
+
+/* =====================================================
+   BLOCK SELECTION
+===================================================== */
+
+let selectedType =
+    "grass";
 
 
 document
@@ -1146,12 +1732,15 @@ document
     .forEach(slot=>{
 
         slot.addEventListener(
-            "click",
-            ()=>{
+            "pointerdown",
+            e=>{
+
+                e.preventDefault();
 
                 document
                     .querySelectorAll(".slot")
-                    .forEach(s=>
+                    .forEach(
+                        s=>
                         s.classList.remove(
                             "selected"
                         )
@@ -1168,48 +1757,180 @@ document
     });
 
 
+/* =====================================================
+   RAYCAST
+===================================================== */
+
+const raycaster =
+    new THREE.Raycaster();
+
+const center =
+    new THREE.Vector2(
+        0,
+        0
+    );
+
+
+/* =====================================================
+   BREAK
+===================================================== */
+
 document
-    .getElementById("place")
+    .getElementById("break")
     .addEventListener(
-        "click",
-        ()=>{
+        "pointerdown",
+        e=>{
+
+            e.preventDefault();
+
 
             raycaster.setFromCamera(
                 center,
                 camera
             );
 
+
             const hits =
                 raycaster.intersectObjects(
                     blocks
                 );
 
-            if(hits.length){
 
-                const hit =
-                    hits[0];
+            if(
+                hits.length===0
+            ){
 
-                const block =
-                    hit.object;
+                return;
+            }
 
-                const distance =
-                    camera.position.distanceTo(
-                        block.position
+
+            const block =
+                hits[0].object;
+
+
+            const distance =
+                camera.position.distanceTo(
+                    block.position
+                );
+
+
+            if(
+                distance<=6
+            ){
+
+                scene.remove(
+                    block
+                );
+
+
+                const index =
+                    blocks.indexOf(
+                        block
                     );
 
-                if(distance<6){
 
-                    const normal =
-                        hit.face.normal;
+                if(index>=0){
 
-                    const position =
-                        block.position.clone()
-                        .add(normal);
+                    blocks.splice(
+                        index,
+                        1
+                    );
+                }
+            }
+        }
+    );
+
+
+/* =====================================================
+   PLACE
+===================================================== */
+
+document
+    .getElementById("place")
+    .addEventListener(
+        "pointerdown",
+        e=>{
+
+            e.preventDefault();
+
+
+            raycaster.setFromCamera(
+                center,
+                camera
+            );
+
+
+            const hits =
+                raycaster.intersectObjects(
+                    blocks
+                );
+
+
+            if(
+                hits.length===0
+            ){
+
+                return;
+            }
+
+
+            const hit =
+                hits[0];
+
+
+            const block =
+                hit.object;
+
+
+            const distance =
+                camera.position.distanceTo(
+                    block.position
+                );
+
+
+            if(
+                distance<=6
+            ){
+
+                const normal =
+                    hit.face.normal;
+
+
+                const position =
+                    block.position.clone()
+                    .add(normal);
+
+
+                const bx =
+                    Math.round(
+                        position.x
+                    );
+
+                const by =
+                    Math.round(
+                        position.y
+                    );
+
+                const bz =
+                    Math.round(
+                        position.z
+                    );
+
+
+                /* Don't place inside player */
+
+                if(
+                    !isSolidBlock(
+                        bx,
+                        by,
+                        bz
+                    )
+                ){
 
                     addBlock(
-                        Math.round(position.x),
-                        Math.round(position.y),
-                        Math.round(position.z),
+                        bx,
+                        by,
+                        bz,
                         selectedType
                     );
                 }
@@ -1218,37 +1939,60 @@ document
     );
 
 
-/* ================= COORDINATES ================= */
+/* =====================================================
+   COORDINATES
+===================================================== */
 
-function updateCoords(){
+function updateCoordinates(){
 
-    document.getElementById("cx")
+    document
+        .getElementById("cx")
         .textContent =
-        Math.round(player.x);
+        Math.round(
+            player.x
+        );
 
-    document.getElementById("cy")
+
+    document
+        .getElementById("cy")
         .textContent =
-        Math.round(player.y);
+        Math.round(
+            player.y
+        );
 
-    document.getElementById("cz")
+
+    document
+        .getElementById("cz")
         .textContent =
-        Math.round(player.z);
+        Math.round(
+            player.z
+        );
 
 
-    const map =
+    const mapPlayer =
         document.getElementById(
             "mapPlayer"
         );
 
-    map.style.left =
-        (50+player.x*1.7)+"%";
 
-    map.style.top =
-        (50+player.z*1.7)+"%";
+    mapPlayer.style.left =
+        (
+            50+
+            player.x*1.8
+        )+"%";
+
+
+    mapPlayer.style.top =
+        (
+            50+
+            player.z*1.8
+        )+"%";
 }
 
 
-/* ================= RESIZE ================= */
+/* =====================================================
+   RESIZE
+===================================================== */
 
 window.addEventListener(
     "resize",
@@ -1260,6 +2004,7 @@ window.addEventListener(
 
         camera.updateProjectionMatrix();
 
+
         renderer.setSize(
             window.innerWidth,
             window.innerHeight
@@ -1268,7 +2013,97 @@ window.addEventListener(
 );
 
 
-/* ================= GAME LOOP ================= */
+/* =====================================================
+   KEYBOARD
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    e=>{
+
+        if(
+            e.key==="ArrowUp" ||
+            e.key==="w"
+        ){
+
+            moving.forward=true;
+        }
+
+
+        if(
+            e.key==="ArrowDown" ||
+            e.key==="s"
+        ){
+
+            moving.back=true;
+        }
+
+
+        if(
+            e.key==="ArrowLeft" ||
+            e.key==="a"
+        ){
+
+            moving.left=true;
+        }
+
+
+        if(
+            e.key==="ArrowRight" ||
+            e.key==="d"
+        ){
+
+            moving.right=true;
+        }
+    }
+);
+
+
+document.addEventListener(
+    "keyup",
+    e=>{
+
+        if(
+            e.key==="ArrowUp" ||
+            e.key==="w"
+        ){
+
+            moving.forward=false;
+        }
+
+
+        if(
+            e.key==="ArrowDown" ||
+            e.key==="s"
+        ){
+
+            moving.back=false;
+        }
+
+
+        if(
+            e.key==="ArrowLeft" ||
+            e.key==="a"
+        ){
+
+            moving.left=false;
+        }
+
+
+        if(
+            e.key==="ArrowRight" ||
+            e.key==="d"
+        ){
+
+            moving.right=false;
+        }
+    }
+);
+
+
+/* =====================================================
+   GAME LOOP
+===================================================== */
 
 function animate(){
 
@@ -1276,13 +2111,15 @@ function animate(){
         animate
     );
 
+
     movePlayer();
 
     physics();
 
     updateCamera();
 
-    updateCoords();
+    updateCoordinates();
+
 
     renderer.render(
         scene,
