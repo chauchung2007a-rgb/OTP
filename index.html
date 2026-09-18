@@ -1,1394 +1,584 @@
 <!DOCTYPE html>
 <html lang="km">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>OTP Service</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Mine</title>
 
-  <style>
-    :root {
-      --sky:#38bdf8;
-      --bg:#020617;
-      --panel:rgba(15,23,42,.95);
-      --border:rgba(148,163,184,.22);
-      --text:#fff;
-      --muted:#94a3b8;
-      --danger:#fb7185;
-      --success:#4ade80;
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+}
+
+html,body{
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#82cef1;
+    font-family:Arial,sans-serif;
+}
+
+#game{
+    position:relative;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#82cef1;
+}
+
+#world{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    background:linear-gradient(
+        #75c8ef 0%,
+        #b8e8fa 55%,
+        #dceff5 100%
+    );
+}
+
+/* Sun */
+#sun{
+    position:absolute;
+    width:65px;
+    height:65px;
+    right:7%;
+    top:10%;
+    border-radius:50%;
+    background:#ffd84d;
+    box-shadow:0 0 30px rgba(255,216,77,.6);
+}
+
+/* Clouds */
+.cloud{
+    position:absolute;
+    width:95px;
+    height:25px;
+    background:rgba(255,255,255,.75);
+    border-radius:30px;
+}
+
+.cloud:before,
+.cloud:after{
+    content:"";
+    position:absolute;
+    background:rgba(255,255,255,.75);
+    border-radius:50%;
+}
+
+.cloud:before{
+    width:42px;
+    height:42px;
+    left:15px;
+    top:-20px;
+}
+
+.cloud:after{
+    width:35px;
+    height:35px;
+    right:15px;
+    top:-14px;
+}
+
+/* Mountains */
+.mountain{
+    position:absolute;
+    bottom:32%;
+    width:0;
+    height:0;
+    border-left:110px solid transparent;
+    border-right:110px solid transparent;
+    border-bottom:190px solid #71947d;
+    opacity:.8;
+}
+
+.mountain.m1{left:8%;}
+.mountain.m2{
+    left:38%;
+    border-left-width:145px;
+    border-right-width:145px;
+    border-bottom-width:230px;
+}
+.mountain.m3{right:4%;}
+
+/* Ground */
+#ground{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:34%;
+    background:#93613f;
+    border-top:12px solid #55a83c;
+}
+
+/* Grass texture */
+#ground:before{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    top:-12px;
+    height:12px;
+    background:#69c847;
+}
+
+/* River */
+#river{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:19%;
+    height:12%;
+    background:#43a9dd;
+    transform:skewY(-2deg);
+    box-shadow:0 5px 0 rgba(255,255,255,.15) inset;
+}
+
+/* Rice field */
+.field{
+    position:absolute;
+    bottom:35%;
+    width:105px;
+    height:70px;
+    background:#b6c94b;
+    border:5px solid #83a53c;
+    transform:skewX(-8deg);
+}
+
+.field.f1{left:9%;}
+.field.f2{left:27%;}
+.field.f3{right:27%;}
+.field.f4{right:8%;}
+
+/* Trees */
+.tree{
+    position:absolute;
+    bottom:34%;
+    width:30px;
+    height:85px;
+}
+
+.tree .trunk{
+    position:absolute;
+    bottom:0;
+    left:11px;
+    width:9px;
+    height:42px;
+    background:#75452c;
+}
+
+.tree .leaf{
+    position:absolute;
+    left:-12px;
+    top:0;
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    background:#2f913b;
+    box-shadow:
+        18px -10px 0 #3ca344,
+        25px 14px 0 #267f34;
+}
+
+.tree.t1{left:5%;}
+.tree.t2{left:20%;transform:scale(.8);}
+.tree.t3{right:17%;transform:scale(1.1);}
+.tree.t4{right:5%;transform:scale(.75);}
+
+/* Small village */
+.house{
+    position:absolute;
+    bottom:34%;
+    width:85px;
+    height:62px;
+    background:#d39a61;
+    border:4px solid #70452f;
+}
+
+.house:before{
+    content:"";
+    position:absolute;
+    left:-9px;
+    top:-45px;
+    width:95px;
+    height:55px;
+    background:#a84432;
+    clip-path:polygon(50% 0,100% 100%,0 100%);
+}
+
+.house:after{
+    content:"";
+    position:absolute;
+    left:34px;
+    bottom:0;
+    width:20px;
+    height:35px;
+    background:#65412e;
+}
+
+.house.h1{left:43%;}
+.house.h2{
+    left:55%;
+    transform:scale(.8);
+}
+
+/* Blocks */
+#blocks{
+    position:absolute;
+    left:0;
+    right:0;
+    bottom:0;
+    height:30%;
+}
+
+.block{
+    position:absolute;
+    width:45px;
+    height:45px;
+    border:2px solid rgba(0,0,0,.16);
+    border-radius:3px;
+}
+
+.block.dirt{background:#93613f;}
+.block.stone{background:#858585;}
+.block.grass{
+    background:linear-gradient(
+        #62bd43 0 23%,
+        #93613f 23% 100%
+    );
+}
+.block.sand{background:#d9c078;}
+.block.wood{background:#8a542f;}
+
+/* Player */
+#player{
+    position:absolute;
+    z-index:20;
+    width:42px;
+    height:70px;
+    left:50%;
+    bottom:35%;
+    transform:translateX(-50%);
+}
+
+.head{
+    width:38px;
+    height:38px;
+    margin:auto;
+    border-radius:8px;
+    background:#e9b47d;
+    border:2px solid #824f32;
+    position:relative;
+}
+
+.head:before,
+.head:after{
+    content:"";
+    position:absolute;
+    top:14px;
+    width:5px;
+    height:5px;
+    background:#222;
+    border-radius:50%;
+}
+
+.head:before{left:8px;}
+.head:after{right:8px;}
+
+.body{
+    width:31px;
+    height:31px;
+    margin:-1px auto 0;
+    background:#3978c9;
+    border-radius:5px 5px 8px 8px;
+}
+
+/* Top UI */
+#topbar{
+    position:absolute;
+    z-index:50;
+    top:12px;
+    left:12px;
+    right:12px;
+    height:54px;
+    padding:0 15px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-radius:17px;
+    background:rgba(255,255,255,.72);
+    backdrop-filter:blur(10px);
+    box-shadow:0 4px 18px rgba(0,0,0,.12);
+}
+
+#title{
+    font-size:21px;
+    font-weight:800;
+    color:#24343b;
+}
+
+#stats{
+    display:flex;
+    gap:12px;
+    font-size:14px;
+    font-weight:bold;
+}
+
+/* Controls */
+#joystick{
+    position:absolute;
+    z-index:60;
+    left:18px;
+    bottom:20px;
+    width:115px;
+    height:115px;
+    border-radius:50%;
+    background:rgba(255,255,255,.25);
+    border:2px solid rgba(255,255,255,.45);
+}
+
+.joyButton{
+    position:absolute;
+    width:48px;
+    height:48px;
+    border:0;
+    border-radius:50%;
+    background:rgba(35,35,35,.68);
+    color:#fff;
+    font-size:21px;
+}
+
+#left{left:4px;top:33px;}
+#right{right:4px;top:33px;}
+#up{left:33px;top:4px;}
+#down{left:33px;bottom:4px;}
+
+#actions{
+    position:absolute;
+    z-index:60;
+    right:18px;
+    bottom:20px;
+    display:flex;
+    gap:10px;
+}
+
+.action{
+    width:58px;
+    height:58px;
+    border:0;
+    border-radius:18px;
+    background:rgba(40,40,40,.75);
+    color:white;
+    font-size:26px;
+    box-shadow:0 4px 12px rgba(0,0,0,.2);
+}
+
+.action:active,
+.joyButton:active{
+    transform:scale(.9);
+}
+
+/* Inventory */
+#inventory{
+    position:absolute;
+    z-index:55;
+    left:50%;
+    bottom:18px;
+    transform:translateX(-50%);
+    display:flex;
+    gap:6px;
+    padding:7px;
+    border-radius:15px;
+    background:rgba(30,30,30,.7);
+}
+
+.slot{
+    width:47px;
+    height:47px;
+    border:2px solid rgba(255,255,255,.25);
+    border-radius:9px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(255,255,255,.1);
+    font-size:24px;
+}
+
+.slot.selected{
+    border-color:white;
+}
+
+/* Portrait warning */
+#portrait{
+    display:none;
+    position:absolute;
+    z-index:200;
+    inset:0;
+    background:#20252a;
+    color:white;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:30px;
+    font-size:20px;
+    font-weight:bold;
+}
+
+@media (orientation:portrait){
+    #portrait{
+        display:flex;
     }
-
-    * {
-      box-sizing:border-box;
-      -webkit-tap-highlight-color:transparent;
-    }
-
-    html,
-    body {
-      margin:0;
-      min-height:100%;
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-      color:var(--text);
-      background:var(--bg);
-    }
-
-    body {
-      min-height:100dvh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      padding:16px 12px;
-    }
-
-    button,
-    input {
-      font:inherit;
-    }
-
-    button {
-      cursor:pointer;
-    }
-
-    button:disabled {
-      opacity:.65;
-      cursor:not-allowed;
-    }
-
-    .app {
-      width:100%;
-      max-width:430px;
-    }
-
-    .card {
-      width:100%;
-      padding:20px 16px 16px;
-      border:1px solid var(--border);
-      border-radius:24px;
-      background:var(--panel);
-      box-shadow:0 18px 60px rgba(0,0,0,.35);
-      backdrop-filter:blur(18px);
-    }
-
-    .logo {
-      width:112px;
-      height:112px;
-      margin:0 auto 8px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .logo img {
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      display:block;
-    }
-
-    .brand {
-      text-align:center;
-      margin-bottom:16px;
-    }
-
-    .brand h1 {
-      margin:0;
-      font-size:24px;
-      font-weight:850;
-    }
-
-    .brand p {
-      margin:5px 0 0;
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .progress {
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:6px;
-      margin-bottom:18px;
-    }
-
-    .progress-item {
-      height:5px;
-      border-radius:99px;
-      background:#1e293b;
-    }
-
-    .progress-item.active {
-      background:var(--sky);
-    }
-
-    .step {
-      display:none;
-    }
-
-    .step.active {
-      display:block;
-    }
-
-    .step-title {
-      margin:0 0 5px;
-      font-size:19px;
-      font-weight:800;
-    }
-
-    .step-description {
-      margin:0 0 15px;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.6;
-    }
-
-    .field {
-      margin-bottom:12px;
-    }
-
-    .field label {
-      display:block;
-      margin:0 0 6px;
-      font-size:12px;
-      font-weight:700;
-      color:#cbd5e1;
-    }
-
-    .input-box {
-      display:flex;
-      align-items:center;
-      gap:9px;
-      min-height:47px;
-      padding:7px 11px;
-      border:1px solid var(--border);
-      border-radius:13px;
-      background:rgba(15,23,42,.78);
-    }
-
-    .input-box:focus-within {
-      border-color:var(--sky);
-      box-shadow:0 0 0 3px rgba(56,189,248,.12);
-    }
-
-    .icon-circle,
-    .field-icon {
-      width:32px;
-      height:32px;
-      flex:0 0 32px;
-      display:grid;
-      place-items:center;
-      border-radius:50%;
-      background:var(--sky);
-      color:#fff;
-      font-size:17px;
-      font-weight:900;
-    }
-
-    .input-box input {
-      width:100%;
-      min-width:0;
-      border:0;
-      outline:0;
-      color:var(--text);
-      background:transparent;
-      font-size:14px;
-    }
-
-    .input-box input::placeholder {
-      color:#64748b;
-    }
-
-    .password-toggle {
-      border:0;
-      background:transparent;
-      color:#fff;
-      padding:5px;
-      font-size:18px;
-    }
-
-    .main-button,
-    .secondary-button {
-      width:100%;
-      min-height:46px;
-      border-radius:13px;
-      color:#fff;
-      background:var(--sky);
-      border:1px solid var(--sky);
-      font-size:14px;
-      font-weight:800;
-    }
-
-    .secondary-button {
-      min-height:42px;
-      margin-top:8px;
-      font-size:13px;
-    }
-
-    .secondary-button[data-back] {
-      background:#fff;
-      color:#111827;
-      border-color:#fff;
-    }
-
-    .message {
-      display:none;
-      margin-top:12px;
-      padding:10px 12px;
-      border-radius:11px;
-      font-size:12px;
-      line-height:1.5;
-    }
-
-    .message.show {
-      display:block;
-    }
-
-    .message.error {
-      color:#fecdd3;
-      background:rgba(225,29,72,.12);
-      border:1px solid rgba(251,113,133,.25);
-    }
-
-    .message.success {
-      color:#bbf7d0;
-      background:rgba(34,197,94,.12);
-      border:1px solid rgba(74,222,128,.25);
-    }
-
-    .requirements {
-      margin:16px 0 12px;
-      border:1px solid var(--border);
-      border-radius:12px;
-      overflow:hidden;
-      background:rgba(15,23,42,.5);
-    }
-
-    .requirements-button {
-      width:100%;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      border:0;
-      color:#111827;
-      background:#fff;
-      padding:10px 12px;
-      font-size:12px;
-      font-weight:700;
-      text-align:left;
-    }
-
-    .requirements-content {
-      display:none;
-      padding:0 12px 10px;
-    }
-
-    .requirements.open .requirements-content {
-      display:block;
-    }
-
-    .requirement {
-      display:flex;
-      gap:7px;
-      color:var(--muted);
-      font-size:12px;
-      margin-top:6px;
-    }
-
-    .demo-code {
-      margin-top:12px;
-      padding:12px;
-      border-radius:10px;
-      color:#bae6fd;
-      background:rgba(56,189,248,.09);
-      font-size:12px;
-      line-height:1.7;
-      text-align:center;
-      overflow-wrap:anywhere;
-    }
-
-    .verify-icon {
-      width:82px;
-      height:82px;
-      margin:18px auto 14px;
-      display:grid;
-      place-items:center;
-      border-radius:25px;
-      background:rgba(56,189,248,.14);
-      border:1px solid rgba(56,189,248,.35);
-      font-size:42px;
-    }
-
-    /* HOME - រក្សារូបរាងដើម */
-    .home-screen {
-      display:none;
-      text-align:center;
-      padding:18px 4px 8px;
-    }
-
-    .home-screen.active {
-      display:block;
-    }
-
-    .home-icon {
-      width:88px;
-      height:88px;
-      margin:0 auto 14px;
-      display:grid;
-      place-items:center;
-      border-radius:28px;
-      background:rgba(56,189,248,.14);
-      border:1px solid rgba(56,189,248,.35);
-      font-size:45px;
-    }
-
-    .home-screen h2 {
-      margin:0;
-      font-size:25px;
-      font-weight:850;
-    }
-
-    .home-screen p {
-      margin:8px 0 22px;
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.7;
-    }
-
-    .home-card {
-      padding:16px;
-      border:1px solid var(--border);
-      border-radius:17px;
-      background:rgba(15,23,42,.65);
-      text-align:left;
-    }
-
-    .home-card-title {
-      margin:0 0 7px;
-      font-size:15px;
-      font-weight:800;
-    }
-
-    .home-card-text {
-      margin:0 !important;
-      color:var(--muted);
-      font-size:12px !important;
-      line-height:1.7;
-    }
-
-    .logout-button {
-      margin-top:16px;
-      width:100%;
-      min-height:44px;
-      border:1px solid rgba(251,113,133,.5);
-      border-radius:13px;
-      background:rgba(225,29,72,.12);
-      color:#fecdd3;
-      font-size:13px;
-      font-weight:800;
-    }
-
-    .footer {
-      margin-top:14px;
-      color:#64748b;
-      font-size:11px;
-      line-height:1.5;
-      text-align:center;
-    }
-
-    .footer strong {
-      color:#94a3b8;
-    }
-
-    @media (max-height:700px) {
-      body {
-        align-items:flex-start;
-        padding-top:10px;
-      }
-
-      .card {
-        padding-top:13px;
-      }
-
-      .logo {
-        width:82px;
-        height:82px;
-      }
-
-      .brand {
-        margin-bottom:11px;
-      }
-
-      .brand h1 {
-        font-size:21px;
-      }
-
-      .progress {
-        margin-bottom:13px;
-      }
-
-      .field {
-        margin-bottom:9px;
-      }
-
-      .input-box {
-        min-height:43px;
-      }
-
-      .main-button {
-        min-height:43px;
-      }
-    }
-  </style>
+}
+</style>
 </head>
 
 <body>
-  <main class="app">
-    <section class="card">
 
-      <div class="logo" id="logoBox">
-        <img src="logo.png" alt="OTP Service Logo">
-      </div>
+<div id="game">
 
-      <div class="brand" id="brandBox">
-        <h1>OTP Service</h1>
-        <p>បង្កើតគណនីរបស់អ្នកដោយសុវត្ថិភាព</p>
-      </div>
+    <div id="world">
 
-      <div class="progress" id="progressBox">
-        <div class="progress-item active"></div>
-        <div class="progress-item"></div>
-        <div class="progress-item"></div>
-      </div>
+        <div id="sun"></div>
 
-      <!-- HOME SCREEN -->
-      <section class="home-screen" id="homeScreen">
-        <div class="home-icon">🏠</div>
+        <div class="cloud" style="left:12%;top:16%;"></div>
+        <div class="cloud" style="left:48%;top:10%;"></div>
 
-        <h2>សូមស្វាគមន៍</h2>
+        <div class="mountain m1"></div>
+        <div class="mountain m2"></div>
+        <div class="mountain m3"></div>
 
-        <p>
-          អ្នកបានចូលក្នុង App ដោយជោគជ័យ។<br>
-          នេះជាផ្ទាំង Home របស់អ្នក។
-        </p>
+        <div id="river"></div>
 
-        <div class="home-card">
-          <h3 class="home-card-title">🏡 Home</h3>
+        <div class="field f1"></div>
+        <div class="field f2"></div>
+        <div class="field f3"></div>
+        <div class="field f4"></div>
 
-          <p class="home-card-text">
-            ពេលនេះ App បង្ហាញតែ Home សិន។<br>
-            មុខងារ Code, Chats និង Settings អាចបន្ថែមនៅពេលក្រោយ។
-          </p>
+        <div class="tree t1">
+            <div class="leaf"></div>
+            <div class="trunk"></div>
         </div>
 
-        <button class="logout-button" id="logoutButton">
-          ចាកចេញ
-        </button>
-      </section>
-
-      <!-- STEP 1 -->
-      <section class="step active" id="step1">
-        <h2 class="step-title">បង្កើតគណនី</h2>
-
-        <p class="step-description">
-          បញ្ចូល Gmail របស់អ្នក ដើម្បីចាប់ផ្ដើមបង្កើតគណនីថ្មី។
-        </p>
-
-        <div class="field">
-          <label for="email">Gmail / Email</label>
-
-          <div class="input-box">
-            <div class="icon-circle">G</div>
-
-            <input
-              id="email"
-              type="email"
-              autocomplete="email"
-              placeholder="បញ្ចូល Gmail របស់អ្នក"
-            >
-          </div>
+        <div class="tree t2">
+            <div class="leaf"></div>
+            <div class="trunk"></div>
         </div>
 
-        <button class="main-button" id="emailNext">
-          បន្តទៅមុខ
-        </button>
-
-        <div class="message" id="emailMessage"></div>
-      </section>
-
-      <!-- STEP 2 -->
-      <section class="step" id="step2">
-        <h2 class="step-title">បង្កើត Password</h2>
-
-        <p class="step-description">
-          បង្កើត Password ដែលពិបាកទាយ និងងាយចងចាំសម្រាប់អ្នក។
-        </p>
-
-        <div class="field">
-          <label for="password">Password</label>
-
-          <div class="input-box">
-            <div class="field-icon">🔒</div>
-
-            <input
-              id="password"
-              type="password"
-              autocomplete="new-password"
-              placeholder="បញ្ចូល Password"
-            >
-
-            <button
-              class="password-toggle"
-              id="togglePassword"
-              type="button"
-            >
-              ◉
-            </button>
-          </div>
+        <div class="tree t3">
+            <div class="leaf"></div>
+            <div class="trunk"></div>
         </div>
 
-        <div class="field">
-          <label for="confirmPassword">
-            បញ្ជាក់ Password ម្ដងទៀត
-          </label>
-
-          <div class="input-box">
-            <div class="field-icon">🔒</div>
-
-            <input
-              id="confirmPassword"
-              type="password"
-              autocomplete="new-password"
-              placeholder="បញ្ចូល Password ម្ដងទៀត"
-            >
-          </div>
+        <div class="tree t4">
+            <div class="leaf"></div>
+            <div class="trunk"></div>
         </div>
 
-        <button class="main-button" id="passwordNext">
-          បង្កើតគណនី និងផ្ញើ Gmail
-        </button>
+        <div class="house h1"></div>
+        <div class="house h2"></div>
 
-        <button class="secondary-button" data-back="1">
-          ត្រឡប់ក្រោយ
-        </button>
+        <div id="ground"></div>
 
-        <div class="message" id="passwordMessage"></div>
+        <div id="blocks">
+            <div class="block grass" style="left:0;bottom:0;"></div>
+            <div class="block grass" style="left:45px;bottom:0;"></div>
+            <div class="block grass" style="left:90px;bottom:0;"></div>
+            <div class="block grass" style="left:135px;bottom:0;"></div>
 
-        <div class="requirements" id="requirements">
-          <button
-            class="requirements-button"
-            id="requirementsButton"
-            type="button"
-          >
-            <span>លក្ខខណ្ឌ Password</span>
-            <span id="requirementsArrow">⌄</span>
-          </button>
+            <div class="block stone" style="left:10%;bottom:45px;"></div>
+            <div class="block stone" style="left:calc(10% + 45px);bottom:45px;"></div>
 
-          <div class="requirements-content">
-            <div class="requirement">
-              <span>○</span>
-              <span>យ៉ាងតិច 8 តួអក្សរ</span>
-            </div>
-
-            <div class="requirement">
-              <span>○</span>
-              <span>មានអក្សរធំ A-Z</span>
-            </div>
-
-            <div class="requirement">
-              <span>○</span>
-              <span>មានលេខ 0-9</span>
-            </div>
-
-            <div class="requirement">
-              <span>○</span>
-              <span>មានសញ្ញាពិសេស ! @ #</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- STEP 3 -->
-      <section class="step" id="step3">
-        <div class="verify-icon">✉️</div>
-
-        <h2 class="step-title">ពិនិត្យ Gmail របស់អ្នក</h2>
-
-        <p class="step-description">
-          យើងបានផ្ញើតំណ Verify Email ទៅ Gmail របស់អ្នកហើយ។
-          សូមបើក Gmail ហើយចុចលើតំណ Verify Email។
-        </p>
-
-        <div class="demo-code" id="verifyEmailText">
-          សូមពិនិត្យ Inbox ឬ Spam ក្នុង Gmail របស់អ្នក។
+            <div class="block sand" style="right:18%;bottom:45px;"></div>
+            <div class="block wood" style="right:calc(18% + 45px);bottom:45px;"></div>
         </div>
 
-        <button class="main-button" id="checkEmailVerified">
-          ខ្ញុំបាន Verify Gmail រួចហើយ
-        </button>
-
-        <button class="secondary-button" id="resendEmail">
-          ផ្ញើ Email ម្ដងទៀត
-        </button>
-
-        <div class="message" id="emailVerifyMessage"></div>
-      </section>
-
-      <div class="footer" id="footerBox">
-        <strong>OTP Service</strong><br>
-        Powered by Firebase Authentication.
-      </div>
-    </section>
-  </main>
-
- 
-
-  <!-- Firebase Compat SDK -->
-  <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDu6OVVvrJAlX_HeycHpWzBxfefktAjhrc",
-      authDomain: "my-otp-app-c3640.firebaseapp.com",
-      projectId: "my-otp-app-c3640",
-      storageBucket: "my-otp-app-c3640.firebasestorage.app",
-      messagingSenderId: "201457460660",
-      appId: "1:201457460660:web:68aaf3e34d2be1fc47fee1",
-      measurementId: "G-XTXDGKW9H2"
-    };
-
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-
-    const auth = firebase.auth();
-
-    auth.useDeviceLanguage();
-
-    let currentStep = 0;
-    let loginMode = false;
-
-    const steps = [
-      document.getElementById("step1"),
-      document.getElementById("step2"),
-      document.getElementById("step3")
-    ];
-
-    const progressItems =
-      document.querySelectorAll(".progress-item");
-
-    const email =
-      document.getElementById("email");
-
-    const password =
-      document.getElementById("password");
-
-    const confirmPassword =
-      document.getElementById("confirmPassword");
-
-    const emailMessage =
-      document.getElementById("emailMessage");
-
-    const passwordMessage =
-      document.getElementById("passwordMessage");
-
-    const emailVerifyMessage =
-      document.getElementById("emailVerifyMessage");
-
-    const requirements =
-      document.getElementById("requirements");
-
-    const requirementsArrow =
-      document.getElementById("requirementsArrow");
-
-    const homeScreen =
-      document.getElementById("homeScreen");
-
-    const logoBox =
-      document.getElementById("logoBox");
-
-    const brandBox =
-      document.getElementById("brandBox");
-
-    const progressBox =
-      document.getElementById("progressBox");
-
-    const footerBox =
-      document.getElementById("footerBox");
-
-    const emailNext =
-      document.getElementById("emailNext");
-
-    const passwordNext =
-      document.getElementById("passwordNext");
-
-    function showMessage(element, text, type = "error") {
-      element.textContent = text;
-      element.className = "message show " + type;
-    }
-
-    function clearMessage(element) {
-      element.textContent = "";
-      element.className = "message";
-    }
-
-    function goToStep(index) {
-      currentStep = index;
-
-      homeScreen.classList.remove("active");
-
-      logoBox.style.display = "flex";
-      brandBox.style.display = "block";
-      progressBox.style.display = "grid";
-      footerBox.style.display = "block";
-
-      steps.forEach(function(step, i) {
-        step.classList.toggle("active", i === index);
-      });
-
-      progressItems.forEach(function(item, i) {
-        item.classList.toggle("active", i <= index);
-      });
-
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    }
-
-    function showHomeScreen() {
-      steps.forEach(function(step) {
-        step.classList.remove("active");
-      });
-
-      logoBox.style.display = "none";
-      brandBox.style.display = "none";
-      progressBox.style.display = "none";
-      footerBox.style.display = "none";
-
-      homeScreen.classList.add("active");
-
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    }
-
-    function resetToCreateMode() {
-      loginMode = false;
-
-      document.querySelector("#step2 .step-title").textContent =
-        "បង្កើត Password";
-
-      document.querySelector("#step2 .step-description").textContent =
-        "បង្កើត Password ដែលពិបាកទាយ និងងាយចងចាំសម្រាប់អ្នក។";
-
-      passwordNext.style.display = "block";
-
-      const loginSubmit =
-        document.getElementById("loginSubmit");
-
-      if (loginSubmit) {
-        loginSubmit.style.display = "none";
-      }
-
-      password.setAttribute("autocomplete", "new-password");
-      confirmPassword.setAttribute("autocomplete", "new-password");
-
-      clearMessage(passwordMessage);
-    }
-
-    function validEmail(value) {
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-    }
-
-    function firebaseError(error) {
-      console.error("Firebase error code:", error.code);
-      console.error("Firebase error message:", error.message);
-
-      const messages = {
-        "auth/invalid-api-key":
-          "Firebase API Key មិនត្រឹមត្រូវ។",
-
-        "auth/api-key-not-valid":
-          "Firebase API Key មិនអាចប្រើបាន។",
-
-        "auth/operation-not-allowed":
-          "សូមបើក Email/Password Authentication ក្នុង Firebase។",
-
-        "auth/unauthorized-domain":
-          "Domain របស់ Website មិនទាន់បានអនុញ្ញាតក្នុង Firebase។",
-
-        "auth/invalid-email":
-          "Gmail មិនត្រឹមត្រូវទេ។",
-
-        "auth/email-already-in-use":
-          "Gmail នេះមានគណនីរួចហើយ។ សូមចុច «ចូលគណនីដែលមានស្រាប់»។",
-
-        "auth/weak-password":
-          "Password ខ្សោយពេក។",
-
-        "auth/network-request-failed":
-          "មានបញ្ហាអ៊ីនធឺណិត។",
-
-        "auth/too-many-requests":
-          "ស្នើច្រើនដងពេក។ សូមរង់ចាំមុនសិន។",
-
-        "auth/wrong-password":
-          "Gmail ឬ Password មិនត្រឹមត្រូវទេ។",
-
-        "auth/invalid-credential":
-          "Gmail ឬ Password មិនត្រឹមត្រូវទេ។",
-
-        "auth/user-not-found":
-          "រកមិនឃើញគណនីនេះទេ។",
-
-        "auth/user-disabled":
-          "គណនីនេះត្រូវបានបិទ។",
-
-        "auth/requires-recent-login":
-          "សូមចូលគណនីឡើងវិញ។"
-      };
-
-      return messages[error.code] ||
-        "មានបញ្ហា: " +
-        (error.code || error.message || "Unknown error");
-    }
-
-    /*
-      បន្ថែមប៊ូតុង Login ដោយមិនប្ដូររាងដើម
-    */
-
-    const loginButton =
-      document.createElement("button");
-
-    loginButton.className = "secondary-button";
-    loginButton.id = "loginButton";
-    loginButton.type = "button";
-    loginButton.textContent = "ចូលគណនីដែលមានស្រាប់";
-
-    emailNext.insertAdjacentElement(
-      "afterend",
-      loginButton
-    );
-
-    /*
-      ប៊ូតុង Login នៅ Step 2
-    */
-
-    const loginSubmit =
-      document.createElement("button");
-
-    loginSubmit.className = "secondary-button";
-    loginSubmit.id = "loginSubmit";
-    loginSubmit.type = "button";
-    loginSubmit.textContent = "ចូលគណនី";
-    loginSubmit.style.display = "none";
-
-    passwordNext.insertAdjacentElement(
-      "afterend",
-      loginSubmit
-    );
-
-    /*
-      ប៊ូតុង Forgot Password
-    */
-
-    const resetPasswordButton =
-      document.createElement("button");
-
-    resetPasswordButton.className = "secondary-button";
-    resetPasswordButton.id = "resetPasswordButton";
-    resetPasswordButton.type = "button";
-    resetPasswordButton.textContent = "ភ្លេច Password?";
-
-    loginSubmit.insertAdjacentElement(
-      "afterend",
-      resetPasswordButton
-    );
-
-    /*
-      Step 1: Email
-    */
-
-    emailNext.addEventListener("click", function() {
-      clearMessage(emailMessage);
-
-      const emailValue = email.value.trim();
-
-      if (!validEmail(emailValue)) {
-        showMessage(
-          emailMessage,
-          "សូមបញ្ចូល Gmail / Email ឲ្យបានត្រឹមត្រូវ។"
-        );
-
-        email.focus();
-        return;
-      }
-
-      resetToCreateMode();
-      goToStep(1);
-    });
-
-    /*
-      ចូលគណនីដែលមានស្រាប់
-    */
-
-    loginButton.addEventListener("click", function() {
-      clearMessage(emailMessage);
-
-      const emailValue = email.value.trim();
-
-      if (!validEmail(emailValue)) {
-        showMessage(
-          emailMessage,
-          "សូមបញ្ចូល Gmail របស់អ្នកជាមុនសិន។"
-        );
-
-        email.focus();
-        return;
-      }
-
-      loginMode = true;
-
-      document.querySelector("#step2 .step-title").textContent =
-        "ចូលគណនី";
-
-      document.querySelector("#step2 .step-description").textContent =
-        "បញ្ចូល Password របស់គណនីដែលមានស្រាប់។";
-
-      passwordNext.style.display = "none";
-      loginSubmit.style.display = "block";
-
-      password.setAttribute("autocomplete", "current-password");
-      confirmPassword.value = "";
-      confirmPassword.style.display = "none";
-
-      const confirmField =
-        confirmPassword.closest(".field");
-
-      if (confirmField) {
-        confirmField.style.display = "none";
-      }
-
-      clearMessage(passwordMessage);
-
-      goToStep(1);
-    });
-
-    /*
-      បង្កើតគណនីថ្មី
-    */
-
-    passwordNext.addEventListener("click", async function() {
-      clearMessage(passwordMessage);
-
-      const emailValue = email.value.trim();
-      const passwordValue = password.value;
-      const confirmValue = confirmPassword.value;
-
-      if (!validEmail(emailValue)) {
-        showMessage(
-          passwordMessage,
-          "សូមបញ្ចូល Gmail ឲ្យបានត្រឹមត្រូវ។"
-        );
-
-        goToStep(0);
-        return;
-      }
-
-      const valid =
-        passwordValue.length >= 8 &&
-        /[A-Z]/.test(passwordValue) &&
-        /[0-9]/.test(passwordValue) &&
-        /[^A-Za-z0-9]/.test(passwordValue);
-
-      if (!valid) {
-        showMessage(
-          passwordMessage,
-          "Password ត្រូវមាន 8 តួ មានអក្សរធំ លេខ និងសញ្ញាពិសេស។"
-        );
-
-        requirements.classList.add("open");
-        requirementsArrow.textContent = "⌃";
-        return;
-      }
-
-      if (passwordValue !== confirmValue) {
-        showMessage(
-          passwordMessage,
-          "Password ទាំងពីរមិនដូចគ្នាទេ។"
-        );
-
-        return;
-      }
-
-      try {
-        passwordNext.disabled = true;
-        passwordNext.textContent = "កំពុងបង្កើតគណនី...";
-
-        const result =
-          await auth.createUserWithEmailAndPassword(
-            emailValue,
-            passwordValue
-          );
-
-        const user = result.user;
-
-        await user.sendEmailVerification();
-
-        document.getElementById(
-          "verifyEmailText"
-        ).textContent =
-          "បានផ្ញើ Verify Email ទៅ: " + emailValue;
-
-        showMessage(
-          passwordMessage,
-          "បង្កើតគណនីបានហើយ។ សូមពិនិត្យ Gmail របស់អ្នក។",
-          "success"
-        );
-
-        goToStep(2);
-
-      } catch (error) {
-        showMessage(
-          passwordMessage,
-          firebaseError(error)
-        );
-
-      } finally {
-        passwordNext.disabled = false;
-        passwordNext.textContent =
-          "បង្កើតគណនី និងផ្ញើ Gmail";
-      }
-    });
-
-    /*
-      Login
-    */
-
-    loginSubmit.addEventListener("click", async function() {
-      clearMessage(passwordMessage);
-
-      const emailValue = email.value.trim();
-      const passwordValue = password.value;
-
-      if (!validEmail(emailValue)) {
-        showMessage(
-          passwordMessage,
-          "សូមបញ្ចូល Gmail ឲ្យបានត្រឹមត្រូវ។"
-        );
-
-        goToStep(0);
-        return;
-      }
-
-      if (!passwordValue) {
-        showMessage(
-          passwordMessage,
-          "សូមបញ្ចូល Password។"
-        );
-
-        password.focus();
-        return;
-      }
-
-      try {
-        loginSubmit.disabled = true;
-        loginSubmit.textContent = "កំពុងចូលគណនី...";
-
-        const result =
-          await auth.signInWithEmailAndPassword(
-            emailValue,
-            passwordValue
-          );
-
-        const user = result.user;
-
-        await user.reload();
-
-        if (!user.emailVerified) {
-          document.getElementById(
-            "verifyEmailText"
-          ).textContent =
-            "Gmail របស់អ្នកមិនទាន់ Verify: " + emailValue;
-
-          showMessage(
-            passwordMessage,
-            "គណនីនេះមិនទាន់ Verify Gmail ទេ។ សូមពិនិត្យ Gmail របស់អ្នក។"
-          );
-
-          goToStep(2);
-          return;
-        }
-
-        showHomeScreen();
-
-      } catch (error) {
-        showMessage(
-          passwordMessage,
-          firebaseError(error)
-        );
-
-      } finally {
-        loginSubmit.disabled = false;
-        loginSubmit.textContent = "ចូលគណនី";
-      }
-    });
-
-    /*
-      Forgot Password
-    */
-
-    resetPasswordButton.addEventListener("click", async function() {
-      clearMessage(passwordMessage);
-
-      const emailValue = email.value.trim();
-
-      if (!validEmail(emailValue)) {
-        showMessage(
-          passwordMessage,
-          "សូមបញ្ចូល Gmail របស់អ្នកជាមុនសិន។"
-        );
-
-        goToStep(0);
-        return;
-      }
-
-      try {
-        resetPasswordButton.disabled = true;
-        resetPasswordButton.textContent = "កំពុងផ្ញើ...";
-
-        await auth.sendPasswordResetEmail(emailValue);
-
-        showMessage(
-          passwordMessage,
-          "បានផ្ញើតំណកំណត់ Password ថ្មីទៅ Gmail របស់អ្នកហើយ។",
-          "success"
-        );
-
-      } catch (error) {
-        showMessage(
-          passwordMessage,
-          firebaseError(error)
-        );
-
-      } finally {
-        resetPasswordButton.disabled = false;
-        resetPasswordButton.textContent = "ភ្លេច Password?";
-      }
-    });
-
-    /*
-      Back button
-    */
-
-    document
-      .querySelectorAll("[data-back]")
-      .forEach(function(button) {
-        button.addEventListener("click", function() {
-          resetToCreateMode();
-
-          const confirmField =
-            confirmPassword.closest(".field");
-
-          if (confirmField) {
-            confirmField.style.display = "block";
-          }
-
-          confirmPassword.style.display = "block";
-
-          goToStep(
-            Math.max(
-              0,
-              Number(button.dataset.back) - 1
-            )
-          );
-        });
-      });
-
-    /*
-      Password requirements
-    */
-
-    document
-      .getElementById("requirementsButton")
-      .addEventListener("click", function() {
-        requirements.classList.toggle("open");
-
-        requirementsArrow.textContent =
-          requirements.classList.contains("open")
-            ? "⌃"
-            : "⌄";
-      });
-
-    /*
-      Show / Hide Password
-    */
-
-    document
-      .getElementById("togglePassword")
-      .addEventListener("click", function() {
-        const show = password.type === "password";
-
-        password.type = show ? "text" : "password";
-
-        if (confirmPassword.style.display !== "none") {
-          confirmPassword.type =
-            show ? "text" : "password";
-        }
-      });
-
-    /*
-      Check Email Verified
-    */
-
-    document
-      .getElementById("checkEmailVerified")
-      .addEventListener("click", async function() {
-        clearMessage(emailVerifyMessage);
-
-        const user = auth.currentUser;
-
-        if (!user) {
-          showMessage(
-            emailVerifyMessage,
-            "សូមបង្កើតគណនី ឬចូលគណនីជាមុនសិន។"
-          );
-
-          goToStep(0);
-          return;
-        }
-
-        try {
-          await user.reload();
-
-          if (user.emailVerified) {
-            showMessage(
-              emailVerifyMessage,
-              "Gmail ត្រូវបាន Verify ជោគជ័យ!",
-              "success"
-            );
-
-            setTimeout(function() {
-              showHomeScreen();
-            }, 700);
-
-          } else {
-            showMessage(
-              emailVerifyMessage,
-              "អ្នកមិនទាន់ចុច Verify Email នៅឡើយទេ។"
-            );
-          }
-
-        } catch (error) {
-          showMessage(
-            emailVerifyMessage,
-            firebaseError(error)
-          );
-        }
-      });
-
-    /*
-      Resend Email
-    */
-
-    document
-      .getElementById("resendEmail")
-      .addEventListener("click", async function() {
-        clearMessage(emailVerifyMessage);
-
-        const user = auth.currentUser;
-
-        if (!user) {
-          showMessage(
-            emailVerifyMessage,
-            "សូមបង្កើតគណនី ឬចូលគណនីជាមុនសិន។"
-          );
-
-          goToStep(0);
-          return;
-        }
-
-        const button =
-          document.getElementById("resendEmail");
-
-        try {
-          button.disabled = true;
-          button.textContent = "កំពុងផ្ញើ...";
-
-          await user.sendEmailVerification();
-
-          showMessage(
-            emailVerifyMessage,
-            "បានផ្ញើ Verify Email ម្ដងទៀតហើយ។",
-            "success"
-          );
-
-        } catch (error) {
-          showMessage(
-            emailVerifyMessage,
-            firebaseError(error)
-          );
-
-        } finally {
-          button.disabled = false;
-          button.textContent = "ផ្ញើ Email ម្ដងទៀត";
-        }
-      });
-
-    /*
-      Logout
-    */
-
-    document
-      .getElementById("logoutButton")
-      .addEventListener("click", async function() {
-        try {
-          await auth.signOut();
-
-          loginMode = false;
-
-          homeScreen.classList.remove("active");
-
-          logoBox.style.display = "flex";
-          brandBox.style.display = "block";
-          progressBox.style.display = "grid";
-          footerBox.style.display = "block";
-
-          email.value = "";
-          password.value = "";
-          confirmPassword.value = "";
-
-          const confirmField =
-            confirmPassword.closest(".field");
-
-          if (confirmField) {
-            confirmField.style.display = "block";
-          }
-
-          confirmPassword.style.display = "block";
-
-          resetToCreateMode();
-
-          clearMessage(emailMessage);
-          clearMessage(passwordMessage);
-          clearMessage(emailVerifyMessage);
-
-          goToStep(0);
-
-        } catch (error) {
-          console.error("Logout error:", error);
-        }
-      });
-
-    /*
-      Auto Login
-    */
-
-    auth.onAuthStateChanged(function(user) {
-      if (user && user.emailVerified) {
-        showHomeScreen();
-      }
-    });
-  </script>
+        <div id="player">
+            <div class="head"></div>
+            <div class="body"></div>
+        </div>
+
+    </div>
+
+    <div id="topbar">
+        <div id="title">⛏️ MINE</div>
+        <div id="stats">
+            <span>❤️ 100</span>
+            <span>☀️ Day</span>
+        </div>
+    </div>
+
+    <div id="joystick">
+        <button class="joyButton" id="left">◀</button>
+        <button class="joyButton" id="right">▶</button>
+        <button class="joyButton" id="up">▲</button>
+        <button class="joyButton" id="down">▼</button>
+    </div>
+
+    <div id="inventory">
+        <div class="slot selected">🟫</div>
+        <div class="slot">🪨</div>
+        <div class="slot">🪵</div>
+        <div class="slot">🟨</div>
+    </div>
+
+    <div id="actions">
+        <button class="action">⛏️</button>
+        <button class="action">🧱</button>
+    </div>
+
+    <div id="portrait">
+        📱<br><br>
+        សូមបង្វិលទូរសព្ទផ្ដេក<br>
+        ដើម្បីលេង Mine
+    </div>
+
+</div>
+
+<script>
+const player = document.getElementById("player");
+
+let x = 50;
+let y = 35;
+
+function updatePlayer(){
+    player.style.left = x + "%";
+    player.style.bottom = y + "%";
+}
+
+function moveLeft(){
+    x = Math.max(3,x-2);
+    updatePlayer();
+}
+
+function moveRight(){
+    x = Math.min(97,x+2);
+    updatePlayer();
+}
+
+function jump(){
+    player.style.bottom = (y+8) + "%";
+
+    setTimeout(()=>{
+        player.style.bottom = y + "%";
+    },300);
+}
+
+document.getElementById("left").addEventListener("click",moveLeft);
+document.getElementById("right").addEventListener("click",moveRight);
+document.getElementById("up").addEventListener("click",jump);
+
+document.addEventListener("keydown",e=>{
+    if(e.key==="ArrowLeft" || e.key==="a") moveLeft();
+    if(e.key==="ArrowRight" || e.key==="d") moveRight();
+    if(e.key==="ArrowUp" || e.key===" ") jump();
+});
+
+updatePlayer();
+</script>
 
 </body>
 </html>
