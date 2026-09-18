@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html lang="km">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Mine</title>
+
+<meta name="viewport"
+      content="width=device-width,
+      initial-scale=1,
+      maximum-scale=1,
+      user-scalable=no">
+
+<title>Mine - Cambodia</title>
 
 <style>
 *{
@@ -17,418 +23,267 @@ html,body{
     width:100%;
     height:100%;
     overflow:hidden;
-    background:#82cef1;
+    background:#87ceeb;
     font-family:Arial,sans-serif;
 }
 
 #game{
-    position:relative;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:#82cef1;
-}
-
-#world{
-    position:absolute;
+    position:fixed;
     inset:0;
     overflow:hidden;
-    background:linear-gradient(
-        #75c8ef 0%,
-        #b8e8fa 55%,
-        #dceff5 100%
-    );
 }
 
-/* Sun */
-#sun{
+canvas{
+    display:block;
+}
+
+/* ================= TOP UI ================= */
+
+#mapBox{
     position:absolute;
-    width:65px;
-    height:65px;
-    right:7%;
-    top:10%;
-    border-radius:50%;
-    background:#ffd84d;
-    box-shadow:0 0 30px rgba(255,216,77,.6);
-}
-
-/* Clouds */
-.cloud{
-    position:absolute;
-    width:95px;
-    height:25px;
-    background:rgba(255,255,255,.75);
-    border-radius:30px;
-}
-
-.cloud:before,
-.cloud:after{
-    content:"";
-    position:absolute;
-    background:rgba(255,255,255,.75);
-    border-radius:50%;
-}
-
-.cloud:before{
-    width:42px;
-    height:42px;
-    left:15px;
-    top:-20px;
-}
-
-.cloud:after{
-    width:35px;
-    height:35px;
-    right:15px;
-    top:-14px;
-}
-
-/* Mountains */
-.mountain{
-    position:absolute;
-    bottom:32%;
-    width:0;
-    height:0;
-    border-left:110px solid transparent;
-    border-right:110px solid transparent;
-    border-bottom:190px solid #71947d;
-    opacity:.8;
-}
-
-.mountain.m1{left:8%;}
-.mountain.m2{
-    left:38%;
-    border-left-width:145px;
-    border-right-width:145px;
-    border-bottom-width:230px;
-}
-.mountain.m3{right:4%;}
-
-/* Ground */
-#ground{
-    position:absolute;
-    left:0;
-    right:0;
-    bottom:0;
-    height:34%;
-    background:#93613f;
-    border-top:12px solid #55a83c;
-}
-
-/* Grass texture */
-#ground:before{
-    content:"";
-    position:absolute;
-    left:0;
-    right:0;
-    top:-12px;
-    height:12px;
-    background:#69c847;
-}
-
-/* River */
-#river{
-    position:absolute;
-    left:0;
-    right:0;
-    bottom:19%;
-    height:12%;
-    background:#43a9dd;
-    transform:skewY(-2deg);
-    box-shadow:0 5px 0 rgba(255,255,255,.15) inset;
-}
-
-/* Rice field */
-.field{
-    position:absolute;
-    bottom:35%;
-    width:105px;
-    height:70px;
-    background:#b6c94b;
-    border:5px solid #83a53c;
-    transform:skewX(-8deg);
-}
-
-.field.f1{left:9%;}
-.field.f2{left:27%;}
-.field.f3{right:27%;}
-.field.f4{right:8%;}
-
-/* Trees */
-.tree{
-    position:absolute;
-    bottom:34%;
-    width:30px;
-    height:85px;
-}
-
-.tree .trunk{
-    position:absolute;
-    bottom:0;
-    left:11px;
-    width:9px;
-    height:42px;
-    background:#75452c;
-}
-
-.tree .leaf{
-    position:absolute;
-    left:-12px;
-    top:0;
-    width:55px;
-    height:55px;
-    border-radius:50%;
-    background:#2f913b;
-    box-shadow:
-        18px -10px 0 #3ca344,
-        25px 14px 0 #267f34;
-}
-
-.tree.t1{left:5%;}
-.tree.t2{left:20%;transform:scale(.8);}
-.tree.t3{right:17%;transform:scale(1.1);}
-.tree.t4{right:5%;transform:scale(.75);}
-
-/* Small village */
-.house{
-    position:absolute;
-    bottom:34%;
-    width:85px;
-    height:62px;
-    background:#d39a61;
-    border:4px solid #70452f;
-}
-
-.house:before{
-    content:"";
-    position:absolute;
-    left:-9px;
-    top:-45px;
-    width:95px;
-    height:55px;
-    background:#a84432;
-    clip-path:polygon(50% 0,100% 100%,0 100%);
-}
-
-.house:after{
-    content:"";
-    position:absolute;
-    left:34px;
-    bottom:0;
-    width:20px;
-    height:35px;
-    background:#65412e;
-}
-
-.house.h1{left:43%;}
-.house.h2{
-    left:55%;
-    transform:scale(.8);
-}
-
-/* Blocks */
-#blocks{
-    position:absolute;
-    left:0;
-    right:0;
-    bottom:0;
-    height:30%;
-}
-
-.block{
-    position:absolute;
-    width:45px;
-    height:45px;
-    border:2px solid rgba(0,0,0,.16);
-    border-radius:3px;
-}
-
-.block.dirt{background:#93613f;}
-.block.stone{background:#858585;}
-.block.grass{
-    background:linear-gradient(
-        #62bd43 0 23%,
-        #93613f 23% 100%
-    );
-}
-.block.sand{background:#d9c078;}
-.block.wood{background:#8a542f;}
-
-/* Player */
-#player{
-    position:absolute;
-    z-index:20;
-    width:42px;
-    height:70px;
-    left:50%;
-    bottom:35%;
-    transform:translateX(-50%);
-}
-
-.head{
-    width:38px;
-    height:38px;
-    margin:auto;
-    border-radius:8px;
-    background:#e9b47d;
-    border:2px solid #824f32;
-    position:relative;
-}
-
-.head:before,
-.head:after{
-    content:"";
-    position:absolute;
-    top:14px;
-    width:5px;
-    height:5px;
-    background:#222;
-    border-radius:50%;
-}
-
-.head:before{left:8px;}
-.head:after{right:8px;}
-
-.body{
-    width:31px;
-    height:31px;
-    margin:-1px auto 0;
-    background:#3978c9;
-    border-radius:5px 5px 8px 8px;
-}
-
-/* Top UI */
-#topbar{
-    position:absolute;
-    z-index:50;
     top:12px;
     left:12px;
+    width:155px;
+    height:125px;
+    z-index:20;
+    padding:8px;
+    border-radius:15px;
+    background:rgba(25,45,55,.72);
+    color:white;
+    backdrop-filter:blur(8px);
+}
+
+#mapTitle{
+    font-size:17px;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+#miniMap{
+    width:100%;
+    height:70px;
+    border-radius:8px;
+    background:
+        linear-gradient(135deg,#4d9b4d 25%,#6db65a 25% 50%,#478e4b 50% 75%,#6aaa52 75%);
+    position:relative;
+    overflow:hidden;
+}
+
+#mapPlayer{
+    position:absolute;
+    width:10px;
+    height:10px;
+    background:white;
+    border-radius:50%;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    box-shadow:0 0 5px #fff;
+}
+
+#coords{
+    font-size:11px;
+    margin-top:5px;
+}
+
+/* ================= TOP RIGHT ================= */
+
+#status{
+    position:absolute;
+    z-index:20;
+    top:12px;
     right:12px;
-    height:54px;
-    padding:0 15px;
     display:flex;
     align-items:center;
-    justify-content:space-between;
-    border-radius:17px;
-    background:rgba(255,255,255,.72);
-    backdrop-filter:blur(10px);
-    box-shadow:0 4px 18px rgba(0,0,0,.12);
-}
-
-#title{
-    font-size:21px;
-    font-weight:800;
-    color:#24343b;
-}
-
-#stats{
-    display:flex;
-    gap:12px;
-    font-size:14px;
-    font-weight:bold;
-}
-
-/* Controls */
-#joystick{
-    position:absolute;
-    z-index:60;
-    left:18px;
-    bottom:20px;
-    width:115px;
-    height:115px;
-    border-radius:50%;
-    background:rgba(255,255,255,.25);
-    border:2px solid rgba(255,255,255,.45);
-}
-
-.joyButton{
-    position:absolute;
-    width:48px;
-    height:48px;
-    border:0;
-    border-radius:50%;
-    background:rgba(35,35,35,.68);
-    color:#fff;
-    font-size:21px;
-}
-
-#left{left:4px;top:33px;}
-#right{right:4px;top:33px;}
-#up{left:33px;top:4px;}
-#down{left:33px;bottom:4px;}
-
-#actions{
-    position:absolute;
-    z-index:60;
-    right:18px;
-    bottom:20px;
-    display:flex;
     gap:10px;
 }
 
-.action{
-    width:58px;
-    height:58px;
-    border:0;
-    border-radius:18px;
-    background:rgba(40,40,40,.75);
+.statusBox{
+    padding:8px 12px;
+    border-radius:13px;
+    background:rgba(30,40,45,.72);
     color:white;
-    font-size:26px;
-    box-shadow:0 4px 12px rgba(0,0,0,.2);
+    font-weight:bold;
+    backdrop-filter:blur(8px);
 }
 
-.action:active,
-.joyButton:active{
+#pause{
+    width:48px;
+    height:48px;
+    border:0;
+    border-radius:14px;
+    background:rgba(255,255,255,.72);
+    font-size:22px;
+}
+
+/* ================= CROSSHAIR ================= */
+
+#crosshair{
+    position:absolute;
+    z-index:15;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    width:24px;
+    height:24px;
+    pointer-events:none;
+}
+
+#crosshair:before,
+#crosshair:after{
+    content:"";
+    position:absolute;
+    background:white;
+    box-shadow:0 0 2px #000;
+}
+
+#crosshair:before{
+    width:2px;
+    height:24px;
+    left:11px;
+}
+
+#crosshair:after{
+    width:24px;
+    height:2px;
+    top:11px;
+}
+
+/* ================= LEFT CONTROLS ================= */
+
+#movement{
+    position:absolute;
+    z-index:30;
+    left:22px;
+    bottom:24px;
+    width:145px;
+    height:145px;
+}
+
+.move{
+    position:absolute;
+    width:52px;
+    height:52px;
+    border:1px solid rgba(255,255,255,.35);
+    border-radius:14px;
+    background:rgba(45,55,60,.62);
+    color:white;
+    font-size:23px;
+    backdrop-filter:blur(5px);
+}
+
+.move:active,
+.action:active{
     transform:scale(.9);
 }
 
-/* Inventory */
-#inventory{
+#forward{
+    left:46px;
+    top:0;
+}
+
+#back{
+    left:46px;
+    bottom:0;
+}
+
+#left{
+    left:0;
+    top:46px;
+}
+
+#right{
+    right:0;
+    top:46px;
+}
+
+/* ================= RIGHT ACTIONS ================= */
+
+#actions{
     position:absolute;
-    z-index:55;
+    z-index:30;
+    right:22px;
+    bottom:25px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    align-items:center;
+}
+
+.action{
+    width:65px;
+    height:65px;
+    border:1px solid rgba(255,255,255,.35);
+    border-radius:50%;
+    background:rgba(45,55,60,.65);
+    color:white;
+    font-size:27px;
+    backdrop-filter:blur(6px);
+}
+
+#jump{
+    font-size:30px;
+}
+
+/* ================= HOTBAR ================= */
+
+#hotbar{
+    position:absolute;
+    z-index:35;
     left:50%;
     bottom:18px;
     transform:translateX(-50%);
     display:flex;
-    gap:6px;
+    gap:5px;
     padding:7px;
-    border-radius:15px;
-    background:rgba(30,30,30,.7);
+    border-radius:13px;
+    background:rgba(25,30,33,.82);
 }
 
 .slot{
-    width:47px;
-    height:47px;
-    border:2px solid rgba(255,255,255,.25);
-    border-radius:9px;
+    width:53px;
+    height:53px;
+    border:2px solid #52606a;
+    border-radius:8px;
+    background:#171b1e;
     display:flex;
     align-items:center;
     justify-content:center;
-    background:rgba(255,255,255,.1);
-    font-size:24px;
+    position:relative;
+    font-size:25px;
+    color:white;
 }
 
 .slot.selected{
     border-color:white;
+    box-shadow:0 0 0 2px rgba(255,255,255,.25);
 }
 
-/* Portrait warning */
+.number{
+    position:absolute;
+    right:4px;
+    bottom:2px;
+    font-size:11px;
+    color:white;
+}
+
+/* ================= PORTRAIT ================= */
+
 #portrait{
     display:none;
     position:absolute;
-    z-index:200;
+    z-index:100;
     inset:0;
     background:#20252a;
     color:white;
     align-items:center;
     justify-content:center;
     text-align:center;
-    padding:30px;
-    font-size:20px;
+    font-size:21px;
     font-weight:bold;
 }
 
-@media (orientation:portrait){
+@media(max-aspect-ratio:1/1){
     #portrait{
         display:flex;
     }
@@ -440,94 +295,83 @@ html,body{
 
 <div id="game">
 
-    <div id="world">
+    <div id="mapBox">
+        <div id="mapTitle">🇰🇭 Mine - Cambodia</div>
 
-        <div id="sun"></div>
-
-        <div class="cloud" style="left:12%;top:16%;"></div>
-        <div class="cloud" style="left:48%;top:10%;"></div>
-
-        <div class="mountain m1"></div>
-        <div class="mountain m2"></div>
-        <div class="mountain m3"></div>
-
-        <div id="river"></div>
-
-        <div class="field f1"></div>
-        <div class="field f2"></div>
-        <div class="field f3"></div>
-        <div class="field f4"></div>
-
-        <div class="tree t1">
-            <div class="leaf"></div>
-            <div class="trunk"></div>
+        <div id="miniMap">
+            <div id="mapPlayer"></div>
         </div>
 
-        <div class="tree t2">
-            <div class="leaf"></div>
-            <div class="trunk"></div>
-        </div>
-
-        <div class="tree t3">
-            <div class="leaf"></div>
-            <div class="trunk"></div>
-        </div>
-
-        <div class="tree t4">
-            <div class="leaf"></div>
-            <div class="trunk"></div>
-        </div>
-
-        <div class="house h1"></div>
-        <div class="house h2"></div>
-
-        <div id="ground"></div>
-
-        <div id="blocks">
-            <div class="block grass" style="left:0;bottom:0;"></div>
-            <div class="block grass" style="left:45px;bottom:0;"></div>
-            <div class="block grass" style="left:90px;bottom:0;"></div>
-            <div class="block grass" style="left:135px;bottom:0;"></div>
-
-            <div class="block stone" style="left:10%;bottom:45px;"></div>
-            <div class="block stone" style="left:calc(10% + 45px);bottom:45px;"></div>
-
-            <div class="block sand" style="right:18%;bottom:45px;"></div>
-            <div class="block wood" style="right:calc(18% + 45px);bottom:45px;"></div>
-        </div>
-
-        <div id="player">
-            <div class="head"></div>
-            <div class="body"></div>
-        </div>
-
-    </div>
-
-    <div id="topbar">
-        <div id="title">⛏️ MINE</div>
-        <div id="stats">
-            <span>❤️ 100</span>
-            <span>☀️ Day</span>
+        <div id="coords">
+            X: <span id="cx">0</span>
+            &nbsp; Y: <span id="cy">1</span>
+            &nbsp; Z: <span id="cz">0</span>
         </div>
     </div>
 
-    <div id="joystick">
-        <button class="joyButton" id="left">◀</button>
-        <button class="joyButton" id="right">▶</button>
-        <button class="joyButton" id="up">▲</button>
-        <button class="joyButton" id="down">▼</button>
+    <div id="status">
+        <div class="statusBox">❤️ 100</div>
+        <div class="statusBox">🍗 100</div>
+        <div class="statusBox">☀️ Day</div>
+        <button id="pause">Ⅱ</button>
     </div>
 
-    <div id="inventory">
-        <div class="slot selected">🟫</div>
-        <div class="slot">🪨</div>
-        <div class="slot">🪵</div>
-        <div class="slot">🟨</div>
+    <div id="crosshair"></div>
+
+    <!-- Movement -->
+    <div id="movement">
+
+        <button class="move" id="forward">▲</button>
+        <button class="move" id="left">◀</button>
+        <button class="move" id="right">▶</button>
+        <button class="move" id="back">▼</button>
+
     </div>
 
+    <!-- Actions -->
     <div id="actions">
-        <button class="action">⛏️</button>
-        <button class="action">🧱</button>
+
+        <button class="action" id="break">⛏️</button>
+
+        <button class="action" id="place">🧱</button>
+
+        <button class="action" id="jump">⬆</button>
+
+    </div>
+
+    <!-- Hotbar -->
+    <div id="hotbar">
+
+        <div class="slot selected" data-block="grass">
+            🌿
+            <span class="number">64</span>
+        </div>
+
+        <div class="slot" data-block="dirt">
+            🟫
+            <span class="number">64</span>
+        </div>
+
+        <div class="slot" data-block="stone">
+            🪨
+            <span class="number">64</span>
+        </div>
+
+        <div class="slot" data-block="wood">
+            🪵
+            <span class="number">48</span>
+        </div>
+
+        <div class="slot" data-block="sand">
+            🟨
+            <span class="number">32</span>
+        </div>
+
+        <div class="slot" data-block="leaf">
+            🌿
+            <span class="number">32</span>
+        </div>
+
     </div>
 
     <div id="portrait">
@@ -538,46 +382,919 @@ html,body{
 
 </div>
 
+
+<!-- THREE.JS -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+
 <script>
-const player = document.getElementById("player");
 
-let x = 50;
-let y = 35;
+/* =====================================================
+   MINE V1
+   Small Cambodia-style voxel world
+===================================================== */
 
-function updatePlayer(){
-    player.style.left = x + "%";
-    player.style.bottom = y + "%";
-}
+const scene = new THREE.Scene();
 
-function moveLeft(){
-    x = Math.max(3,x-2);
-    updatePlayer();
-}
+scene.background = new THREE.Color(0x8fd3f4);
 
-function moveRight(){
-    x = Math.min(97,x+2);
-    updatePlayer();
-}
+scene.fog = new THREE.Fog(
+    0x8fd3f4,
+    35,
+    100
+);
 
-function jump(){
-    player.style.bottom = (y+8) + "%";
 
-    setTimeout(()=>{
-        player.style.bottom = y + "%";
-    },300);
-}
+/* ================= CAMERA ================= */
 
-document.getElementById("left").addEventListener("click",moveLeft);
-document.getElementById("right").addEventListener("click",moveRight);
-document.getElementById("up").addEventListener("click",jump);
+const camera = new THREE.PerspectiveCamera(
+    70,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    200
+);
 
-document.addEventListener("keydown",e=>{
-    if(e.key==="ArrowLeft" || e.key==="a") moveLeft();
-    if(e.key==="ArrowRight" || e.key==="d") moveRight();
-    if(e.key==="ArrowUp" || e.key===" ") jump();
+camera.position.set(
+    0,
+    4,
+    8
+);
+
+
+/* ================= RENDERER ================= */
+
+const renderer = new THREE.WebGLRenderer({
+    antialias:true
 });
 
-updatePlayer();
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio,2)
+);
+
+renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+);
+
+renderer.shadowMap.enabled = true;
+
+document
+    .getElementById("game")
+    .appendChild(renderer.domElement);
+
+
+/* ================= LIGHT ================= */
+
+const skyLight = new THREE.HemisphereLight(
+    0xbde9ff,
+    0x56703f,
+    2.2
+);
+
+scene.add(skyLight);
+
+
+const sun = new THREE.DirectionalLight(
+    0xffffff,
+    2.5
+);
+
+sun.position.set(
+    -20,
+    35,
+    15
+);
+
+sun.castShadow = true;
+
+scene.add(sun);
+
+
+/* ================= MATERIALS ================= */
+
+const materials = {
+
+    grass:
+        new THREE.MeshLambertMaterial({
+            color:0x55a83c
+        }),
+
+    dirt:
+        new THREE.MeshLambertMaterial({
+            color:0x8b5a38
+        }),
+
+    stone:
+        new THREE.MeshLambertMaterial({
+            color:0x858585
+        }),
+
+    wood:
+        new THREE.MeshLambertMaterial({
+            color:0x87562f
+        }),
+
+    sand:
+        new THREE.MeshLambertMaterial({
+            color:0xd8c078
+        }),
+
+    leaf:
+        new THREE.MeshLambertMaterial({
+            color:0x328c3c
+        }),
+
+    water:
+        new THREE.MeshLambertMaterial({
+            color:0x36a9df,
+            transparent:true,
+            opacity:.82
+        })
+};
+
+
+/* ================= BLOCK SIZE ================= */
+
+const SIZE = 1;
+
+
+/* ================= BLOCK FUNCTION ================= */
+
+const blocks = [];
+
+function addBlock(
+    x,
+    y,
+    z,
+    type
+){
+
+    const geometry =
+        new THREE.BoxGeometry(
+            SIZE,
+            SIZE,
+            SIZE
+        );
+
+    const mesh =
+        new THREE.Mesh(
+            geometry,
+            materials[type] || materials.dirt
+        );
+
+    mesh.position.set(
+        x,
+        y,
+        z
+    );
+
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+
+    mesh.userData.type = type;
+
+    scene.add(mesh);
+
+    blocks.push(mesh);
+
+    return mesh;
+}
+
+
+/* ================= SMALL WORLD ================= */
+
+const WORLD = 22;
+
+
+/* Ground */
+
+for(let x=-WORLD;x<=WORLD;x++){
+
+    for(let z=-WORLD;z<=WORLD;z++){
+
+        addBlock(
+            x,
+            0,
+            z,
+            "grass"
+        );
+
+        addBlock(
+            x,
+            -1,
+            z,
+            "dirt"
+        );
+
+        addBlock(
+            x,
+            -2,
+            z,
+            "dirt"
+        );
+    }
+}
+
+
+/* ================= RIVER ================= */
+
+for(let x=-WORLD;x<=WORLD;x++){
+
+    for(let z=-3;z<=0;z++){
+
+        const water =
+            addBlock(
+                x,
+                0.35,
+                z,
+                "water"
+            );
+
+        water.scale.y=.35;
+    }
+}
+
+
+/* ================= TREES ================= */
+
+function tree(x,z){
+
+    for(let y=1;y<=4;y++){
+
+        addBlock(
+            x,
+            y,
+            z,
+            "wood"
+        );
+    }
+
+    for(let dx=-2;dx<=2;dx++){
+
+        for(let dz=-2;dz<=2;dz++){
+
+            for(let dy=4;dy<=5;dy++){
+
+                if(
+                    Math.abs(dx)+
+                    Math.abs(dz)<4
+                ){
+
+                    addBlock(
+                        x+dx,
+                        dy,
+                        z+dz,
+                        "leaf"
+                    );
+                }
+            }
+        }
+    }
+}
+
+
+/* Trees around village */
+
+tree(-8,-7);
+tree(-5,-8);
+tree(7,-8);
+tree(10,-5);
+tree(-11,5);
+tree(9,8);
+tree(-8,9);
+tree(12,10);
+
+
+/* ================= HILLS ================= */
+
+for(let x=-18;x<=18;x++){
+
+    for(let z=7;z<=13;z++){
+
+        const distance =
+            Math.abs(x)/18 +
+            Math.abs(z-10)/6;
+
+        if(distance<1){
+
+            const height =
+                Math.floor(
+                    2+
+                    (1-distance)*5
+                );
+
+            for(let y=1;y<=height;y++){
+
+                addBlock(
+                    x,
+                    y,
+                    z,
+                    y===height
+                        ? "grass"
+                        : "stone"
+                );
+            }
+        }
+    }
+}
+
+
+/* ================= VILLAGE HOUSES ================= */
+
+function house(x,z){
+
+    /* floor */
+
+    for(let dx=0;dx<5;dx++){
+
+        for(let dz=0;dz<5;dz++){
+
+            addBlock(
+                x+dx,
+                1,
+                z+dz,
+                "wood"
+            );
+        }
+    }
+
+
+    /* walls */
+
+    for(let y=2;y<=4;y++){
+
+        for(let dx=0;dx<5;dx++){
+
+            addBlock(
+                x+dx,
+                y,
+                z,
+                "wood"
+            );
+
+            addBlock(
+                x+dx,
+                y,
+                z+4,
+                "wood"
+            );
+        }
+
+
+        for(let dz=1;dz<4;dz++){
+
+            addBlock(
+                x,
+                y,
+                z+dz,
+                "wood"
+            );
+
+            addBlock(
+                x+4,
+                y,
+                z+dz,
+                "wood"
+            );
+        }
+    }
+
+
+    /* roof */
+
+    for(let dx=-1;dx<=5;dx++){
+
+        for(let dz=-1;dz<=5;dz++){
+
+            addBlock(
+                x+dx,
+                5,
+                z+dz,
+                "wood"
+            );
+        }
+    }
+}
+
+
+/* Small village */
+
+house(-14,-1);
+house(8,-1);
+house(-2,7);
+
+
+/* ================= PLAYER ================= */
+
+const player = {
+
+    x:0,
+    y:2,
+    z:7,
+
+    speed:.18,
+
+    vy:0,
+
+    onGround:true
+};
+
+
+/* ================= CAMERA CONTROL ================= */
+
+let yaw = 0;
+let pitch = -0.12;
+
+
+/* ================= UPDATE CAMERA ================= */
+
+function updateCamera(){
+
+    camera.position.set(
+        player.x,
+        player.y+1.6,
+        player.z
+    );
+
+    const direction =
+        new THREE.Vector3(
+            Math.sin(yaw),
+            Math.sin(pitch),
+            Math.cos(yaw)
+        );
+
+    camera.lookAt(
+        camera.position.x +
+        direction.x,
+
+        camera.position.y +
+        direction.y,
+
+        camera.position.z +
+        direction.z
+    );
+}
+
+
+/* ================= MOVEMENT ================= */
+
+let moving = {
+
+    forward:false,
+    back:false,
+    left:false,
+    right:false
+
+};
+
+
+function movePlayer(){
+
+    const speed =
+        player.speed;
+
+    const forwardX =
+        Math.sin(yaw);
+
+    const forwardZ =
+        Math.cos(yaw);
+
+    if(moving.forward){
+
+        player.x +=
+            forwardX*speed;
+
+        player.z +=
+            forwardZ*speed;
+    }
+
+    if(moving.back){
+
+        player.x -=
+            forwardX*speed;
+
+        player.z -=
+            forwardZ*speed;
+    }
+
+    if(moving.left){
+
+        player.x +=
+            Math.sin(
+                yaw-Math.PI/2
+            )*speed;
+
+        player.z +=
+            Math.cos(
+                yaw-Math.PI/2
+            )*speed;
+    }
+
+    if(moving.right){
+
+        player.x +=
+            Math.sin(
+                yaw+Math.PI/2
+            )*speed;
+
+        player.z +=
+            Math.cos(
+                yaw+Math.PI/2
+            )*speed;
+    }
+
+
+    /* World boundary */
+
+    player.x =
+        Math.max(
+            -20,
+            Math.min(20,player.x)
+        );
+
+    player.z =
+        Math.max(
+            -20,
+            Math.min(20,player.z)
+        );
+}
+
+
+/* ================= BUTTONS ================= */
+
+function holdButton(
+    id,
+    key
+){
+
+    const button =
+        document.getElementById(id);
+
+    button.addEventListener(
+        "touchstart",
+        e=>{
+            e.preventDefault();
+            moving[key]=true;
+        },
+        {passive:false}
+    );
+
+    button.addEventListener(
+        "touchend",
+        e=>{
+            e.preventDefault();
+            moving[key]=false;
+        },
+        {passive:false}
+    );
+
+    button.addEventListener(
+        "touchcancel",
+        ()=>{
+            moving[key]=false;
+        }
+    );
+
+    button.addEventListener(
+        "mousedown",
+        ()=>{
+            moving[key]=true;
+        }
+    );
+
+    button.addEventListener(
+        "mouseup",
+        ()=>{
+            moving[key]=false;
+        }
+    );
+}
+
+holdButton("forward","forward");
+holdButton("back","back");
+holdButton("left","left");
+holdButton("right","right");
+
+
+/* ================= JUMP ================= */
+
+document
+    .getElementById("jump")
+    .addEventListener(
+        "click",
+        ()=>{
+
+            if(player.onGround){
+
+                player.vy=.18;
+
+                player.onGround=false;
+            }
+        }
+    );
+
+
+function physics(){
+
+    player.vy -= .008;
+
+    player.y += player.vy;
+
+    if(player.y<=2){
+
+        player.y=2;
+
+        player.vy=0;
+
+        player.onGround=true;
+    }
+}
+
+
+/* ================= LOOK AROUND ================= */
+
+let touching = false;
+let lastX = 0;
+let lastY = 0;
+
+renderer.domElement.addEventListener(
+    "touchstart",
+    e=>{
+
+        if(
+            e.touches.length!==1
+        ) return;
+
+        touching=true;
+
+        lastX =
+            e.touches[0].clientX;
+
+        lastY =
+            e.touches[0].clientY;
+    },
+    {passive:true}
+);
+
+
+renderer.domElement.addEventListener(
+    "touchmove",
+    e=>{
+
+        if(!touching) return;
+
+        const x =
+            e.touches[0].clientX;
+
+        const y =
+            e.touches[0].clientY;
+
+        const dx =
+            x-lastX;
+
+        const dy =
+            y-lastY;
+
+        yaw -= dx*.006;
+
+        pitch -= dy*.004;
+
+        pitch =
+            Math.max(
+                -.9,
+                Math.min(.7,pitch)
+            );
+
+        lastX=x;
+        lastY=y;
+    },
+    {passive:true}
+);
+
+
+renderer.domElement.addEventListener(
+    "touchend",
+    ()=>{
+        touching=false;
+    }
+);
+
+
+/* ================= RAYCASTER ================= */
+
+const raycaster =
+    new THREE.Raycaster();
+
+const center =
+    new THREE.Vector2(0,0);
+
+
+/* ================= BREAK BLOCK ================= */
+
+document
+    .getElementById("break")
+    .addEventListener(
+        "click",
+        ()=>{
+
+            raycaster.setFromCamera(
+                center,
+                camera
+            );
+
+            const hits =
+                raycaster.intersectObjects(
+                    blocks
+                );
+
+            if(hits.length){
+
+                const block =
+                    hits[0].object;
+
+                const distance =
+                    camera.position.distanceTo(
+                        block.position
+                    );
+
+                if(distance<6){
+
+                    scene.remove(block);
+
+                    const index =
+                        blocks.indexOf(block);
+
+                    if(index>=0){
+
+                        blocks.splice(
+                            index,
+                            1
+                        );
+                    }
+                }
+            }
+        }
+    );
+
+
+/* ================= PLACE BLOCK ================= */
+
+let selectedType="grass";
+
+
+document
+    .querySelectorAll(".slot")
+    .forEach(slot=>{
+
+        slot.addEventListener(
+            "click",
+            ()=>{
+
+                document
+                    .querySelectorAll(".slot")
+                    .forEach(s=>
+                        s.classList.remove(
+                            "selected"
+                        )
+                    );
+
+                slot.classList.add(
+                    "selected"
+                );
+
+                selectedType =
+                    slot.dataset.block;
+            }
+        );
+    });
+
+
+document
+    .getElementById("place")
+    .addEventListener(
+        "click",
+        ()=>{
+
+            raycaster.setFromCamera(
+                center,
+                camera
+            );
+
+            const hits =
+                raycaster.intersectObjects(
+                    blocks
+                );
+
+            if(hits.length){
+
+                const hit =
+                    hits[0];
+
+                const block =
+                    hit.object;
+
+                const distance =
+                    camera.position.distanceTo(
+                        block.position
+                    );
+
+                if(distance<6){
+
+                    const normal =
+                        hit.face.normal;
+
+                    const position =
+                        block.position.clone()
+                        .add(normal);
+
+                    addBlock(
+                        Math.round(position.x),
+                        Math.round(position.y),
+                        Math.round(position.z),
+                        selectedType
+                    );
+                }
+            }
+        }
+    );
+
+
+/* ================= COORDINATES ================= */
+
+function updateCoords(){
+
+    document.getElementById("cx")
+        .textContent =
+        Math.round(player.x);
+
+    document.getElementById("cy")
+        .textContent =
+        Math.round(player.y);
+
+    document.getElementById("cz")
+        .textContent =
+        Math.round(player.z);
+
+
+    const map =
+        document.getElementById(
+            "mapPlayer"
+        );
+
+    map.style.left =
+        (50+player.x*1.7)+"%";
+
+    map.style.top =
+        (50+player.z*1.7)+"%";
+}
+
+
+/* ================= RESIZE ================= */
+
+window.addEventListener(
+    "resize",
+    ()=>{
+
+        camera.aspect =
+            window.innerWidth /
+            window.innerHeight;
+
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(
+            window.innerWidth,
+            window.innerHeight
+        );
+    }
+);
+
+
+/* ================= GAME LOOP ================= */
+
+function animate(){
+
+    requestAnimationFrame(
+        animate
+    );
+
+    movePlayer();
+
+    physics();
+
+    updateCamera();
+
+    updateCoords();
+
+    renderer.render(
+        scene,
+        camera
+    );
+}
+
+
+updateCamera();
+
+animate();
+
 </script>
 
 </body>
