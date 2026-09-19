@@ -2,31 +2,31 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-
 <meta name="viewport"
       content="width=device-width,
-      initial-scale=1,
-      maximum-scale=1,
-      user-scalable=no">
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
 
-<title>Mine - Cambodia</title>
+<title>My Block World</title>
 
 <style>
-
 *{
     box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
+    -webkit-user-select:none;
     user-select:none;
+    -webkit-touch-callout:none;
 }
 
-html,
-body{
+html,body{
     margin:0;
+    padding:0;
     width:100%;
     height:100%;
     overflow:hidden;
-    background:#87ceeb;
+    background:#79c9ee;
     font-family:Arial,sans-serif;
+    touch-action:none;
 }
 
 #game{
@@ -37,695 +37,530 @@ body{
 
 canvas{
     display:block;
+    width:100%;
+    height:100%;
     touch-action:none;
 }
 
-/* ================= TOP LEFT ================= */
-
-#mapBox{
-
-    position:absolute;
-
-    top:12px;
-    left:12px;
-
-    width:155px;
-    height:125px;
-
-    z-index:20;
-
-    padding:8px;
-
-    border-radius:15px;
-
-    background:rgba(25,45,55,.72);
-
-    color:white;
-
-    backdrop-filter:blur(8px);
-
-    pointer-events:none;
-}
-
-#mapTitle{
-
-    font-size:17px;
-
-    font-weight:bold;
-
-    margin-bottom:5px;
-}
-
-#miniMap{
-
-    width:100%;
-    height:70px;
-
-    border-radius:8px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #4d9b4d 25%,
-            #6db65a 25% 50%,
-            #478e4b 50% 75%,
-            #6aaa52 75%
-        );
-
-    position:relative;
-
-    overflow:hidden;
-}
-
-#mapPlayer{
-
-    position:absolute;
-
-    width:10px;
-    height:10px;
-
-    background:white;
-
-    border-radius:50%;
-
-    left:50%;
-    top:50%;
-
-    transform:translate(-50%,-50%);
-
-    box-shadow:0 0 5px white;
-}
-
-#coords{
-
-    font-size:11px;
-
-    margin-top:5px;
-}
-
-/* ================= TOP RIGHT ================= */
-
-#status{
-
-    position:absolute;
-
-    z-index:20;
-
-    top:12px;
-    right:12px;
+/* TOP BAR */
+#topbar{
+    position:fixed;
+    top:10px;
+    left:10px;
+    right:10px;
+    height:52px;
 
     display:flex;
-
     align-items:center;
+    justify-content:space-between;
 
-    gap:8px;
+    pointer-events:none;
+    z-index:20;
 }
 
-.statusBox{
-
-    padding:8px 12px;
-
-    border-radius:13px;
-
-    background:rgba(30,40,45,.72);
-
-    color:white;
-
-    font-weight:bold;
-
-    backdrop-filter:blur(8px);
-}
-
-#pause{
-
+.topButton{
     width:48px;
     height:48px;
-
     border:0;
+    border-radius:15px;
 
-    border-radius:14px;
+    background:rgba(20,30,35,.68);
+    color:white;
+    font-size:24px;
 
-    background:rgba(255,255,255,.72);
+    box-shadow:
+        0 5px 15px rgba(0,0,0,.25);
 
-    font-size:22px;
-
-    touch-action:none;
+    pointer-events:auto;
 }
 
-/* ================= CROSSHAIR ================= */
-
+/* CROSSHAIR */
 #crosshair{
-
-    position:absolute;
-
-    z-index:15;
-
+    position:fixed;
     left:50%;
     top:50%;
 
+    width:22px;
+    height:22px;
+
     transform:translate(-50%,-50%);
 
-    width:24px;
-    height:24px;
-
     pointer-events:none;
+    z-index:15;
 }
 
-#crosshair:before,
-#crosshair:after{
-
+#crosshair::before,
+#crosshair::after{
     content:"";
-
     position:absolute;
-
     background:white;
-
-    box-shadow:0 0 2px black;
+    box-shadow:0 0 3px black;
 }
 
-#crosshair:before{
-
-    width:2px;
-    height:24px;
-
-    left:11px;
-}
-
-#crosshair:after{
-
-    width:24px;
+#crosshair::before{
+    width:22px;
     height:2px;
-
-    top:11px;
+    left:0;
+    top:10px;
 }
 
-/* ================= MOVEMENT ================= */
+#crosshair::after{
+    width:2px;
+    height:22px;
+    left:10px;
+    top:0;
+}
 
-#movement{
+/* MOVEMENT */
+#controls{
+    position:fixed;
+    left:16px;
+    bottom:18px;
 
-    position:absolute;
+    width:155px;
+    height:155px;
 
-    z-index:30;
-
-    left:22px;
-    bottom:24px;
-
-    width:145px;
-    height:145px;
-
-    touch-action:none;
+    z-index:20;
 }
 
 .move{
-
     position:absolute;
 
     width:52px;
     height:52px;
 
-    border:1px solid rgba(255,255,255,.35);
+    border:0;
+    border-radius:17px;
 
-    border-radius:14px;
-
-    background:rgba(45,55,60,.62);
-
+    background:rgba(20,30,35,.68);
     color:white;
 
     font-size:23px;
+    font-weight:bold;
 
-    backdrop-filter:blur(5px);
+    box-shadow:
+        0 5px 14px rgba(0,0,0,.25);
 
     touch-action:none;
 }
 
-.move:active{
-
-    transform:scale(.9);
-}
-
-#forward{
-
-    left:46px;
+#up{
+    left:52px;
     top:0;
 }
 
-#back{
-
-    left:46px;
+#down{
+    left:52px;
     bottom:0;
 }
 
 #left{
-
     left:0;
-    top:46px;
+    top:52px;
 }
 
 #right{
-
     right:0;
-    top:46px;
+    top:52px;
 }
 
-/* ================= ACTIONS ================= */
-
-#actions{
-
-    position:absolute;
-
-    z-index:30;
-
+/* JUMP */
+#jump{
+    position:fixed;
     right:22px;
-    bottom:25px;
+    bottom:24px;
 
-    display:flex;
+    width:68px;
+    height:68px;
 
-    flex-direction:column;
-
-    gap:12px;
-
-    align-items:center;
-
-    touch-action:none;
-}
-
-.action{
-
-    width:65px;
-    height:65px;
-
-    border:1px solid rgba(255,255,255,.35);
-
+    border:0;
     border-radius:50%;
 
-    background:rgba(45,55,60,.65);
-
+    background:rgba(20,30,35,.72);
     color:white;
 
-    font-size:27px;
+    font-size:28px;
 
-    backdrop-filter:blur(6px);
+    box-shadow:
+        0 6px 16px rgba(0,0,0,.3);
 
+    z-index:20;
     touch-action:none;
 }
 
-.action:active{
-
-    transform:scale(.9);
-}
-
-/* ================= HOTBAR ================= */
-
-#hotbar{
-
-    position:absolute;
-
-    z-index:35;
+/* INVENTORY */
+#inventory{
+    position:fixed;
 
     left:50%;
-    bottom:18px;
+    bottom:14px;
 
     transform:translateX(-50%);
 
+    width:min(440px,calc(100% - 230px));
+    min-width:260px;
+
+    height:72px;
+
+    padding:8px;
+
     display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
 
-    gap:5px;
+    background:rgba(20,30,35,.70);
 
-    padding:7px;
+    border-radius:20px;
 
-    border-radius:13px;
+    z-index:20;
 
-    background:rgba(25,30,33,.82);
+    opacity:0;
+    pointer-events:none;
 
-    touch-action:none;
+    transition:.2s;
+}
+
+#inventory.show{
+    opacity:1;
+    pointer-events:auto;
 }
 
 .slot{
+    flex:1;
+    max-width:58px;
+    height:56px;
 
-    width:53px;
-    height:53px;
+    border:2px solid rgba(255,255,255,.2);
+    border-radius:12px;
 
-    border:2px solid #52606a;
-
-    border-radius:8px;
-
-    background:#171b1e;
+    background:rgba(255,255,255,.10);
 
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
     position:relative;
 
-    font-size:25px;
+    cursor:pointer;
+}
+
+.slot.selected{
+    border-color:white;
+    background:rgba(255,255,255,.25);
+    transform:translateY(-3px);
+}
+
+.slotBlock{
+    width:31px;
+    height:31px;
+    border-radius:4px;
+
+    box-shadow:
+        inset 0 4px 0 rgba(255,255,255,.15),
+        inset 0 -5px 0 rgba(0,0,0,.15);
+}
+
+.grass{
+    background:#62ad43;
+}
+
+.dirt{
+    background:#87582f;
+}
+
+.stone{
+    background:#777b7e;
+}
+
+.wood{
+    background:#9a6437;
+}
+
+.sand{
+    background:#d8c078;
+}
+
+.leaf{
+    background:#348044;
+}
+
+.slotName{
+    position:absolute;
+    bottom:2px;
+    left:0;
+    right:0;
+
+    text-align:center;
 
     color:white;
+    font-size:8px;
+}
+
+/* MESSAGE */
+#message{
+    position:fixed;
+    top:75px;
+    left:50%;
+
+    transform:translateX(-50%);
+
+    padding:9px 15px;
+
+    color:white;
+    background:rgba(0,0,0,.55);
+
+    border-radius:12px;
+
+    font-size:12px;
+
+    opacity:0;
+    pointer-events:none;
+
+    transition:.25s;
+
+    z-index:30;
+}
+
+#message.show{
+    opacity:1;
+}
+
+/* HELP */
+#help{
+    position:fixed;
+
+    left:50%;
+    top:75%;
+
+    transform:translateX(-50%);
+
+    padding:8px 13px;
+
+    border-radius:12px;
+
+    background:rgba(0,0,0,.42);
+    color:white;
+
+    font-size:11px;
+
+    pointer-events:none;
+
+    z-index:10;
+
+    opacity:.75;
+}
+
+/* BUILD BUTTON */
+#buildButton{
+    position:fixed;
+
+    right:105px;
+    bottom:28px;
+
+    width:58px;
+    height:58px;
+
+    border:0;
+    border-radius:18px;
+
+    background:rgba(20,30,35,.72);
+
+    color:white;
+    font-size:25px;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.25);
+
+    z-index:20;
 
     touch-action:none;
 }
 
-.slot.selected{
-
-    border-color:white;
-
-    box-shadow:
-        0 0 0 2px
-        rgba(255,255,255,.25);
-}
-
-.number{
-
-    position:absolute;
-
-    right:4px;
-    bottom:2px;
-
-    font-size:11px;
-
-    color:white;
-}
-
-/* ================= PORTRAIT ================= */
-
-#portrait{
-
+/* PORTRAIT */
+#rotateMessage{
     display:none;
 
-    position:absolute;
+    position:fixed;
+    inset:0;
 
     z-index:100;
 
-    inset:0;
-
-    background:#20252a;
+    background:#20272b;
 
     color:white;
 
     align-items:center;
-
     justify-content:center;
 
     text-align:center;
 
-    font-size:21px;
+    padding:30px;
 
-    font-weight:bold;
+    font-size:18px;
 }
 
-@media(max-aspect-ratio:1/1){
-
-    #portrait{
-
+@media (orientation:portrait){
+    #rotateMessage{
         display:flex;
     }
 }
 
+/* SMALL PHONE */
+@media (max-height:500px){
+
+    #controls{
+        transform:scale(.85);
+        transform-origin:bottom left;
+        bottom:8px;
+    }
+
+    #jump{
+        transform:scale(.85);
+        transform-origin:bottom right;
+        bottom:10px;
+    }
+
+    #buildButton{
+        bottom:14px;
+    }
+
+    #inventory{
+        bottom:8px;
+        height:60px;
+    }
+
+    .slot{
+        height:48px;
+    }
+}
 </style>
 </head>
 
 <body>
 
-<div id="game">
+<div id="game"></div>
 
-    <!-- MAP -->
+<div id="rotateMessage">
+    📱<br><br>
+    Please rotate your phone to landscape mode.
+</div>
 
-    <div id="mapBox">
+<div id="topbar">
 
-        <div id="mapTitle">
-            🇰🇭 Mine - Cambodia
-        </div>
+    <button class="topButton" id="inventoryButton">
+        🎒
+    </button>
 
-        <div id="miniMap">
+    <button class="topButton" id="resetButton">
+        ↻
+    </button>
 
-            <div id="mapPlayer"></div>
+</div>
 
-        </div>
+<div id="crosshair"></div>
 
-        <div id="coords">
+<div id="help">
+    Tap = Build&nbsp;&nbsp; • &nbsp;&nbsp;Hold = Break&nbsp;&nbsp; • &nbsp;&nbsp;Drag = Look
+</div>
 
-            X:
-            <span id="cx">0</span>
+<div id="message"></div>
 
-            &nbsp;
+<!-- MOVEMENT -->
+<div id="controls">
 
-            Y:
-            <span id="cy">2</span>
+    <button class="move" id="up">▲</button>
+    <button class="move" id="down">▼</button>
+    <button class="move" id="left">◀</button>
+    <button class="move" id="right">▶</button>
 
-            &nbsp;
+</div>
 
-            Z:
-            <span id="cz">7</span>
+<!-- JUMP -->
+<button id="jump">⬆</button>
 
-        </div>
+<!-- BUILD SHORTCUT -->
+<button id="buildButton">🧱</button>
 
+<!-- INVENTORY -->
+<div id="inventory">
+
+    <div class="slot selected" data-type="grass">
+        <div class="slotBlock grass"></div>
+        <div class="slotName">Grass</div>
     </div>
 
-
-    <!-- STATUS -->
-
-    <div id="status">
-
-        <div class="statusBox">
-            ❤️ 100
-        </div>
-
-        <div class="statusBox">
-            🍗 100
-        </div>
-
-        <div class="statusBox">
-            ☀️ Day
-        </div>
-
-        <button id="pause">
-            Ⅱ
-        </button>
-
+    <div class="slot" data-type="dirt">
+        <div class="slotBlock dirt"></div>
+        <div class="slotName">Dirt</div>
     </div>
 
-
-    <!-- CROSSHAIR -->
-
-    <div id="crosshair"></div>
-
-
-    <!-- MOVEMENT -->
-
-    <div id="movement">
-
-        <button
-            class="move"
-            id="forward">
-            ▲
-        </button>
-
-        <button
-            class="move"
-            id="left">
-            ◀
-        </button>
-
-        <button
-            class="move"
-            id="right">
-            ▶
-        </button>
-
-        <button
-            class="move"
-            id="back">
-            ▼
-        </button>
-
+    <div class="slot" data-type="stone">
+        <div class="slotBlock stone"></div>
+        <div class="slotName">Stone</div>
     </div>
 
-
-    <!-- ACTIONS -->
-
-    <div id="actions">
-
-        <button
-            class="action"
-            id="break">
-            ⛏️
-        </button>
-
-        <button
-            class="action"
-            id="place">
-            🧱
-        </button>
-
-        <button
-            class="action"
-            id="jump">
-            ⬆
-        </button>
-
+    <div class="slot" data-type="wood">
+        <div class="slotBlock wood"></div>
+        <div class="slotName">Wood</div>
     </div>
 
-
-    <!-- HOTBAR -->
-
-    <div id="hotbar">
-
-        <div
-            class="slot selected"
-            data-block="grass">
-
-            🌿
-
-            <span class="number">
-                64
-            </span>
-
-        </div>
-
-        <div
-            class="slot"
-            data-block="dirt">
-
-            🟫
-
-            <span class="number">
-                64
-            </span>
-
-        </div>
-
-        <div
-            class="slot"
-            data-block="stone">
-
-            🪨
-
-            <span class="number">
-                64
-            </span>
-
-        </div>
-
-        <div
-            class="slot"
-            data-block="wood">
-
-            🪵
-
-            <span class="number">
-                48
-            </span>
-
-        </div>
-
-        <div
-            class="slot"
-            data-block="sand">
-
-            🟨
-
-            <span class="number">
-                32
-            </span>
-
-        </div>
-
-        <div
-            class="slot"
-            data-block="leaf">
-
-            🌿
-
-            <span class="number">
-                32
-            </span>
-
-        </div>
-
+    <div class="slot" data-type="sand">
+        <div class="slotBlock sand"></div>
+        <div class="slotName">Sand</div>
     </div>
 
-
-    <!-- PORTRAIT WARNING -->
-
-    <div id="portrait">
-
-        📱
-
-        <br><br>
-
-        សូមបង្វិលទូរសព្ទផ្ដេក
-
-        <br>
-
-        ដើម្បីលេង Mine
-
+    <div class="slot" data-type="leaf">
+        <div class="slotBlock leaf"></div>
+        <div class="slotName">Leaf</div>
     </div>
 
 </div>
 
-
-<!-- THREE.JS -->
-
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-
 
 <script>
 
-/* =====================================================
-   MINE V2
-   3D WORLD + COLLISION
-===================================================== */
+/* =========================================================
+   BASIC SETUP
+========================================================= */
+
+const game = document.getElementById("game");
+
+const scene = new THREE.Scene();
+
+scene.background = new THREE.Color(0x79c9ee);
+
+scene.fog = new THREE.Fog(
+    0x79c9ee,
+    35,
+    100
+);
 
 
-/* ================= SCENE ================= */
+/* CAMERA */
 
-const scene =
-    new THREE.Scene();
-
-scene.background =
-    new THREE.Color(
-        0x8fd3f4
-    );
-
-scene.fog =
-    new THREE.Fog(
-        0x8fd3f4,
-        35,
-        100
-    );
-
-
-/* ================= CAMERA ================= */
-
-const camera =
-    new THREE.PerspectiveCamera(
-        70,
-        window.innerWidth /
-        window.innerHeight,
-        0.1,
-        200
-    );
+const camera = new THREE.PerspectiveCamera(
+    70,
+    window.innerWidth / window.innerHeight,
+    0.05,
+    200
+);
 
 camera.position.set(
     0,
-    3.6,
+    3,
     8
 );
 
 
-/* ================= RENDERER ================= */
+/* RENDERER */
 
-const renderer =
-    new THREE.WebGLRenderer({
-        antialias:true
-    });
+const renderer = new THREE.WebGLRenderer({
+    antialias:true
+});
 
 renderer.setPixelRatio(
-    Math.min(
-        window.devicePixelRatio,
-        2
-    )
+    Math.min(window.devicePixelRatio,2)
 );
 
 renderer.setSize(
@@ -733,72 +568,64 @@ renderer.setSize(
     window.innerHeight
 );
 
-renderer.shadowMap.enabled =
-    true;
+renderer.shadowMap.enabled = true;
 
-document
-    .getElementById("game")
-    .appendChild(
-        renderer.domElement
-    );
+game.appendChild(renderer.domElement);
 
 
-/* ================= LIGHT ================= */
+/* =========================================================
+   LIGHT
+========================================================= */
 
-const skyLight =
-    new THREE.HemisphereLight(
-        0xbde9ff,
-        0x56703f,
-        2.2
-    );
-
-scene.add(
-    skyLight
+const hemi = new THREE.HemisphereLight(
+    0xbde8ff,
+    0x5f6d3f,
+    1.5
 );
 
+scene.add(hemi);
 
-const sunLight =
-    new THREE.DirectionalLight(
-        0xffffff,
-        2.5
-    );
 
-sunLight.position.set(
-    -20,
-    35,
-    15
+const sun = new THREE.DirectionalLight(
+    0xffffff,
+    1.6
 );
 
-sunLight.castShadow =
-    true;
-
-scene.add(
-    sunLight
+sun.position.set(
+    30,
+    50,
+    20
 );
 
+sun.castShadow = true;
 
-/* ================= MATERIALS ================= */
+scene.add(sun);
+
+
+/* =========================================================
+   MATERIALS
+========================================================= */
 
 const materials = {
 
     grass:
         new THREE.MeshLambertMaterial({
-            color:0x55a83c
+            color:0x62ad43
         }),
 
     dirt:
         new THREE.MeshLambertMaterial({
-            color:0x8b5a38
+            color:0x87582f
         }),
 
     stone:
         new THREE.MeshLambertMaterial({
-            color:0x858585
+            color:0x777b7e
         }),
 
     wood:
         new THREE.MeshLambertMaterial({
-            color:0x87562f
+            color:0x9a6437
         }),
 
     sand:
@@ -808,21 +635,18 @@ const materials = {
 
     leaf:
         new THREE.MeshLambertMaterial({
-            color:0x328c3c
-        }),
-
-    water:
-        new THREE.MeshLambertMaterial({
-            color:0x36a9df,
-            transparent:true,
-            opacity:.82
+            color:0x348044
         })
 };
 
 
-/* ================= BLOCK DATA ================= */
+/* =========================================================
+   BLOCK SYSTEM
+========================================================= */
 
-const blocks = [];
+const blockSize = 1;
+
+const blocks = new Map();
 
 const blockGeometry =
     new THREE.BoxGeometry(
@@ -832,19 +656,30 @@ const blockGeometry =
     );
 
 
+function key(x,y,z){
+
+    return `${x},${y},${z}`;
+
+}
+
+
 function addBlock(
     x,
     y,
     z,
-    type
+    type="grass"
 ){
 
-    const mesh =
-        new THREE.Mesh(
-            blockGeometry,
-            materials[type] ||
-            materials.dirt
-        );
+    const k = key(x,y,z);
+
+    if(blocks.has(k)){
+        return;
+    }
+
+    const mesh = new THREE.Mesh(
+        blockGeometry,
+        materials[type] || materials.grass
+    );
 
     mesh.position.set(
         x,
@@ -852,39 +687,63 @@ function addBlock(
         z
     );
 
-    mesh.castShadow =
-        true;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
 
-    mesh.receiveShadow =
-        true;
-
-    mesh.userData.type =
-        type;
+    mesh.userData.block = true;
+    mesh.userData.x = x;
+    mesh.userData.y = y;
+    mesh.userData.z = z;
+    mesh.userData.type = type;
 
     scene.add(mesh);
 
-    blocks.push(mesh);
+    blocks.set(k,mesh);
 
     return mesh;
 }
 
 
-/* ================= WORLD ================= */
+function removeBlock(
+    x,
+    y,
+    z
+){
 
-const WORLD = 20;
+    const k = key(x,y,z);
+
+    const mesh = blocks.get(k);
+
+    if(!mesh){
+        return false;
+    }
+
+    scene.remove(mesh);
+
+    blocks.delete(k);
+
+    return true;
+}
+
+
+/* =========================================================
+   WORLD
+========================================================= */
+
+const WORLD_SIZE = 34;
 
 
 /* Ground */
 
 for(
-    let x=-WORLD;
-    x<=WORLD;
+    let x=-WORLD_SIZE/2;
+    x<=WORLD_SIZE/2;
     x++
 ){
 
     for(
-        let z=-WORLD;
-        z<=WORLD;
+        let z=-WORLD_SIZE/2;
+        z<=WORLD_SIZE/2;
         z++
     ){
 
@@ -902,54 +761,161 @@ for(
             "dirt"
         );
 
-        addBlock(
-            x,
-            -2,
-            z,
-            "dirt"
-        );
     }
+
 }
 
 
-/* ================= RIVER ================= */
+/* =========================================================
+   SMALL HILLS
+========================================================= */
+
+function makeHill(cx,cz,radius,height){
+
+    for(
+        let x=cx-radius;
+        x<=cx+radius;
+        x++
+    ){
+
+        for(
+            let z=cz-radius;
+            z<=cz+radius;
+            z++
+        ){
+
+            const distance =
+                Math.sqrt(
+                    (x-cx)*(x-cx) +
+                    (z-cz)*(z-cz)
+                );
+
+            if(distance > radius){
+                continue;
+            }
+
+            const h =
+                Math.max(
+                    1,
+                    Math.floor(
+                        height *
+                        (1-distance/radius)
+                    )
+                );
+
+            for(
+                let y=1;
+                y<=h;
+                y++
+            ){
+
+                addBlock(
+                    x,
+                    y,
+                    z,
+                    y===h
+                    ? "grass"
+                    : "dirt"
+                );
+
+            }
+
+        }
+
+    }
+
+}
+
+
+/* Small hills around the map */
+
+makeHill(
+    -11,
+    -9,
+    5,
+    4
+);
+
+makeHill(
+    11,
+    -11,
+    4,
+    3
+);
+
+makeHill(
+    13,
+    10,
+    5,
+    4
+);
+
+
+/* =========================================================
+   RIVER
+========================================================= */
+
+const riverZStart = -2;
+const riverZEnd = 1;
+
+const waterMaterial =
+    new THREE.MeshLambertMaterial({
+        color:0x3ca9d6,
+        transparent:true,
+        opacity:.75
+    });
+
+
+const waterGeometry =
+    new THREE.BoxGeometry(
+        1,
+        .12,
+        1
+    );
+
 
 for(
-    let x=-WORLD;
-    x<=WORLD;
+    let x=-WORLD_SIZE/2;
+    x<=WORLD_SIZE/2;
     x++
 ){
 
     for(
-        let z=-3;
-        z<=0;
+        let z=riverZStart;
+        z<=riverZEnd;
         z++
     ){
 
         const water =
-            addBlock(
-                x,
-                .35,
-                z,
-                "water"
+            new THREE.Mesh(
+                waterGeometry,
+                waterMaterial
             );
 
-        water.scale.y =
-            .35;
+        water.position.set(
+            x,
+            .56,
+            z
+        );
+
+        scene.add(water);
+
     }
+
 }
 
 
-/* ================= TREES ================= */
+/* =========================================================
+   TREES
+========================================================= */
 
-function createTree(
-    x,
-    z
-){
+function makeTree(x,z){
+
+    /* trunk */
 
     for(
         let y=1;
-        y<=4;
+        y<=3;
         y++
     ){
 
@@ -959,673 +925,705 @@ function createTree(
             z,
             "wood"
         );
+
     }
 
 
-    for(
-        let dx=-2;
-        dx<=2;
-        dx++
-    ){
-
-        for(
-            let dz=-2;
-            dz<=2;
-            dz++
-        ){
-
-            if(
-                Math.abs(dx) +
-                Math.abs(dz) < 4
-            ){
-
-                addBlock(
-                    x+dx,
-                    5,
-                    z+dz,
-                    "leaf"
-                );
-
-                addBlock(
-                    x+dx,
-                    6,
-                    z+dz,
-                    "leaf"
-                );
-            }
-        }
-    }
-}
-
-
-createTree(-8,-7);
-createTree(-5,-9);
-createTree(7,-8);
-createTree(10,-5);
-createTree(-11,6);
-createTree(9,8);
-createTree(-8,9);
-createTree(12,10);
-
-
-/* ================= HILLS ================= */
-
-for(
-    let x=-15;
-    x<=15;
-    x++
-){
-
-    for(
-        let z=8;
-        z<=14;
-        z++
-    ){
-
-        const d =
-            Math.abs(x)/15 +
-            Math.abs(z-11)/6;
-
-        if(d<1){
-
-            const height =
-                Math.floor(
-                    2 +
-                    (1-d)*5
-                );
-
-            for(
-                let y=1;
-                y<=height;
-                y++
-            ){
-
-                addBlock(
-                    x,
-                    y,
-                    z,
-                    y===height
-                    ? "grass"
-                    : "stone"
-                );
-            }
-        }
-    }
-}
-
-
-/* ================= HOUSES ================= */
-
-function createHouse(
-    x,
-    z
-){
-
-    for(
-        let dx=0;
-        dx<5;
-        dx++
-    ){
-
-        for(
-            let dz=0;
-            dz<5;
-            dz++
-        ){
-
-            addBlock(
-                x+dx,
-                1,
-                z+dz,
-                "wood"
-            );
-        }
-    }
-
-
-    for(
-        let y=2;
-        y<=4;
-        y++
-    ){
-
-        for(
-            let dx=0;
-            dx<5;
-            dx++
-        ){
-
-            addBlock(
-                x+dx,
-                y,
-                z,
-                "wood"
-            );
-
-            addBlock(
-                x+dx,
-                y,
-                z+4,
-                "wood"
-            );
-        }
-
-
-        for(
-            let dz=1;
-            dz<4;
-            dz++
-        ){
-
-            addBlock(
-                x,
-                y,
-                z+dz,
-                "wood"
-            );
-
-            addBlock(
-                x+4,
-                y,
-                z+dz,
-                "wood"
-            );
-        }
-    }
-
+    /* leaves */
 
     for(
         let dx=-1;
-        dx<=5;
+        dx<=1;
         dx++
     ){
 
         for(
             let dz=-1;
-        dz<=5;
-        dz++
+            dz<=1;
+            dz++
         ){
 
             addBlock(
                 x+dx,
-                5,
+                4,
                 z+dz,
-                "wood"
+                "leaf"
             );
+
         }
+
     }
+
+
+    addBlock(
+        x,
+        5,
+        z,
+        "leaf"
+    );
+
 }
 
 
-createHouse(-14,-1);
-createHouse(8,-1);
+/* fixed trees */
+
+[
+    [-13,7],
+    [-9,11],
+    [-4,12],
+    [5,11],
+    [9,8],
+    [14,4],
+    [-14,-10],
+    [14,-8],
+    [8,-14],
+    [-7,-13]
+].forEach(
+    p=>makeTree(p[0],p[1])
+);
 
 
-/* =====================================================
+/* =========================================================
    PLAYER
-===================================================== */
+========================================================= */
 
 const player = {
 
-    x:0,
+    position:
+        new THREE.Vector3(
+            0,
+            2.1,
+            7
+        ),
 
-    y:2,
+    velocity:
+        new THREE.Vector3(),
 
-    z:7,
+    height:1.7,
 
-    speed:.12,
+    width:.55,
 
-    vy:0,
+    onGround:false
 
-    height:1.8,
-
-    radius:.3,
-
-    onGround:true
 };
 
 
-/* ================= CAMERA ROTATION ================= */
+camera.position.copy(
+    player.position
+);
 
-let yaw = 0;
-
-let pitch = -0.12;
+camera.position.y += .5;
 
 
-/* ================= MOVEMENT ================= */
+/* =========================================================
+   MOVEMENT
+========================================================= */
 
-const moving = {
+const move = {
 
     forward:false,
-
-    back:false,
-
+    backward:false,
     left:false,
-
     right:false
+
 };
 
 
-/* =====================================================
-   COLLISION
-===================================================== */
+let canJump = false;
 
-function isSolidBlock(
+
+/* Buttons */
+
+function setupHoldButton(
+    element,
+    property
+){
+
+    const start = e => {
+
+        e.preventDefault();
+
+        move[property] = true;
+
+    };
+
+    const stop = e => {
+
+        e.preventDefault();
+
+        move[property] = false;
+
+    };
+
+    element.addEventListener(
+        "pointerdown",
+        start
+    );
+
+    element.addEventListener(
+        "pointerup",
+        stop
+    );
+
+    element.addEventListener(
+        "pointercancel",
+        stop
+    );
+
+    element.addEventListener(
+        "pointerleave",
+        stop
+    );
+
+}
+
+
+setupHoldButton(
+    document.getElementById("up"),
+    "forward"
+);
+
+setupHoldButton(
+    document.getElementById("down"),
+    "backward"
+);
+
+setupHoldButton(
+    document.getElementById("left"),
+    "left"
+);
+
+setupHoldButton(
+    document.getElementById("right"),
+    "right"
+);
+
+
+/* Jump */
+
+document.getElementById("jump")
+.addEventListener(
+    "pointerdown",
+    e=>{
+
+        e.preventDefault();
+
+        if(player.onGround){
+
+            player.velocity.y = 7;
+
+            player.onGround = false;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   COLLISION
+========================================================= */
+
+function solidAt(
     x,
     y,
     z
 ){
 
+    return blocks.has(
+        key(
+            Math.round(x),
+            Math.round(y),
+            Math.round(z)
+        )
+    );
+
+}
+
+
+function collidesAt(
+    pos
+){
+
+    const minX =
+        Math.floor(
+            pos.x - player.width
+        );
+
+    const maxX =
+        Math.floor(
+            pos.x + player.width
+        );
+
+    const minY =
+        Math.floor(
+            pos.y - player.height
+        );
+
+    const maxY =
+        Math.floor(
+            pos.y + .2
+        );
+
+    const minZ =
+        Math.floor(
+            pos.z - player.width
+        );
+
+    const maxZ =
+        Math.floor(
+            pos.z + player.width
+        );
+
+
     for(
-        const block of blocks
+        let x=minX;
+        x<=maxX;
+        x++
     ){
 
-        if(
-            !block.parent
-        ){
-            continue;
-        }
-
-        const type =
-            block.userData.type;
-
-        if(type==="water"){
-            continue;
-        }
-
-        const bx =
-            block.position.x;
-
-        const by =
-            block.position.y;
-
-        const bz =
-            block.position.z;
-
-
-        const minX =
-            x-player.radius;
-
-        const maxX =
-            x+player.radius;
-
-        const minY =
-            y;
-
-        const maxY =
-            y+player.height;
-
-        const minZ =
-            z-player.radius;
-
-        const maxZ =
-            z+player.radius;
-
-
-        const blockMinX =
-            bx-.5;
-
-        const blockMaxX =
-            bx+.5;
-
-        const blockMinY =
-            by-.5;
-
-        const blockMaxY =
-            by+.5;
-
-        const blockMinZ =
-            bz-.5;
-
-        const blockMaxZ =
-            bz+.5;
-
-
-        const hitX =
-            maxX>blockMinX &&
-            minX<blockMaxX;
-
-        const hitY =
-            maxY>blockMinY &&
-            minY<blockMaxY;
-
-        const hitZ =
-            maxZ>blockMinZ &&
-            minZ<blockMaxZ;
-
-
-        if(
-            hitX &&
-            hitY &&
-            hitZ
+        for(
+            let y=minY;
+            y<=maxY;
+            y++
         ){
 
-            return true;
+            for(
+                let z=minZ;
+                z<=maxZ;
+                z++
+            ){
+
+                if(
+                    blocks.has(
+                        key(x,y,z)
+                    )
+                ){
+
+                    return true;
+
+                }
+
+            }
+
         }
+
     }
 
     return false;
+
 }
 
 
-/* =====================================================
-   MOVEMENT WITH COLLISION
-===================================================== */
+/* =========================================================
+   PLAYER UPDATE
+========================================================= */
 
-function movePlayer(){
-
-    const speed =
-        player.speed;
+const clock =
+    new THREE.Clock();
 
 
-    const forwardX =
-        Math.sin(yaw);
+function updatePlayer(dt){
 
-    const forwardZ =
-        Math.cos(yaw);
+    const speed = 5.5;
 
-
-    let moveX=0;
-
-    let moveZ=0;
+    const direction =
+        new THREE.Vector3();
 
 
-    if(moving.forward){
+    if(move.forward){
+        direction.z -= 1;
+    }
 
-        moveX +=
-            forwardX*speed;
+    if(move.backward){
+        direction.z += 1;
+    }
 
-        moveZ +=
-            forwardZ*speed;
+    if(move.left){
+        direction.x -= 1;
+    }
+
+    if(move.right){
+        direction.x += 1;
     }
 
 
-    if(moving.back){
+    if(direction.lengthSq()>0){
 
-        moveX -=
-            forwardX*speed;
+        direction.normalize();
 
-        moveZ -=
-            forwardZ*speed;
+        direction.applyAxisAngle(
+            new THREE.Vector3(0,1,0),
+            yaw
+        );
+
     }
 
 
-    if(moving.left){
-
-        moveX +=
-            Math.sin(
-                yaw +
-                Math.PI/2
-            )*speed;
-
-        moveZ +=
-            Math.cos(
-                yaw +
-                Math.PI/2
-            )*speed;
-    }
+    player.velocity.x =
+        THREE.MathUtils.lerp(
+            player.velocity.x,
+            direction.x * speed,
+            Math.min(1,dt*10)
+        );
 
 
-    if(moving.right){
-
-        moveX +=
-            Math.sin(
-                yaw -
-                Math.PI/2
-            )*speed;
-
-        moveZ +=
-            Math.cos(
-                yaw -
-                Math.PI/2
-            )*speed;
-    }
+    player.velocity.z =
+        THREE.MathUtils.lerp(
+            player.velocity.z,
+            direction.z * speed,
+            Math.min(1,dt*10)
+        );
 
 
-    /* X collision */
+    /* gravity */
+
+    player.velocity.y -=
+        18 * dt;
+
+
+    /* X */
 
     const nextX =
-        player.x+moveX;
+        player.position.clone();
+
+    nextX.x +=
+        player.velocity.x * dt;
 
 
-    if(
-        !isSolidBlock(
-            nextX,
-            player.y,
-            player.z
-        )
-    ){
+    if(!collidesAt(nextX)){
 
-        player.x =
-            nextX;
+        player.position.x =
+            nextX.x;
+
+    }
+    else{
+
+        player.velocity.x = 0;
+
     }
 
 
-    /* Z collision */
+    /* Z */
 
     const nextZ =
-        player.z+moveZ;
+        player.position.clone();
+
+    nextZ.z +=
+        player.velocity.z * dt;
 
 
-    if(
-        !isSolidBlock(
-            player.x,
-            player.y,
-            nextZ
-        )
-    ){
+    if(!collidesAt(nextZ)){
 
-        player.z =
-            nextZ;
+        player.position.z =
+            nextZ.z;
+
+    }
+    else{
+
+        player.velocity.z = 0;
+
     }
 
 
-    /* Boundary */
-
-    player.x =
-        Math.max(
-            -19,
-            Math.min(
-                19,
-                player.x
-            )
-        );
-
-    player.z =
-        Math.max(
-            -19,
-            Math.min(
-                19,
-                player.z
-            )
-        );
-}
-
-
-/* =====================================================
-   BUTTON CONTROL
-===================================================== */
-
-function holdButton(
-    id,
-    key
-){
-
-    const button =
-        document.getElementById(
-            id
-        );
-
-
-    function start(e){
-
-        e.preventDefault();
-
-        moving[key]=true;
-
-        if(
-            e.pointerId !== undefined
-        ){
-
-            button.setPointerCapture?.(
-                e.pointerId
-            );
-        }
-    }
-
-
-    function stop(e){
-
-        e.preventDefault();
-
-        moving[key]=false;
-    }
-
-
-    button.addEventListener(
-        "pointerdown",
-        start
-    );
-
-    button.addEventListener(
-        "pointerup",
-        stop
-    );
-
-    button.addEventListener(
-        "pointercancel",
-        stop
-    );
-
-    button.addEventListener(
-        "pointerleave",
-        stop
-    );
-}
-
-
-holdButton(
-    "forward",
-    "forward"
-);
-
-holdButton(
-    "back",
-    "back"
-);
-
-holdButton(
-    "left",
-    "left"
-);
-
-holdButton(
-    "right",
-    "right"
-);
-
-
-/* =====================================================
-   JUMP
-===================================================== */
-
-document
-    .getElementById("jump")
-    .addEventListener(
-        "pointerdown",
-        e=>{
-
-            e.preventDefault();
-
-            if(
-                player.onGround
-            ){
-
-                player.vy=.18;
-
-                player.onGround=false;
-            }
-        }
-    );
-
-
-/* =====================================================
-   PHYSICS
-===================================================== */
-
-function physics(){
-
-    player.vy -= .008;
+    /* Y */
 
     const nextY =
-        player.y +
-        player.vy;
+        player.position.clone();
+
+    nextY.y +=
+        player.velocity.y * dt;
 
 
-    if(
-        player.vy < 0
-    ){
+    if(!collidesAt(nextY)){
 
-        if(
-            isSolidBlock(
-                player.x,
-                nextY,
-                player.z
-            )
-        ){
+        player.position.y =
+            nextY.y;
 
-            player.y =
-                Math.ceil(
-                    player.y
-                );
+        player.onGround = false;
 
-            player.vy=0;
+    }
+    else{
 
-            player.onGround=true;
+        if(player.velocity.y < 0){
 
-            return;
+            player.onGround = true;
+
         }
+
+        player.velocity.y = 0;
+
     }
 
 
-    player.y =
-        nextY;
+    /* keep player in world */
+
+    player.position.x =
+        THREE.MathUtils.clamp(
+            player.position.x,
+            -16,
+            16
+        );
+
+    player.position.z =
+        THREE.MathUtils.clamp(
+            player.position.z,
+            -16,
+            16
+        );
 
 
-    if(
-        player.y<=2
-    ){
+    /* camera */
 
-        player.y=2;
+    camera.position.copy(
+        player.position
+    );
 
-        player.vy=0;
+    camera.position.y += .5;
 
-        player.onGround=true;
-    }
 }
 
 
-/* =====================================================
-   LOOK AROUND
-===================================================== */
+/* =========================================================
+   LOOK CONTROLS
+========================================================= */
 
-let looking=false;
+let yaw = 0;
+let pitch = -0.08;
 
-let lastX=0;
+let looking = false;
 
-let lastY=0;
+let lastX = 0;
+let lastY = 0;
 
+let pointerMoved = false;
+
+
+/* Touch state */
+
+let pointerDown = false;
+
+let pointerStartX = 0;
+let pointerStartY = 0;
+
+let longPressTimer = null;
+
+let breaking = false;
+
+const LONG_PRESS = 650;
+const MOVE_LIMIT = 10;
+
+
+/* =========================================================
+   RAYCAST
+========================================================= */
+
+const raycaster =
+    new THREE.Raycaster();
+
+
+const pointer =
+    new THREE.Vector2();
+
+
+function getTargetBlock(){
+
+    pointer.set(0,0);
+
+    raycaster.setFromCamera(
+        pointer,
+        camera
+    );
+
+    const objects =
+        Array.from(
+            blocks.values()
+        );
+
+    const hits =
+        raycaster.intersectObjects(
+            objects,
+            false
+        );
+
+    if(hits.length === 0){
+        return null;
+    }
+
+    return hits[0];
+
+}
+
+
+/* =========================================================
+   BREAK BLOCK
+========================================================= */
+
+function breakTarget(){
+
+    const hit =
+        getTargetBlock();
+
+    if(!hit){
+        return;
+    }
+
+    const block =
+        hit.object;
+
+    const x =
+        block.userData.x;
+
+    const y =
+        block.userData.y;
+
+    const z =
+        block.userData.z;
+
+
+    /* Don't remove the bottom world */
+
+    if(y <= -1){
+        return;
+    }
+
+
+    removeBlock(
+        x,
+        y,
+        z
+    );
+
+
+    showMessage(
+        "Block broken"
+    );
+
+}
+
+
+/* =========================================================
+   BUILD BLOCK
+========================================================= */
+
+let selectedType = "grass";
+
+
+function buildTarget(){
+
+    const hit =
+        getTargetBlock();
+
+    if(!hit){
+        return;
+    }
+
+
+    const block =
+        hit.object;
+
+
+    const normal =
+        hit.face.normal.clone();
+
+
+    normal.transformDirection(
+        block.matrixWorld
+    );
+
+
+    const x =
+        block.userData.x +
+        Math.round(normal.x);
+
+    const y =
+        block.userData.y +
+        Math.round(normal.y);
+
+    const z =
+        block.userData.z +
+        Math.round(normal.z);
+
+
+    /* Don't build inside player */
+
+    const testPosition =
+        new THREE.Vector3(
+            x,
+            y+1,
+            z
+        );
+
+
+    if(collidesAt(testPosition)){
+        return;
+    }
+
+
+    addBlock(
+        x,
+        y,
+        z,
+        selectedType
+    );
+
+
+    showMessage(
+        "Block placed"
+    );
+
+}
+
+
+/* =========================================================
+   WORLD POINTER CONTROLS
+========================================================= */
 
 renderer.domElement.addEventListener(
     "pointerdown",
     e=>{
 
-        looking=true;
+        e.preventDefault();
 
-        lastX=e.clientX;
+        pointerDown = true;
 
-        lastY=e.clientY;
-    }
+        pointerMoved = false;
+
+        breaking = false;
+
+        pointerStartX = e.clientX;
+        pointerStartY = e.clientY;
+
+        lastX = e.clientX;
+        lastY = e.clientY;
+
+
+        clearTimeout(
+            longPressTimer
+        );
+
+
+        longPressTimer =
+            setTimeout(
+                ()=>{
+
+                    if(
+                        pointerDown &&
+                        !pointerMoved
+                    ){
+
+                        breaking = true;
+
+                        breakTarget();
+
+                    }
+
+                },
+                LONG_PRESS
+            );
+
+    },
+    {passive:false}
 );
 
 
@@ -1633,103 +1631,167 @@ renderer.domElement.addEventListener(
     "pointermove",
     e=>{
 
-        if(!looking){
+        if(!pointerDown){
             return;
         }
 
 
         const dx =
-            e.clientX-lastX;
+            e.clientX -
+            pointerStartX;
 
         const dy =
-            e.clientY-lastY;
+            e.clientY -
+            pointerStartY;
 
 
-        yaw -=
-            dx*.006;
+        if(
+            Math.abs(dx) > MOVE_LIMIT ||
+            Math.abs(dy) > MOVE_LIMIT
+        ){
 
-        pitch -=
-            dy*.004;
+            pointerMoved = true;
 
-
-        pitch =
-            Math.max(
-                -.9,
-                Math.min(
-                    .7,
-                    pitch
-                )
+            clearTimeout(
+                longPressTimer
             );
 
 
-        lastX=e.clientX;
+            if(!breaking){
 
-        lastY=e.clientY;
-    }
+                const moveX =
+                    e.clientX-lastX;
+
+                const moveY =
+                    e.clientY-lastY;
+
+
+                yaw -=
+                    moveX * .006;
+
+                pitch -=
+                    moveY * .006;
+
+
+                pitch =
+                    THREE.MathUtils.clamp(
+                        pitch,
+                        -1.3,
+                        1.3
+                    );
+
+
+                updateCameraRotation();
+
+            }
+
+        }
+
+
+        lastX = e.clientX;
+        lastY = e.clientY;
+
+    },
+    {passive:false}
 );
 
 
 renderer.domElement.addEventListener(
     "pointerup",
-    ()=>{
-        looking=false;
-    }
+    e=>{
+
+        e.preventDefault();
+
+        clearTimeout(
+            longPressTimer
+        );
+
+
+        if(
+            pointerDown &&
+            !pointerMoved &&
+            !breaking
+        ){
+
+            buildTarget();
+
+        }
+
+
+        pointerDown = false;
+
+        breaking = false;
+
+    },
+    {passive:false}
 );
 
 
 renderer.domElement.addEventListener(
     "pointercancel",
     ()=>{
-        looking=false;
+
+        clearTimeout(
+            longPressTimer
+        );
+
+        pointerDown = false;
+
+        breaking = false;
+
     }
 );
 
 
-/* =====================================================
-   CAMERA
-===================================================== */
+/* =========================================================
+   CAMERA ROTATION
+========================================================= */
 
-function updateCamera(){
+function updateCameraRotation(){
 
-    camera.position.set(
-        player.x,
-        player.y+1.6,
-        player.z
-    );
+    camera.rotation.order =
+        "YXZ";
 
+    camera.rotation.y =
+        yaw;
 
-    const direction =
-        new THREE.Vector3(
-            Math.sin(yaw),
-            Math.sin(pitch),
-            Math.cos(yaw)
-        );
+    camera.rotation.x =
+        pitch;
 
-
-    camera.lookAt(
-        camera.position.x+
-        direction.x,
-
-        camera.position.y+
-        direction.y,
-
-        camera.position.z+
-        direction.z
-    );
 }
 
 
-/* =====================================================
-   BLOCK SELECTION
-===================================================== */
+/* =========================================================
+   INVENTORY
+========================================================= */
 
-let selectedType =
-    "grass";
+const inventory =
+    document.getElementById(
+        "inventory"
+    );
 
 
-document
-    .querySelectorAll(".slot")
-    .forEach(slot=>{
+document.getElementById(
+    "inventoryButton"
+)
+.addEventListener(
+    "pointerdown",
+    e=>{
+
+        e.preventDefault();
+
+        inventory.classList.toggle(
+            "show"
+        );
+
+    }
+);
+
+
+document.querySelectorAll(
+    ".slot"
+).forEach(
+    slot=>{
 
         slot.addEventListener(
             "pointerdown",
@@ -1737,262 +1799,143 @@ document
 
                 e.preventDefault();
 
-                document
-                    .querySelectorAll(".slot")
-                    .forEach(
-                        s=>
-                        s.classList.remove(
-                            "selected"
-                        )
-                    );
+                document.querySelectorAll(
+                    ".slot"
+                ).forEach(
+                    s=>s.classList.remove(
+                        "selected"
+                    )
+                );
+
 
                 slot.classList.add(
                     "selected"
                 );
 
+
                 selectedType =
-                    slot.dataset.block;
+                    slot.dataset.type;
+
+
+                inventory.classList.remove(
+                    "show"
+                );
+
+
+                showMessage(
+                    "Selected: " +
+                    selectedType
+                );
+
             }
         );
-    });
+
+    }
+);
 
 
-/* =====================================================
-   RAYCAST
-===================================================== */
+/* =========================================================
+   BUILD BUTTON
+========================================================= */
 
-const raycaster =
-    new THREE.Raycaster();
+document.getElementById(
+    "buildButton"
+)
+.addEventListener(
+    "pointerdown",
+    e=>{
 
-const center =
-    new THREE.Vector2(
-        0,
-        0
-    );
+        e.preventDefault();
 
+        buildTarget();
 
-/* =====================================================
-   BREAK
-===================================================== */
-
-document
-    .getElementById("break")
-    .addEventListener(
-        "pointerdown",
-        e=>{
-
-            e.preventDefault();
+    }
+);
 
 
-            raycaster.setFromCamera(
-                center,
-                camera
-            );
+/* =========================================================
+   RESET
+========================================================= */
 
+document.getElementById(
+    "resetButton"
+)
+.addEventListener(
+    "pointerdown",
+    e=>{
 
-            const hits =
-                raycaster.intersectObjects(
-                    blocks
-                );
+        e.preventDefault();
 
-
-            if(
-                hits.length===0
-            ){
-
-                return;
-            }
-
-
-            const block =
-                hits[0].object;
-
-
-            const distance =
-                camera.position.distanceTo(
-                    block.position
-                );
-
-
-            if(
-                distance<=6
-            ){
-
-                scene.remove(
-                    block
-                );
-
-
-                const index =
-                    blocks.indexOf(
-                        block
-                    );
-
-
-                if(index>=0){
-
-                    blocks.splice(
-                        index,
-                        1
-                    );
-                }
-            }
-        }
-    );
-
-
-/* =====================================================
-   PLACE
-===================================================== */
-
-document
-    .getElementById("place")
-    .addEventListener(
-        "pointerdown",
-        e=>{
-
-            e.preventDefault();
-
-
-            raycaster.setFromCamera(
-                center,
-                camera
-            );
-
-
-            const hits =
-                raycaster.intersectObjects(
-                    blocks
-                );
-
-
-            if(
-                hits.length===0
-            ){
-
-                return;
-            }
-
-
-            const hit =
-                hits[0];
-
-
-            const block =
-                hit.object;
-
-
-            const distance =
-                camera.position.distanceTo(
-                    block.position
-                );
-
-
-            if(
-                distance<=6
-            ){
-
-                const normal =
-                    hit.face.normal;
-
-
-                const position =
-                    block.position.clone()
-                    .add(normal);
-
-
-                const bx =
-                    Math.round(
-                        position.x
-                    );
-
-                const by =
-                    Math.round(
-                        position.y
-                    );
-
-                const bz =
-                    Math.round(
-                        position.z
-                    );
-
-
-                /* Don't place inside player */
-
-                if(
-                    !isSolidBlock(
-                        bx,
-                        by,
-                        bz
-                    )
-                ){
-
-                    addBlock(
-                        bx,
-                        by,
-                        bz,
-                        selectedType
-                    );
-                }
-            }
-        }
-    );
-
-
-/* =====================================================
-   COORDINATES
-===================================================== */
-
-function updateCoordinates(){
-
-    document
-        .getElementById("cx")
-        .textContent =
-        Math.round(
-            player.x
+        player.position.set(
+            0,
+            2.1,
+            7
         );
 
-
-    document
-        .getElementById("cy")
-        .textContent =
-        Math.round(
-            player.y
+        player.velocity.set(
+            0,
+            0,
+            0
         );
 
+        yaw = 0;
+        pitch = -.08;
 
-    document
-        .getElementById("cz")
-        .textContent =
-        Math.round(
-            player.z
+        updateCameraRotation();
+
+        showMessage(
+            "Position reset"
         );
 
+    }
+);
 
-    const mapPlayer =
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+let messageTimer = null;
+
+
+function showMessage(text){
+
+    const message =
         document.getElementById(
-            "mapPlayer"
+            "message"
         );
 
+    message.textContent =
+        text;
 
-    mapPlayer.style.left =
-        (
-            50+
-            player.x*1.8
-        )+"%";
+    message.classList.add(
+        "show"
+    );
 
 
-    mapPlayer.style.top =
-        (
-            50+
-            player.z*1.8
-        )+"%";
+    clearTimeout(
+        messageTimer
+    );
+
+
+    messageTimer =
+        setTimeout(
+            ()=>{
+
+                message.classList.remove(
+                    "show"
+                );
+
+            },
+            1000
+        );
+
 }
 
 
-/* =====================================================
+/* =========================================================
    RESIZE
-===================================================== */
+========================================================= */
 
 window.addEventListener(
     "resize",
@@ -2004,106 +1947,18 @@ window.addEventListener(
 
         camera.updateProjectionMatrix();
 
-
         renderer.setSize(
             window.innerWidth,
             window.innerHeight
         );
+
     }
 );
 
 
-/* =====================================================
-   KEYBOARD
-===================================================== */
-
-document.addEventListener(
-    "keydown",
-    e=>{
-
-        if(
-            e.key==="ArrowUp" ||
-            e.key==="w"
-        ){
-
-            moving.forward=true;
-        }
-
-
-        if(
-            e.key==="ArrowDown" ||
-            e.key==="s"
-        ){
-
-            moving.back=true;
-        }
-
-
-        if(
-            e.key==="ArrowLeft" ||
-            e.key==="a"
-        ){
-
-            moving.left=true;
-        }
-
-
-        if(
-            e.key==="ArrowRight" ||
-            e.key==="d"
-        ){
-
-            moving.right=true;
-        }
-    }
-);
-
-
-document.addEventListener(
-    "keyup",
-    e=>{
-
-        if(
-            e.key==="ArrowUp" ||
-            e.key==="w"
-        ){
-
-            moving.forward=false;
-        }
-
-
-        if(
-            e.key==="ArrowDown" ||
-            e.key==="s"
-        ){
-
-            moving.back=false;
-        }
-
-
-        if(
-            e.key==="ArrowLeft" ||
-            e.key==="a"
-        ){
-
-            moving.left=false;
-        }
-
-
-        if(
-            e.key==="ArrowRight" ||
-            e.key==="d"
-        ){
-
-            moving.right=false;
-        }
-    }
-);
-
-
-/* =====================================================
+/* =========================================================
    GAME LOOP
-===================================================== */
+========================================================= */
 
 function animate(){
 
@@ -2112,25 +1967,42 @@ function animate(){
     );
 
 
-    movePlayer();
+    const dt =
+        Math.min(
+            clock.getDelta(),
+            .05
+        );
 
-    physics();
 
-    updateCamera();
-
-    updateCoordinates();
-
+    updatePlayer(dt);
 
     renderer.render(
         scene,
         camera
     );
+
 }
 
 
-updateCamera();
+updateCameraRotation();
 
 animate();
+
+
+/* =========================================================
+   START MESSAGE
+========================================================= */
+
+setTimeout(
+    ()=>{
+
+        showMessage(
+            "Welcome to your world!"
+        );
+
+    },
+    500
+);
 
 </script>
 
